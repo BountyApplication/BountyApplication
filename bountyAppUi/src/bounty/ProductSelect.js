@@ -23,8 +23,13 @@ export default class ProductSelect extends React.Component {
                 { id: 12, name: "Sprudel", price: 0.8, amount: 0,},
                 { id: 13, name: "Apfelschorle", price: 1, amount: 0,},
                 { id: 14, name: "Cola", price: 1.5, amount: 0,},
-            ]
+                { id: 15, name: "Reis", price: 2, amount: 0},
+                { id: 16, name: "ESP", price: 5, amount: 0},
+            ],
+
+            correction: 0,
         }
+        this.props.setSubmitCallback(this.submitProducts.bind(this));
     }
 
     updateProductAmount = (id, amount) => {
@@ -37,22 +42,45 @@ export default class ProductSelect extends React.Component {
         }
     }
 
+    calculatePrice() {
+        var price = 0;
+        for(var i = 0, l = this.state.products.length; i < l; i++)
+            price+=this.state.products[i].amount*this.state.products[i].price;
+        price+=this.state.correction;
+        return price;
+    }
+
     submitProducts() {
+        this.resets();
+    }
+
+    reset() {
         const updatedProducts = [];
         this.state.products.map(product => {
             const updatedProduct = {...product, amount: 0 };
             updatedProducts.push(updatedProduct)
         })
-        this.setState({ products: updatedProducts });
+        this.setState({ products: updatedProducts, correction: 0 });
     }
     
     render() {
         return(
             <div className="ProductSelect">
-                {this.state.products.map(({id, name, price, amount}) => { 
-                    return <Product key={id} id={id} name={name} price={price} amount={amount} setAmount={this.updateProductAmount}/>
-                })}
-                <button className="submit" onClick={() => this.submitProducts()}>{"kaufen"}</button>
+                <div className='products'>
+                    {this.state.products.map(({id, name, price, amount}) => { 
+                        return <Product key={id} id={id} name={name} price={price} amount={amount} setAmount={this.updateProductAmount}/>
+                    })}
+                </div>
+                <div className='correction'>
+                    {"Korrektur: "}
+                    <input type="number" value={this.state.correction.toString()} onChange={event=>{this.setState({correction: Math.floor(parseFloat(event.target.value)*100)/100})}} onKeyPress={(event)=>{if(!/[0-9|.]/.test(event.key)) event.preventDefault();}} />
+                </div>
+                <button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>
+                <div className='balance infos'>
+                    <p className='balance'> {"Kontostand: "+(this.props.userBalance!=null?this.props.userBalance.toFixed(2)+"€":null)} </p>
+                    <p className='sum'> {"Summe: "+this.calculatePrice().toFixed(2)+"€"} </p>
+                    <p className='result'> {"Neu: "+(this.props.userBalance!==null?((this.props.userBalance-this.calculatePrice()).toFixed(2)+"€"):null)} </p>
+                </div>
             </div>
         );
     }

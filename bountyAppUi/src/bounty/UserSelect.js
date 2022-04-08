@@ -90,6 +90,11 @@ export default class UserSelect extends React.Component {
                 { id: "6", lastname: "Schwarz", firstname: "Tim" },
                 { id: "7", lastname: "Schreiber", firstname: "Jan" },
                 { id: "8", lastname: "Günther", firstname: "William" },
+                { id: "8", lastname: "Lee", firstname: "Cindy" },
+                { id: "8", lastname: "Hopp", firstname: "Janice" },
+                { id: "8", lastname: "Kuhn", firstname: "Maja" },
+                { id: "8", lastname: "Wäscher", firstname: "Nele" },
+                { id: "8", lastname: "Bürle", firstname: "Rahle" },
                 { id: "9", lastname: "Mustermann", firstname: "Tim"},
                 { id: "10", lastname: "Mustermann", firstname: "Fridolin"},
             ],
@@ -100,49 +105,48 @@ export default class UserSelect extends React.Component {
 
     updateName(isFirstname, name) {
         if(name === "") {
-            if(isFirstname && this.state.userFirstname!=="")
-                this.setState({userLastname: name});
-            else if(!isFirstname && this.state.userLastname!=="")
-                this.setState({userFirstname: name});
+            this.props.reset();
+            return;
         }
         if(isFirstname)
-            this.setState({userFirstname: name}, this.checkOptions);
+            this.props.setUserFirstname(name, this.checkOptions.bind(this));
         else
-            this.setState({userLastname: name}, this.checkOptions);
+            this.props.setUserLastname(name, this.checkOptions.bind(this));
     }
 
     checkOptions() {
         if(this.getFilteredUsers().length <= 1) {
-            if(this.state.userFirstname!=="" && this.state.userLastname==="")
-                this.setState({userLastname: this.getFilteredUsers().find(user => {return user.firstname === this.state.userFirstname}).lastname}, this.run);
-            else if(this.state.userFirstname==="" && this.state.userLastname!=="")
-                this.setState({userFirstname: this.getFilteredUsers().find(user => {return user.lastname === this.state.userLastname}).firstname}, this.run);
-            else if(this.state.userFirstname!=="" && this.state.userLastname!=="")
+            if(this.props.userFirstname!=="" && this.props.userLastname==="")
+                this.props.setUserLastname(this.getFilteredUsers().find(user => {return user.firstname === this.props.userFirstname}).lastname, this.run.bind(this));
+            else if(this.props.userFirstname==="" && this.props.userLastname!=="")
+                this.props.setUserFirstname(this.getFilteredUsers().find(user => {return user.lastname === this.props.userLastname}).firstname, this.run.bind(this));
+            else if(this.props.userFirstname!=="" && this.props.userLastname!=="")
                 this.run();
         }
     }
 
     getFilteredUsers() {
-        return this.state.users.filter(({id, lastname, firstname}) => {return (this.state.userFirstname === "" || this.state.userFirstname === firstname) && (this.state.userLastname === "" || this.state.userLastname === lastname)});
+        return this.state.users.filter(({id, lastname, firstname}) => {return (this.props.userFirstname === "" || this.props.userFirstname === firstname) && (this.props.userLastname === "" || this.props.userLastname === lastname)});
     }
 
     run() {
-        console.log(this.state.userFirstname+" "+this.state.userLastname);
+        console.log(this.props.userFirstname+" "+this.props.userLastname);
+        this.props.setUserId(this.getFilteredUsers().length==1?this.getFilteredUsers()[0].id:-1);
     }
 
     render() {
         const users = this.getFilteredUsers();
         return(
             <div className="UserSelect">
-                <select className="firstname" value={this.state.userFirstname} onChange={(event) => {this.updateName(true, event.target.value);}}>
-                    {<option value="">{this.state.userFirstname!==""?"delete":""}</option>}
+                <select className="firstname" value={this.props.userFirstname} onChange={(event) => {this.updateName(true, event.target.value);}}>
+                    {<option value="">{this.props.userFirstname!==""?"delete":""}</option>}
                     {users.map(({id, lastname, firstname}) => { 
                         if(users.findIndex(object => {return object.firstname === firstname}) === users.findIndex(object => {return object.id === id}))
                             return <option key={id} value={firstname}>{firstname}</option>
                     })}
                 </select>
-                <select className="lastname" value={this.state.userLastname} onChange={(event) => {this.updateName(false, event.target.value);}}>
-                    {<option value="">{this.state.userLastname!==""?"delete":""}</option>}
+                <select className="lastname" value={this.props.userLastname} onChange={(event) => {this.updateName(false, event.target.value);}}>
+                    {<option value="">{this.props.userLastname!==""?"delete":""}</option>}
                     {users.map(({id, lastname, firstname}) => {
                         if(users.findIndex(object => {return object.lastname === lastname}) === users.findIndex(object => {return object.id === id}))
                             return <option key={id} value={lastname}>{lastname}</option>
