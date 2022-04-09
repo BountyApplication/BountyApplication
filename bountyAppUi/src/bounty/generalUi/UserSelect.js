@@ -80,27 +80,32 @@ export default class UserSelect extends React.Component {
         super(props);
         
         this.state = {
-            users: [
-                { id: "0", lastname: "Mauch", firstname: "Josua" },
-                { id: "1", lastname: "Tappe", firstname: "Isajah" },
-                { id: "2", lastname: "Braun", firstname: "Jonas" },
-                { id: "3", lastname: "Strasser", firstname: "Marit" },
-                { id: "4", lastname: "Pauli", firstname: "Lotta" },
-                { id: "5", lastname: "Volmer", firstname: "Hannah" },
-                { id: "6", lastname: "Schwarz", firstname: "Tim" },
-                { id: "7", lastname: "Schreiber", firstname: "Jan" },
-                { id: "8", lastname: "Günther", firstname: "William" },
-                { id: "8", lastname: "Lee", firstname: "Cindy" },
-                { id: "8", lastname: "Hopp", firstname: "Janice" },
-                { id: "8", lastname: "Kuhn", firstname: "Maja" },
-                { id: "8", lastname: "Wäscher", firstname: "Nele" },
-                { id: "8", lastname: "Bürle", firstname: "Rahle" },
-                { id: "9", lastname: "Mustermann", firstname: "Tim"},
-                { id: "10", lastname: "Mustermann", firstname: "Fridolin"},
-            ],
+            users: this.getUsers(),
             userFirstname: "",
             userLastname: "",
         }
+    }
+
+    getUsers() {
+        // do server
+        return [
+            { id: "0", lastname: "Mauch", firstname: "Josua" },
+            { id: "1", lastname: "Tappe", firstname: "Isajah" },
+            { id: "2", lastname: "Braun", firstname: "Jonas" },
+            { id: "3", lastname: "Strasser", firstname: "Marit" },
+            { id: "4", lastname: "Pauli", firstname: "Lotta" },
+            { id: "5", lastname: "Volmer", firstname: "Hannah" },
+            { id: "6", lastname: "Schwarz", firstname: "Tim" },
+            { id: "7", lastname: "Schreiber", firstname: "Jan" },
+            { id: "8", lastname: "Günther", firstname: "William" },
+            { id: "9", lastname: "Lee", firstname: "Cindy" },
+            { id: "10", lastname: "Hopp", firstname: "Janice" },
+            { id: "11", lastname: "Kuhn", firstname: "Maja" },
+            { id: "12", lastname: "Wäscher", firstname: "Nele" },
+            { id: "13", lastname: "Bürle", firstname: "Rahle" },
+            { id: "14", lastname: "Mustermann", firstname: "Tim"},
+            { id: "15", lastname: "Mustermann", firstname: "Fridolin"},
+        ];
     }
 
     updateName(isFirstname, name) {

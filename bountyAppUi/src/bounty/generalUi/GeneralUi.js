@@ -41,6 +41,7 @@ export default class GeneralUi extends React.Component {
     }
 
     getUserBalance() {
+        // do server
         let balance = 10;
         this.setState({userBalance: balance});
     }
