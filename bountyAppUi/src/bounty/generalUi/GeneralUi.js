@@ -91,12 +91,12 @@ export default class GeneralUi extends React.Component {
         return(
             <div className="GeneralUi">
                 {/* <Link to="/admin">{"Admin"}</Link> */}
-                <UserSelect setResetCallback={(func)=>{this.setState({resetCallbac: func});}} reset={this.reset.bind(this)} run={this.setUser.bind(this)} useSubmit={false} />
+                <UserSelect setResetCallback={(func)=>{this.setState({resetCallbac: func});}} reset={this.reset.bind(this)} run={this.setUser.bind(this)} useSubmit={false} useReset={true} hideReset={true} />
                 <ProductDisplay products={this.state.products} setProducts={(products)=>{this.setState({products: products});}} />
                 <BalanceCorrection value={this.state.correction} setValue={(value)=>{this.setState({correction: value});}} />
-                <button className='reset' onClick={this.resetProducts.bind(this)}>{"reset"}</button>
-                <BalanceInfos balance={this.state.userBalance} sum={this.calculatePrice()} />
-                <button className="submit" onClick={this.submit.bind(this)}>{"kaufen"}</button>
+                {(this.calculatePrice()!==0||this.state.correction!==null)&&<button className='reset' onClick={this.resetProducts.bind(this)}>{"reset"}</button>} <br />
+                {this.state.user!=null&&<BalanceInfos balance={this.state.userBalance} sum={this.calculatePrice()} />}<br />
+                {(this.calculatePrice()!==0||this.state.correction!==null)&&this.state.user!=null&&<button className="submit" onClick={this.submit.bind(this)}>{"kaufen"}</button>}
             </div>
         );
     }

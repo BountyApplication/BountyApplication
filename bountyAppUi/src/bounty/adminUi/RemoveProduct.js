@@ -11,15 +11,17 @@ export default class RemoveProduct extends React.Component {
     }
 
     run(product) {
-        console.log(product);
-        // do server
+        if(window.confirm("Remove Product "+product.name+" ("+product.price+"€) ?")) {
+            console.log(product);
+            // do server
+        }
     }
 
     render() {
         return(
             <div className='RemoveProduct'>
                 <p>{"Remove Product"}</p>
-                <ProductSelect run={this.run.bind(this)} useReset={true} useSubmit={true} resetSubmit={true} />
+                <ProductSelect run={this.run.bind(this)} useReset={true} useSubmit={true} resetSubmit={true} hideReset={true} hideSubmit={true} />
             </div>
         );
     }

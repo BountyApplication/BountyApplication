@@ -51,8 +51,11 @@ export default class ProductSelect extends React.Component {
     }
 
     submit() {
-        if(this.state.selectedProduct.id===-1)
+        if(this.state.selectedProduct.id===-1) {
+            console.log("Error: no valid entries");
+            window.alert("Error: no valid entries");
             return;
+        }
         if(this.props.run!=null)
             this.props.run(this.state.selectedProduct);
         if(this.props.resetSubmit)
@@ -69,8 +72,8 @@ export default class ProductSelect extends React.Component {
                         return <option key={id} value={id}>{name+" ("+price.toFixed(2)+"€)"}</option>
                     })}
                 </select>
-                {this.props.useReset?<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>:null}
-                {this.props.useSubmit?<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>:null}
+                {this.props.useReset&&(!this.props.hideReset||this.state.selectedProduct.id!==-1)&&<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>}
+                {this.props.useSubmit&&(!this.props.hideSubmit||this.state.selectedProduct.id!==-1)&&<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }

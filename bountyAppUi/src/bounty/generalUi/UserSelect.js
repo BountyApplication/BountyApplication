@@ -145,9 +145,10 @@ export default class UserSelect extends React.Component {
     }
 
     submit() {
-        if(this.getFilteredUsers().length!==1)
+        if(this.getFilteredUsers().length!==1) {
             console.log("Error: user selection ambiguous");
-        else
+            window.alert("Error: user selection ambiguous");
+        } else
             if(this.props.run!=null)
                 this.props.run(this.getFilteredUsers()[0]);
         if(this.props.resetSubmit)
@@ -181,8 +182,8 @@ export default class UserSelect extends React.Component {
                             return <option key={id} value={lastname}>{lastname}</option>
                     })}
                 </select>
-                {this.props.useReset?<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>:null}
-                {this.props.useSubmit?<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>:null}
+                {this.props.useReset&&(!this.props.hideReset||this.state.userFirstname!==""||this.state.userLastname!=="")&&<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>}
+                {this.props.useSubmit&&(!this.props.hideSubmit||users.length<=1)&&<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }
