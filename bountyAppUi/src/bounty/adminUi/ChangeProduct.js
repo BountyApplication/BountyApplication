@@ -1,39 +1,76 @@
 // import '../App.css';
 import React from 'react';
+import ProductSelect from './ProductSelect';
+import NumberInput from '../util/NumberInput';
 
 export default class ChangeProduct extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            productName: "",
-            productPrice: 0,
+            product: null,
+            newProduct: null,
+            
+            resetCallbac: null,
         };
     }
 
-    reset() {
+    setProduct(product) {
+        console.log(product);
         this.setState({
-            productName: "",
-            productPrice: 0,
+            product: product,
+            newProduct: product,
         });
     }
 
+    setResetCallback(func) {
+        this.setState({resetCallbac: func});
+    }
+
+    resetAll() {
+        this.setState({
+            product: null,
+            newProduct: null,
+        });
+    }
+    
+    reset() {
+        this.setState({newProduct: this.state.product});
+    }
+
     submit() {
-        console.log(this.state.productName);
-        console.log(this.state.productPrice);
-        this.reset();
+        if(this.state.product===this.state.newProduct) {
+            console.log("nothing changed");
+            return;
+        }
+        if(this.state.newProduct.name==="" || this.state.newProduct.price==null) {
+            console.log("Error no valid entries");
+            return;
+        }
+        console.log(this.state.newProduct);
         // do server
+
+        if(this.state.resetCallbac!=null)
+            this.state.resetCallbac();
+    }
+
+    changeProductUi() {
+        return(
+            <div>
+                {"Name: "} <input value={this.state.newProduct.name} onChange={event=>{this.setState({newProduct: {...this.state.newProduct, name: event.target.value}})}} />
+                {"Price: "} <NumberInput value={this.state.newProduct.price} setValue={(value)=>{this.setState({newProduct: {...this.state.newProduct, price: value}})}} />
+                <button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>
+                <button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>
+            </div>
+        );
     }
 
     render() {
         return(
             <div className='ChangeProduct'>
                 <p>{"Change Product"}</p>
-                {"Select Product: "}
-                {"Name: "} <input type="text" value={this.state.productName} onChange={event=>{this.setState({productName: event.target.value})}} />
-                {"Price: "} <input type="number" value={this.state.productPrice.toString()} onChange={event=>{this.setState({productPrice: Math.floor(parseFloat(event.target.value)*100)/100})}} onKeyPress={(event)=>{if(!/[0-9|.]/.test(event.key)) event.preventDefault();}} />
-                <button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>
-                <button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>
+                <ProductSelect run={this.setProduct.bind(this)} reset={this.resetAll.bind(this)} setResetCallback={this.setResetCallback.bind(this)} useReset={true} />
+                {this.state.product!=null?this.changeProductUi():null}
             </div>
         );
     }

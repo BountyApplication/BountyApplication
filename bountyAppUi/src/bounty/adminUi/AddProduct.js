@@ -1,5 +1,6 @@
 // import '../App.css';
 import React from 'react';
+import NumberInput from '../util/NumberInput';
 
 export default class AddProduct extends React.Component {
     constructor(props) {
@@ -7,30 +8,34 @@ export default class AddProduct extends React.Component {
 
         this.state = {
             productName: "",
-            productPrice: 0,
+            productPrice: null,
         };
     }
 
     reset() {
         this.setState({
             productName: "",
-            productPrice: 0,
+            productPrice: null,
         });
     }
 
     submit() {
-        console.log(this.state.productName);
-        console.log(this.state.productPrice);
-        this.reset();
+        if(this.state.productName === "" || this.state.productPrice === null) {
+            console.log("Error no valid entries");
+            return;
+        }
+        console.log(this.state);
         // do server
+
+        this.reset();
     }
 
     render() {
         return(
             <div className='AddProduct'>
                 <p>{"Add Product"}</p>
-                {"Name: "} <input type="text" value={this.state.productName} onChange={event=>{this.setState({productName: event.target.value})}} />
-                {"Price: "} <input type="number" value={this.state.productPrice.toString()} onChange={event=>{this.setState({productPrice: Math.floor(parseFloat(event.target.value)*100)/100})}} onKeyPress={(event)=>{if(!/[0-9|.]/.test(event.key)) event.preventDefault();}} />
+                {"Name: "} <input value={this.state.productName} onChange={event=>{this.setState({productName: event.target.value})}} />
+                {"Price: "} <NumberInput value={this.state.productPrice} setValue={(value)=>{this.setState({productPrice: value});}} />
                 <button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>
                 <button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>
             </div>

@@ -3,13 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
-import TicTacToe from './TicTacToe';
 import BountyApp from './bounty/BountyApp';
 
 ReactDOM.render(
   <React.StrictMode>
     {/* <App /> */}
-    {/* <TicTacToe /> */}
     <BountyApp />
   </React.StrictMode>,
   document.getElementById('root')

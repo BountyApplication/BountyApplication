@@ -81,9 +81,13 @@ export default class UserSelect extends React.Component {
         
         this.state = {
             users: this.getUsers(),
+
             userFirstname: "",
             userLastname: "",
         }
+
+        if(this.props.setResetCallback!=null)
+            this.props.setResetCallback(this.reset.bind(this));
     }
 
     getUsers() {
@@ -110,53 +114,75 @@ export default class UserSelect extends React.Component {
 
     updateName(isFirstname, name) {
         if(name === "") {
-            this.props.reset();
+            this.reset();
             return;
         }
         if(isFirstname)
-            this.props.setUserFirstname(name, this.checkOptions.bind(this));
+            this.setState({userFirstname: name}, this.checkOptions);
         else
-            this.props.setUserLastname(name, this.checkOptions.bind(this));
+            this.setState({userLastname: name}, this.checkOptions);
     }
 
     checkOptions() {
         if(this.getFilteredUsers().length <= 1) {
-            if(this.props.userFirstname!=="" && this.props.userLastname==="")
-                this.props.setUserLastname(this.getFilteredUsers().find(user => {return user.firstname === this.props.userFirstname}).lastname, this.run.bind(this));
-            else if(this.props.userFirstname==="" && this.props.userLastname!=="")
-                this.props.setUserFirstname(this.getFilteredUsers().find(user => {return user.lastname === this.props.userLastname}).firstname, this.run.bind(this));
-            else if(this.props.userFirstname!=="" && this.props.userLastname!=="")
+            if(this.state.userFirstname!=="" && this.state.userLastname==="")
+                this.setState({userLastname: this.getFilteredUsers().find(user => {return user.firstname === this.state.userFirstname}).lastname}, this.run);
+            else if(this.state.userFirstname==="" && this.state.userLastname!=="")
+                this.setState({userFirstname: this.getFilteredUsers().find(user => {return user.lastname === this.state.userLastname}).firstname}, this.run);
+            else if(this.state.userFirstname!=="" && this.state.userLastname!=="")
                 this.run();
         }
     }
 
     getFilteredUsers() {
-        return this.state.users.filter(({id, lastname, firstname}) => {return (this.props.userFirstname === "" || this.props.userFirstname === firstname) && (this.props.userLastname === "" || this.props.userLastname === lastname)});
+        return this.state.users.filter(({id, lastname, firstname}) => {return (this.state.userFirstname === "" || this.state.userFirstname === firstname) && (this.state.userLastname === "" || this.state.userLastname === lastname)});
     }
 
     run() {
-        console.log(this.props.userFirstname+" "+this.props.userLastname);
-        this.props.setUserId(this.getFilteredUsers().length==1?this.getFilteredUsers()[0].id:-1);
+        console.log(this.state.userFirstname+" "+this.state.userLastname);
+        if(!this.props.useSubmit)
+            this.submit();
+    }
+
+    submit() {
+        if(this.getFilteredUsers().length!==1)
+            console.log("Error: user selection ambiguous");
+        else
+            if(this.props.run!=null)
+                this.props.run(this.getFilteredUsers()[0]);
+        if(this.props.resetSubmit)
+            this.reset();
+    }
+
+    reset() {
+        this.setState({userFirstname: "", userLastname: ""});
+        if(this.props.reset!=null)
+            this.props.reset();
     }
 
     render() {
         const users = this.getFilteredUsers();
         return(
             <div className="UserSelect">
-                <select className="firstname" value={this.props.userFirstname} onChange={(event) => {this.updateName(true, event.target.value);}}>
-                    {<option value="">{this.props.userFirstname!==""?"delete":""}</option>}
+                {/* {"Select User: "} */}
+                {"Vorname: "}
+                <select className="firstname" value={this.state.userFirstname} onChange={(event) => {this.updateName(true, event.target.value);}}>
+                    {<option value="">{this.state.userFirstname!==""?"delete":""}</option>}
                     {users.map(({id, lastname, firstname}) => { 
                         if(users.findIndex(object => {return object.firstname === firstname}) === users.findIndex(object => {return object.id === id}))
                             return <option key={id} value={firstname}>{firstname}</option>
                     })}
                 </select>
-                <select className="lastname" value={this.props.userLastname} onChange={(event) => {this.updateName(false, event.target.value);}}>
-                    {<option value="">{this.props.userLastname!==""?"delete":""}</option>}
+                {" Nachname: "}
+                <select className="lastname" value={this.state.userLastname} onChange={(event) => {this.updateName(false, event.target.value);}}>
+                    {<option value="">{this.state.userLastname!==""?"delete":""}</option>}
                     {users.map(({id, lastname, firstname}) => {
                         if(users.findIndex(object => {return object.lastname === lastname}) === users.findIndex(object => {return object.id === id}))
                             return <option key={id} value={lastname}>{lastname}</option>
                     })}
                 </select>
+                {this.props.useReset?<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>:null}
+                {this.props.useSubmit?<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>:null}
             </div>
         );
     }

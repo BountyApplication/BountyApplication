@@ -2,10 +2,18 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "type": "firefox",
+        "name": "Launch Chrome",
         "request": "launch",
-        "name": "Launch Edge against localhost",
+        "type": "pwa-chrome",
         "url": "http://localhost:3000",
+        "webRoot": "${workspaceFolder}"
+      },
+      {
+        "name": "Attach to Chrome",
+        "port": 9222,
+        "request": "attach",
+        "type": "pwa-chrome",
+        "urlFilter": "http://localhost:3000/*", // use urlFilter instead of url!
         "webRoot": "${workspaceFolder}"
       }
     ]

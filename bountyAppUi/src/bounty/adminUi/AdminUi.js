@@ -1,4 +1,4 @@
-// import '../App.css';
+import '../../App.css';
 import React from 'react';
 import AddProduct from './AddProduct';
 import AddUser from './AddUser';
