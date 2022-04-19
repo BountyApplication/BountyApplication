@@ -35,12 +35,12 @@ export default class AddProduct extends React.Component {
 
     render() {
         return(
-            <div className='AddProduct'>
-                <p>{"Add Product"}</p>
-                <div className='name'>{"Name: "} <input value={this.state.productName} onChange={event=>{this.setState({productName: event.target.value})}} /></div>
-                <div className='price'>{"Price: "} <NumberInput value={this.state.productPrice} setValue={(value)=>{this.setState({productPrice: value});}} /></div>
-                {(this.state.productName!==""||this.state.productPrice!=null)&&<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>}
-                {(this.state.productName!==""&&this.state.productPrice!=null)&&<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>}
+            <div className='rubric'>
+                <div className='title'>{"Add Product"}</div>
+                <div className='wrapper'>{"Name: "} <input value={this.state.productName} onChange={event=>{this.setState({productName: event.target.value})}} /></div>
+                <div className='wrapper'>{"Price: "} <NumberInput value={this.state.productPrice} setValue={(value)=>{this.setState({productPrice: value});}} /></div>
+                {(this.state.productName!==""||this.state.productPrice!=null)&&<button className='wrapper' onClick={this.reset.bind(this)}>{"reset"}</button>}
+                {(this.state.productName!==""&&this.state.productPrice!=null)&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }

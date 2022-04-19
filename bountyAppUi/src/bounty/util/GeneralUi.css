@@ -1,0 +1,47 @@
+/* * {
+    display: inline-block;
+} */
+
+.main {
+    
+}
+
+.rubric {
+    border: solid black 1px;
+    display: inline-block;
+    /* display: inline-table; */
+    width: auto;
+    margin: 5px;
+}
+
+.title {
+    font-size: 0.5rem;
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+    /* display: inline-block; */
+    margin-right: 5px;
+    margin-left: 2px; 
+}
+
+.wrapper {
+    display: inline-block;
+    margin: 4px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.numberInput { 
+    max-width: 4rem;
+}
+
+.product {
+    width: 50px;
+    height: auto;
+    font-size: x-small;
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+    /* overflow: hidde#n; */
+    white-space: pre-line;
+    margin: 2px;
+}

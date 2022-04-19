@@ -1,6 +1,5 @@
-// import '../App.css';
 import React from 'react';
-import Product from './Product'; 
+import Product from './Product';
 
 export default class ProductDisplay extends React.Component {
     updateProductAmount = (id, amount) => {
@@ -15,10 +14,11 @@ export default class ProductDisplay extends React.Component {
     
     render() {
         return(
-            <div className="ProductDisplay">
-                {this.props.products.map(({id, name, price, amount}) => { 
-                   return <Product key={id} id={id} name={name} price={price} amount={amount} setAmount={this.updateProductAmount}/>
-                })}
+            <div className="rubric">
+                <div className='title'>{"Einkaufen"}</div>
+                <div className='wrapper'>{this.props.products.map(({id, name, price, amount}) => { 
+                   return <Product remove={this.props.remove} key={id} id={id} name={name} price={price} amount={amount} setAmount={this.updateProductAmount}/>
+                })}</div>
             </div>
         );
     }

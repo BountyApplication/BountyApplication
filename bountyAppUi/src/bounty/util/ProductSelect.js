@@ -1,4 +1,3 @@
-// import '../App.css';
 import React from 'react';
 
 export default class ProductSelect extends React.Component {
@@ -64,16 +63,16 @@ export default class ProductSelect extends React.Component {
 
     render() {
         return(
-            <div className="ProductSelect">
-                {"select product: "}
+            <div className="wrapper">
+                <div className='wrapper'>{"Product: "}
                 <select value={this.state.selectedProduct.id} onChange={(event) => {this.updateProduct(parseInt(event.target.value));}}>
                     {<option value={-1}>{""}</option>}
                     {this.state.products.map(({id, name, price}) => { 
                         return <option key={id} value={id}>{name+" ("+price.toFixed(2)+"€)"}</option>
                     })}
-                </select>
-                {this.props.useReset&&(!this.props.hideReset||this.state.selectedProduct.id!==-1)&&<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>}
-                {this.props.useSubmit&&(!this.props.hideSubmit||this.state.selectedProduct.id!==-1)&&<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>}
+                </select></div>
+                {this.props.useReset&&(!this.props.hideReset||this.state.selectedProduct.id!==-1)&&<button className='wrapper' onClick={this.reset.bind(this)}>{"reset"}</button>}
+                {this.props.useSubmit&&(!this.props.hideSubmit||this.state.selectedProduct.id!==-1)&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }

@@ -1,6 +1,6 @@
 // import '../App.css';
 import React from 'react';
-import ProductSelect from './ProductSelect';
+import ProductSelect from '../util/ProductSelect';
 import NumberInput from '../util/NumberInput';
 
 export default class ChangeProduct extends React.Component {
@@ -61,18 +61,18 @@ export default class ChangeProduct extends React.Component {
     changeProductUi() {
         return(
             <div>
-                <div className='name'>{"Name: "} <input value={this.state.newProduct.name} onChange={event=>{this.setState({newProduct: {...this.state.newProduct, name: event.target.value}})}} /></div>
-                <div className='price'>{"Price: "} <NumberInput value={this.state.newProduct.price} setValue={(value)=>{this.setState({newProduct: {...this.state.newProduct, price: value}})}} /></div>
-                <button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>
-                <button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>
+                <div className='wrapper'>{"Name: "} <input value={this.state.newProduct.name} onChange={event=>{this.setState({newProduct: {...this.state.newProduct, name: event.target.value}})}} /></div>
+                <div className='wrapper'>{"Price: "} <NumberInput value={this.state.newProduct.price} setValue={(value)=>{this.setState({newProduct: {...this.state.newProduct, price: value}})}} /></div>
+                {this.state.newProduct!==this.state.product&&<button className='wrapper' onClick={this.reset.bind(this)}>{"reset"}</button>}
+                {this.state.newProduct!==this.state.product&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }
 
     render() {
         return(
-            <div className='ChangeProduct'>
-                <p>{"Change Product"}</p>
+            <div className='rubric'>
+                <div className='title'>{"Change Product"}</div>
                 <ProductSelect run={this.setProduct.bind(this)} reset={this.resetAll.bind(this)} setResetCallback={this.setResetCallback.bind(this)} useReset={true} hideReset={true}/>
                 {this.state.product!=null?this.changeProductUi():null}
             </div>

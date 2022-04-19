@@ -1,4 +1,3 @@
-// import '../App.css';
 import React from 'react';
 
 // export default function UserSelect() {
@@ -164,26 +163,26 @@ export default class UserSelect extends React.Component {
     render() {
         const users = this.getFilteredUsers();
         return(
-            <div className="UserSelect">
-                {/* {"Select User: "} */}
-                {"Vorname: "}
+            <div className="rubric">
+                <div className='title'>{this.props.title!=null?this.props.title:"Suchen"}</div>
+                <div className='wrapper'>{"Vorname "}
                 <select className="firstname" value={this.state.userFirstname} onChange={(event) => {this.updateName(true, event.target.value);}}>
                     {<option value="">{this.state.userFirstname!==""?"delete":""}</option>}
                     {users.map(({id, lastname, firstname}) => { 
                         if(users.findIndex(object => {return object.firstname === firstname}) === users.findIndex(object => {return object.id === id}))
                             return <option key={id} value={firstname}>{firstname}</option>
                     })}
-                </select>
-                {" Nachname: "}
+                </select></div>
+                <div className='wrapper'>{"Nachname "}
                 <select className="lastname" value={this.state.userLastname} onChange={(event) => {this.updateName(false, event.target.value);}}>
                     {<option value="">{this.state.userLastname!==""?"delete":""}</option>}
                     {users.map(({id, lastname, firstname}) => {
                         if(users.findIndex(object => {return object.lastname === lastname}) === users.findIndex(object => {return object.id === id}))
                             return <option key={id} value={lastname}>{lastname}</option>
                     })}
-                </select>
-                {this.props.useReset&&(!this.props.hideReset||this.state.userFirstname!==""||this.state.userLastname!=="")&&<button className='reset' onClick={this.reset.bind(this)}>{"reset"}</button>}
-                {this.props.useSubmit&&(!this.props.hideSubmit||users.length<=1)&&<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>}
+                </select></div>
+                {this.props.useReset&&(!this.props.hideReset||this.state.userFirstname!==""||this.state.userLastname!=="")&&<button className='wrapper' onClick={this.reset.bind(this)}>{"reset"}</button>}
+                {this.props.useSubmit&&(!this.props.hideSubmit||users.length<=1)&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }

@@ -1,10 +1,11 @@
-import '../../App.css';
 import React from 'react';
 import {Link} from "react-router-dom";
 import ProductDisplay from './ProductDisplay';
-import UserSelect from './UserSelect';
+import UserSelect from '../util/UserSelect';
 import BalanceInfos from './BalanceInfos';
 import BalanceCorrection from './BalanceCorrection';
+import CashPayment from './ChashPayment';
+import LastBookings from './LastBookings';
 
 export default class GeneralUi extends React.Component {
     constructor(props) {
@@ -13,7 +14,11 @@ export default class GeneralUi extends React.Component {
         this.state = {
             user: null,
             userBalance: null,
-            correction: null,
+
+            correctionPlus: null,
+            correctionMinus: null,
+            paymentOut: null,
+            paymentIn: null,
 
             products: this.getProducts(),
 
@@ -48,34 +53,37 @@ export default class GeneralUi extends React.Component {
     setUser(user) {
         console.log(user);
         this.setState({user: user})
-        this.getUserBalance();
+        this.getUserBalance(user);
     }
 
     calculatePrice() {
         var price = 0;
         for(var i = 0, l = this.state.products.length; i < l; i++)
             price+=this.state.products[i].amount*this.state.products[i].price;
-        price-=this.state.correction;
+        price-=this.state.correctionPlus;
+        price+=this.state.correctionMinus;
+        price-=this.state.paymentIn;
+        price+=this.state.paymentOut;
         return price;
     }
 
-    getUserBalance() {
+    getUserBalance(user) {
         // do server
         let balance = 10;
         this.setState({userBalance: balance});
     }
 
     reset() {
-        this.setState({user: null, userBalance: null, correction: null,});
+        this.setState({user: null, userBalance: null});
     }
 
     resetProducts() {
         const updatedProducts = [];
-            this.state.products.map(product => {
-                const updatedProduct = {...product, amount: 0 };
-                updatedProducts.push(updatedProduct)
-            })        
-        this.setState({products: updatedProducts});
+        this.state.products.map(product => {
+            const updatedProduct = {...product, amount: 0 };
+            updatedProducts.push(updatedProduct);
+        });
+        this.setState({products: updatedProducts, correctionPlus: null, correctionMinus: null, paymentIn: null, paymentOut: null,});
     }
 
     submit() {
@@ -89,14 +97,16 @@ export default class GeneralUi extends React.Component {
 
     render() {
         return(
-            <div className="GeneralUi">
+            <div className="main">
                 {/* <Link to="/admin">{"Admin"}</Link> */}
                 <UserSelect setResetCallback={(func)=>{this.setState({resetCallbac: func});}} reset={this.reset.bind(this)} run={this.setUser.bind(this)} useSubmit={false} useReset={true} hideReset={true} />
-                <ProductDisplay products={this.state.products} setProducts={(products)=>{this.setState({products: products});}} />
-                <BalanceCorrection value={this.state.correction} setValue={(value)=>{this.setState({correction: value});}} />
-                {(this.calculatePrice()!==0||this.state.correction!==null)&&<button className='reset' onClick={this.resetProducts.bind(this)}>{"reset"}</button>} <br />
-                {this.state.user!=null&&<BalanceInfos balance={this.state.userBalance} sum={this.calculatePrice()} />}<br />
-                {(this.calculatePrice()!==0||this.state.correction!==null)&&this.state.user!=null&&<button className="submit" onClick={this.submit.bind(this)}>{"kaufen"}</button>}
+                <ProductDisplay remove={this.calculatePrice()>this.state.userBalance} products={this.state.products} setProducts={(products)=>{this.setState({products: products});}} />
+                <BalanceCorrection plus={this.state.correctionPlus} setPlus={(value)=>{this.setState({correctionPlus: value});}} minus={this.state.correctionMinus} setMinus={(value)=>{this.setState({correctionMinus: value})}} />
+                <CashPayment out={this.state.paymentOut} setOut={(value)=>{this.setState({paymentOut: value})}} in={this.state.paymentIn} setIn={(value)=>{this.setState({paymentIn: value})}} /><br className='wrapper'/>
+                {this.state.user!=null&&<BalanceInfos balance={this.state.userBalance} sum={this.calculatePrice()} />}
+                {this.state.user!=null&&<LastBookings />}
+                {(this.calculatePrice()!==0||this.state.correction!==null)&&<button className='wrapper' onClick={this.resetProducts.bind(this)}>{"reset"}</button>}
+                {this.calculatePrice()<=this.state.userBalance&&(this.calculatePrice()!==0||this.state.correctionPlus!==null||this.state.paymentIn!=null)&&this.state.user!=null&&<button className="wrapper" onClick={this.submit.bind(this)}>{"Buchen"}</button>}
             </div>
         );
     }

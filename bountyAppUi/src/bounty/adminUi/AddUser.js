@@ -33,13 +33,13 @@ export default class AddUser extends React.Component {
 
     render() {
         return(
-            <div className='AddUSer'>
-                <p>{"Add User"}</p>
-                <div className="firstname">{"Vorname: "} <input value={this.state.userFirstname} onChange={event=>{this.setState({userFirstname: event.target.value})}}/></div>
-                <div className="lastname"> {"Nachname: "} <input value={this.state.userLastname} onChange={event=>{this.setState({userLastname: event.target.value})}} /></div>
-                <div className='balance'>{"Kontostand: "} <NumberInput value={this.state.userBalance} setValue={(value)=>{this.setState({userBalance: value});}} /></div>
-                {(this.state.userFirstname!==""||this.state.userLastname!==""||this.state.userBalance!=null)&&<button className="reset" onClick={this.reset.bind(this)}>{"reset"}</button>}
-                {(this.state.userFirstname!==""&&this.state.userLastname!==""&&this.state.userBalance!=null)&&<button className='submit' onClick={this.submit.bind(this)}>{"submit"}</button>}
+            <div className='rubric'>
+                <div className='title'>{"Add User"}</div>
+                <div className="wrapper">{"Vorname: "} <input className='wrapper' value={this.state.userFirstname} onChange={event=>{this.setState({userFirstname: event.target.value})}}/></div>
+                <div className="wrapper"> {"Nachname: "} <input className='wrapper' value={this.state.userLastname} onChange={event=>{this.setState({userLastname: event.target.value})}} /></div><br className='wrapper' />
+                <div className='wrapper'>{"Kontostand: "} <NumberInput value={this.state.userBalance} setValue={(value)=>{this.setState({userBalance: value});}} /></div>
+                {(this.state.userFirstname!==""||this.state.userLastname!==""||this.state.userBalance!=null)&&<button className="wrapper" onClick={this.reset.bind(this)}>{"reset"}</button>}
+                {(this.state.userFirstname!==""&&this.state.userLastname!==""&&this.state.userBalance!=null)&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }

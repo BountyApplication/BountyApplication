@@ -7,6 +7,7 @@ import BountyApp from './bounty/BountyApp';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    {/* <meta name="viewport" content="width=device-width, intitial-scale=1.0"/> */}
     {/* <App /> */}
     <BountyApp />
   </React.StrictMode>

@@ -1,6 +1,6 @@
 // import '../App.css';
 import React from 'react';
-import ProductSelect from '../adminUi/ProductSelect';
+import ProductSelect from '../util/ProductSelect';
 
 export default class RemoveProduct extends React.Component {
     constructor(props) {
@@ -19,8 +19,8 @@ export default class RemoveProduct extends React.Component {
 
     render() {
         return(
-            <div className='RemoveProduct'>
-                <p>{"Remove Product"}</p>
+            <div className='rubric'>
+                <div className='title'>{"Remove Product"}</div>
                 <ProductSelect run={this.run.bind(this)} useReset={true} useSubmit={true} resetSubmit={true} hideReset={true} hideSubmit={true} />
             </div>
         );

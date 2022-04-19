@@ -9,6 +9,7 @@ import {
 import AdminUi from './adminUi/AdminUi';
 import GeneralUi from './generalUi/GeneralUi';
 import TicTacToe from '../TicTacToe';
+import "./util/GeneralUi.css"
 
 export default function BountyApp() {
   return (
