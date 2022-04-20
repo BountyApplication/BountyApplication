@@ -1,19 +1,15 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 
-export default class ProductSelect extends React.Component {
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-            products: this.getProducts(),
-            selectedProduct: {id: -1, name: "", price: null}
-        }
+export default function ProductSelect(props) {
+    const [products, setProducts] = useState(getProducts);
+    const [selectedProductId, setSelectedProductId] = useState(-1);
 
-        if(this.props.setResetCallback!=null)
-            this.props.setResetCallback(this.reset.bind(this));
-    }
-
-    getProducts() {
+    useEffect(() => {
+        if(props.setResetCallback!=null)
+            props.setResetCallback(prev => reset);
+    }, []);    
+    
+    function getProducts() {
         // do sever
         return [
             { id: 0, name: "Bonbon", price: .05 },
@@ -33,47 +29,44 @@ export default class ProductSelect extends React.Component {
             { id: 14, name: "Cola", price: 1.5 },
             { id: 15, name: "Reis", price: 2 },
             { id: 16, name: "ESP", price: 5 },
-        ];
+        ].concat({id: -1, name: "", price: null});
     }
 
-    updateProduct(id) {
-        if(id!==-1)
-            this.setState({selectedProduct: this.state.products.find(product=>{return product.id===id})}, this.props.useSubmit?null:this.submit.bind(this));
-        else
-            this.reset();
+    function updateProduct(id) {
+        if(id===-1)
+            return reset();
+        setSelectedProductId(id);
     }
 
-    reset() {
-        this.setState({selectedProduct: {id: -1, name: "", price: null}})
-        if(this.props.reset)
-            this.props.reset();
+    function reset() {
+        setSelectedProductId(-1);
+        if(props.reset)
+            props.reset();
     }
 
-    submit() {
-        if(this.state.selectedProduct.id===-1) {
+    function submit() {
+        if(selectedProductId===-1) {
             console.log("Error: no valid entries");
             window.alert("Error: no valid entries");
             return;
         }
-        if(this.props.run!=null)
-            this.props.run(this.state.selectedProduct);
-        if(this.props.resetSubmit)
-            this.reset();
+        if(props.run!=null)
+            props.run(products.find(product => product.id===selectedProductId));
+        if(props.resetSubmit)
+            reset();
     }
 
-    render() {
-        return(
-            <div className="wrapper">
-                <div className='wrapper'>{"Product: "}
-                <select value={this.state.selectedProduct.id} onChange={(event) => {this.updateProduct(parseInt(event.target.value));}}>
-                    {<option value={-1}>{""}</option>}
-                    {this.state.products.map(({id, name, price}) => { 
-                        return <option key={id} value={id}>{name+" ("+price.toFixed(2)+"€)"}</option>
-                    })}
-                </select></div>
-                {this.props.useReset&&(!this.props.hideReset||this.state.selectedProduct.id!==-1)&&<button className='wrapper' onClick={this.reset.bind(this)}>{"reset"}</button>}
-                {this.props.useSubmit&&(!this.props.hideSubmit||this.state.selectedProduct.id!==-1)&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
-            </div>
-        );
-    }
+    return(
+        <div className="wrapper">
+            <div className='wrapper'>{"Product: "}
+            <select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
+                {<option value={-1}>{""}</option>}
+                {products.map(({id, name, price}) => { 
+                    return <option key={id} value={id}>{`${name}(${+price.toFixed(2)}€)`}</option>
+                })}
+            </select></div>
+            {props.useReset&&(!props.hideReset||selectedProductId!==-1)&&<button className='wrapper' onClick={reset}>{"reset"}</button>}
+            {props.useSubmit&&(!props.hideSubmit||selectedProductId!==-1)&&<button className='wrapper' onClick={submit}>{"submit"}</button>}
+        </div>
+    );
 }
