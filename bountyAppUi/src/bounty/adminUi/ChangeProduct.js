@@ -1,81 +1,64 @@
-// import '../App.css';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
 import NumberInput from '../util/NumberInput';
+import { changeProduct } from '../util/Database';
 
-export default class ChangeProduct extends React.Component {
-    constructor(props) {
-        super(props);
+export default function ChangeProduct(props) {
+    // vars
+    const [product, setProduct] = useState(null);
+    const [updatedProduct, setUpdatedProduct] = useState(null);
 
-        this.state = {
-            product: null,
-            newProduct: null,
-            
-            resetCallbac: null,
-        };
-    }
+    const [resetCallback, setResetCallback] = useState();
 
-    setProduct(product) {
-        console.log(product);
-        this.setState({
-            product: product,
-            newProduct: product,
-        });
-    }
+    useEffect(() => {
+        setUpdatedProduct(product);
+    }, [product]);
 
-    setResetCallback(func) {
-        this.setState({resetCallbac: func});
-    }
-
-    resetAll() {
-        this.setState({
-            product: null,
-            newProduct: null,
-        });
+    function resetAll() {
+        setProduct(null);
+        // setUpdatedProduct(null);
     }
     
-    reset() {
-        this.setState({newProduct: this.state.product});
+    function reset() {
+        setUpdatedProduct(product);
     }
 
-    submit() {
-        if(this.state.product===this.state.newProduct) {
+    function submit() {
+        if(product===updatedProduct) {
             console.log("nothing changed");
             window.alert("Nothing changed");
             return;
         }
-        if(this.state.newProduct.name==="" || this.state.newProduct.price==null) {
+        if(updatedProduct.name==="" || updatedProduct.price==null) {
             console.log("Error no valid entries");
             window.alert("Error: No valid entries");
             return;
         }
-        if(window.confirm("Change Product "+this.state.product.name+" ("+this.state.product.price+"€) to "+this.state.newProduct.name+" ("+this.state.newProduct.price+"€) ?")) {
-            console.log(this.state.newProduct);
-            // do server
+        if(window.confirm("Change Product "+product.name+" ("+product.price+"€) to "+updatedProduct.name+" ("+updatedProduct.price+"€) ?")) {
+            console.log(updatedProduct);
+            changeProduct(product, updatedProduct);
 
-            if(this.state.resetCallbac!=null)
-                this.state.resetCallbac();
+        if(resetCallback)
+            resetCallback();
         }
     }
 
-    changeProductUi() {
+    function changeProductUi() {
         return(
             <div>
-                <div className='wrapper'>{"Name: "} <input value={this.state.newProduct.name} onChange={event=>{this.setState({newProduct: {...this.state.newProduct, name: event.target.value}})}} /></div>
-                <div className='wrapper'>{"Price: "} <NumberInput value={this.state.newProduct.price} setValue={(value)=>{this.setState({newProduct: {...this.state.newProduct, price: value}})}} /></div>
-                {this.state.newProduct!==this.state.product&&<button className='wrapper' onClick={this.reset.bind(this)}>{"reset"}</button>}
-                {this.state.newProduct!==this.state.product&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
+                <div className='wrapper'>{"Name: "} <input value={updatedProduct.name} onChange={event=>{setUpdatedProduct({...updatedProduct, name: event.target.value})}} /></div>
+                <div className='wrapper'>{"Price: "} <NumberInput value={updatedProduct.price} setValue={value => setUpdatedProduct({...updatedProduct, price: value})} /></div>
+                {updatedProduct!==product && <button className='wrapper' onClick={reset.bind(this)}>{"reset"}</button>}
+                {updatedProduct!==product && <button className='wrapper' onClick={submit.bind(this)}>{"submit"}</button>}
             </div>
         );
     }
 
-    render() {
-        return(
-            <div className='rubric'>
-                <div className='title'>{"Change Product"}</div>
-                <ProductSelect run={this.setProduct.bind(this)} reset={this.resetAll.bind(this)} setResetCallback={this.setResetCallback.bind(this)} useReset={true} hideReset={true}/>
-                {this.state.product!=null?this.changeProductUi():null}
-            </div>
-        );
-    }
+    return(
+        <div className='rubric'>
+            <div className='title'>{"Change Product"}</div>
+            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true}/>
+            {updatedProduct!=null && changeProductUi()}
+        </div>
+    );
 }

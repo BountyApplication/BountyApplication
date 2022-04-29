@@ -1,12 +1,25 @@
-// import '../App.css';
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default function NumberInput(props) {
+NumberInput.propTypes = {
+    value: PropTypes.number,
+    setValue: PropTypes.func.isRequired,
+};
+
+NumberInput.defaultProps = {
+    value: null,
+    setValue: (v) => {},
+};
+
+export default function NumberInput({value, setValue}) {
     return(
         <input className='wrapper' type="number"
-            value={props.value===null?" ":props.value.toString()}
-            onChange={event=>{props.setValue(isNaN(parseFloat(event.target.value))?null:Math.floor(parseFloat(event.target.value)*100)/100);}}
-            onKeyPress={(event)=>{if(!/[0-9|.]/.test(event.key)) event.preventDefault();}}
+            value={!value ? " " : value.toString() }
+            onChange={event => {
+                let newValue = parseFloat(event.target.value);
+                setValue(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100);
+            }}
+            onKeyPress={event => { if(!/[0-9|.]/.test(event.key)) event.preventDefault(); }}
         />
     );
 }

@@ -45,3 +45,7 @@
     white-space: pre-line;
     margin: 2px;
 }
+
+.redText {
+    color: red;
+}

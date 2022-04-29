@@ -1,15 +1,30 @@
 import React from 'react';
-// import {Text} from 'react-native';
+import PropTypes from 'prop-types';
 
-export default class Product extends React.Component {
-    render() {
+Product.propTypes = {
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    amount: PropTypes.number.isRequired,
+    setAmount: PropTypes.func.isRequired,
+    tryRemove: PropTypes.bool,
+};
+
+Product.defaultProps = {
+    id: null,
+    name: null,
+    price: null,
+    amount: 0,
+    setAmount: (v) => {},
+    tryRemove: false,
+};
+
+export default function Product({id, name, price, amount, setAmount, tryRemove}) {
         return(
-            <button className="product" onClick={() => this.props.setAmount(this.props.id, this.props.amount+(this.props.remove&&this.props.amount>0?-1:1))}>
-                {/* <Text adjustFontScaling={true} minimumFontScale={0.5}>{this.props.name}</Text> <br /> */}
-                {this.props.name} <br />
-                {`${this.props.price.toFixed(2)}€`} <br />
-                <div style={this.props.amount>0?{color: 'red'}:{}}>{this.props.amount>0 ? this.props.amount : 0}</div>
+            <button className="product" onClick={() => setAmount(id, amount + (tryRemove && amount>0 ? -1 : 1))}>
+                {name} <br />
+                {`${price.toFixed(2)}€`} <br />
+                <div className={amount>0 ? "redText" : ""}>{amount}</div>
             </button>
         );
-    }
 }

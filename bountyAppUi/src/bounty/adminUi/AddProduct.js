@@ -1,47 +1,38 @@
-// import '../App.css';
-import React from 'react';
+import React, {useState} from 'react';
 import NumberInput from '../util/NumberInput';
+import { addProduct } from '../util/Database';
 
-export default class AddProduct extends React.Component {
-    constructor(props) {
-        super(props);
+const debug = true;
 
-        this.state = {
-            productName: "",
-            productPrice: null,
-        };
+export default function AddProduct(props) {
+    //vars
+    const [productName, setProductName] = useState("");
+    const [productPrice, setProductPrice] = useState(null);
+
+    function reset() {
+        setProductName("");
+        setProductPrice(null);
     }
 
-    reset() {
-        this.setState({
-            productName: "",
-            productPrice: null,
-        });
-    }
-
-    submit() {
-        if(this.state.productName === "" || this.state.productPrice === null) {
+    function submit() {
+        if(productName === "" || productPrice === null) {
             console.log("Error no valid entries");
             window.alert("Error: no valid entries");
             return;
         }
-        if(window.confirm("Add Product "+this.state.productName+" ("+this.state.productPrice+"€) ?")) {
-            console.log(this.state);
-            // do server
+        if(window.confirm("Add Product "+productName+" ("+productPrice+"€) ?")) {
+            addProduct(productName, productPrice);
 
-            this.reset();
+            reset();
         }
     }
 
-    render() {
-        return(
-            <div className='rubric'>
-                <div className='title'>{"Add Product"}</div>
-                <div className='wrapper'>{"Name: "} <input value={this.state.productName} onChange={event=>{this.setState({productName: event.target.value})}} /></div>
-                <div className='wrapper'>{"Price: "} <NumberInput value={this.state.productPrice} setValue={(value)=>{this.setState({productPrice: value});}} /></div>
-                {(this.state.productName!==""||this.state.productPrice!=null)&&<button className='wrapper' onClick={this.reset.bind(this)}>{"reset"}</button>}
-                {(this.state.productName!==""&&this.state.productPrice!=null)&&<button className='wrapper' onClick={this.submit.bind(this)}>{"submit"}</button>}
-            </div>
-        );
-    }
+    return(
+        <div className='rubric'>
+            <div className='title'>{"Add Product"}</div>
+            <div className='wrapper'>{"Name: "} <input value={productName} onChange={event => setProductName(event.target.value)} /></div>
+            <div className='wrapper'>{"Price: "} <NumberInput value={productPrice} setValue={setProductPrice} /></div>
+            {(productName!=="" || productPrice!=null) && <button className='wrapper' onClick={reset}>{"reset"}</button>}                {(productName!==""&&productPrice!=null)&&<button className='wrapper' onClick={submit.bind(this)}>{"submit"}</button>}
+        </div>
+    );
 }

@@ -7,19 +7,17 @@ import ChangeUser from './ChangeUser';
 import RemoveProduct from './RemoveProduct';
 import RemoveUser from './RemoveUser';
 
-export default class AdminUi extends React.Component {
+export default function AdminUi(props) {
 
-    render() {
-        return(
-            <div className="main">
-                <Link to="/">{"back"}</Link><br />
-                <AddUser />
-                <RemoveUser />
-                <ChangeUser />
-                <AddProduct />
-                <RemoveProduct />
-                <ChangeProduct />
-            </div>
-        );
-    }
+    return(
+        <div className="main">
+            <Link to="/">{"back"}</Link><br />
+            <AddUser />
+            <RemoveUser />
+            <ChangeUser />
+            <AddProduct />
+            <RemoveProduct />
+            <ChangeProduct />
+        </div>
+    );
 }

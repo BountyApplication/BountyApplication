@@ -1,122 +1,162 @@
 import React, {useState, useEffect} from 'react';
+import PropTypes from 'prop-types';
+import { getUsers } from './Database';
 
-export default function UserSelect(props) {
+const debug = true;
 
+const NameType = {
+    LASTNAME: false,
+    FIRSTNAME: true,
+};
+
+function UserSelect({title, runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit}) {
+    // vars
     const [users, setUsers] = useState(getUsers());
     const [userFirstname, setUserFirstname] = useState("");
     const [userLastname, setUserLastname] = useState("");
 
+    // temp var for easier access
+    const hasFirstname = userFirstname !== "";
+    const hasLastname = userLastname !== "";
+    const filteredUsers = getFilteredUsers();
+
+    // set callback on beginning
     useEffect(() => {
-      if(props.setResetCallback!=null)
-        props.setResetCallback(()=>reset);
+      if(setResetCallback) setResetCallback(()=>reset);
     }, []);
 
-
+    // if username input changes, checks for autocomplete or run (if complete)
     useEffect(() => {
-        if(userFirstname!==""&&userLastname!=="")
-            run();
-        else
-            checkOptions();
+        if(hasFirstname && hasLastname) return run();
+        checkAutoComplete();
     }, [userFirstname, userLastname]);
 
-    function getUsers() {
-        // do server
-        return [
-            { id: "0", lastname: "Mauch", firstname: "Josua" },
-            { id: "1", lastname: "Tappe", firstname: "Isajah" },
-            { id: "2", lastname: "Braun", firstname: "Jonas" },
-            { id: "3", lastname: "Strasser", firstname: "Marit" },
-            { id: "4", lastname: "Pauli", firstname: "Lotta" },
-            { id: "5", lastname: "Volmer", firstname: "Hannah" },
-            { id: "6", lastname: "Schwarz", firstname: "Tim" },
-            { id: "7", lastname: "Schreiber", firstname: "Jan" },
-            { id: "8", lastname: "Günther", firstname: "William" },
-            { id: "9", lastname: "Lee", firstname: "Cindy" },
-            { id: "10", lastname: "Hopp", firstname: "Janice" },
-            { id: "11", lastname: "Kuhn", firstname: "Maja" },
-            { id: "12", lastname: "Wäscher", firstname: "Nele" },
-            { id: "13", lastname: "Bürle", firstname: "Rahle" },
-            { id: "14", lastname: "Mustermann", firstname: "Tim"},
-            { id: "15", lastname: "Mustermann", firstname: "Fridolin"},
-            { id: "16", lastname: "Maurer", firstname: "Jakob"},
-        ];
+    // filters for current selection (firstname or lastname)
+    function getFilteredUsers() {
+        return users.filter(({lastname, firstname}) => (!hasFirstname || firstname===userFirstname) && (!hasLastname || lastname===userLastname));
+    }
+
+    // filters for first user with matching name (no dupplicates)
+    function getUniqueUsers(isFirstname) {
+        return filteredUsers.filter(({id, firstname, lastname}) => findUser(isFirstname, isFirstname?firstname:lastname).id===id);
+    }
+
+    // sortes user selection alphabetically
+    function getSortedUsers(isFirstname) {
+        return getUniqueUsers(isFirstname).sort((user1, user2) => compareNames(isFirstname?user1.firstname:user1.lastname, isFirstname?user2.firstname:user2.lastname));
+    }
+
+    // finds first user with matching name
+    function findUser(isFirstname, name) {
+        return filteredUsers.find(({firstname, lastname}) => (isFirstname?firstname:lastname)===name);
+    }
+
+    // compares alphabetic order of two names
+    function compareNames(name1, name2) {
+        return name1.toLowerCase().localeCompare(name2.toLowerCase());
     }
 
     function updateName(isFirstname, name) {
-        if(name === "")
-            return reset();
+        // resets if name selection deleted
+        if(name === "") return reset();
 
         if(isFirstname)
             setUserFirstname(name);
         else
             setUserLastname(name);
     }
+    
+    function checkAutoComplete() {
+        // returns if autocomplete not possible
+        if(filteredUsers.length > 1) return;
+        if(!hasFirstname && !hasLastname) return;
 
-    function checkOptions() {
-        if(getFilteredUsers().length > 1)
-            return;
-
-        if(userFirstname!=="" && userLastname==="")
-            return setUserLastname(getFilteredUsers().find(user => {return user.firstname === userFirstname}).lastname);
-        if(userFirstname==="" && userLastname!=="")
-            return setUserFirstname(getFilteredUsers().find(user => {return user.lastname === userLastname}).firstname);
+        if(!hasFirstname)
+            setUserFirstname(findUser(NameType.LASTNAME, userLastname).firstname);
+        else
+            setUserLastname(findUser(NameType.FIRSTNAME, userFirstname).lastname);            
     }
 
-    function getFilteredUsers() {
-        return users.filter(({lastname, firstname}) => (userFirstname==="" || userFirstname===firstname) && (userLastname==="" || userLastname===lastname));
-    }
-
+    // executed when selection complete
     function run() {
-        console.log(userFirstname+" "+userLastname);
-        if(!props.useSubmit)
-            submit();
+        if(debug) console.log(`${userFirstname} ${userLastname}`);
+
+        // auto submit if no submit button
+        if(!useSubmit) submit();
     }
 
     function submit() {
+        // checks if result valid
         if(getFilteredUsers().length!==1) {
-            console.log("Error: user selection ambiguous");
-            window.alert("Error: user selection ambiguous");
+            console.log(`Error: user selection ambiguous`);
+            window.alert(`Error: user selection ambiguous`);
             return;
         }
-
-        if(props.run!=null)
-            props.run(getFilteredUsers()[0]);
-
-        if(props.resetSubmit)
-            reset();
+        
+        if(runCallback) runCallback(getFilteredUsers()[0]);
+        if(resetOnSubmit) reset();
     }
 
     function reset() {
         setUserFirstname("");
         setUserLastname("");
-        if(props.reset!=null)
-            props.reset();
+        if(resetCallback) resetCallback();
+    }
+
+    function nameSelectUi(isFirstname) {
+        let userName = isFirstname?userFirstname:userLastname;
+        return(
+            <select value={userName} onChange={event => updateName(isFirstname, event.target.value)}>
+                <option value="">{userName!==""?"delete":""}</option>
+                {getSortedUsers(isFirstname).map(({id, firstname, lastname}) => {
+                    let name=isFirstname?firstname:lastname;
+                    return <option key={id} value={name}>{name}</option>
+                })}
+            </select>
+        );
     }
     
-    const filteredUsers = getFilteredUsers();
     return(
         <div className="rubric">
-            <div className='title'>{props.title!=null?props.title:"Suchen"}</div>
-            <div className='wrapper'>{"Vorname "}
-            <select className="firstname" value={userFirstname} onChange={(event) => {updateName(true, event.target.value);}}>
-                {<option value="">{userFirstname!==""?"delete":""}</option>}
-                {filteredUsers.map(({id, firstname}) => { 
-                    if(filteredUsers.findIndex(object => {return object.firstname === firstname}) === filteredUsers.findIndex(object => {return object.id === id}))
-                        return <option key={id} value={firstname}>{firstname}</option>
-                    return null;
-                })}
-            </select></div>
-            <div className='wrapper'>{"Nachname "}
-            <select className="lastname" value={userLastname} onChange={(event) => {updateName(false, event.target.value);}}>
-                {<option value="">{userLastname!==""?"delete":""}</option>}
-                {filteredUsers.map(({id, lastname}) => {
-                    if(filteredUsers.findIndex(object => {return object.lastname === lastname}) === filteredUsers.findIndex(object => {return object.id === id}))
-                        return <option key={id} value={lastname}>{lastname}</option>
-                    return null;
-                })}
-            </select></div>
-            {props.useReset&&(!props.hideReset||userFirstname!==""||userLastname!=="")&&<button className='wrapper' onClick={reset}>{"reset"}</button>}
-            {props.useSubmit&&(!props.hideSubmit||filteredUsers.length<=1)&&<button className='wrapper' onClick={submit}>{"submit"}</button>}
+            <div className='title'>{title}</div>
+            <div className='wrapper'>
+                {"Vorname "}{nameSelectUi(NameType.FIRSTNAME)}
+            </div>
+            <div className='wrapper'>
+                {"Nachname "}{nameSelectUi(NameType.LASTNAME)}
+            </div>
+            {useReset  && (!hideReset  || hasFirstname || hasLastname) &&   <button className='wrapper' onClick={reset}>{"reset"}</button>}
+            {useSubmit && (!hideSubmit || filteredUsers.length===1)    &&   <button className='wrapper' onClick={submit}>{"submit"}</button>}
         </div>
     );
 }
+
+UserSelect.prototype = {
+    title: PropTypes.string,
+
+    // callbacks
+    runCallback: PropTypes.func,
+    resetCallback: PropTypes.func,
+    setResetCallback: PropTypes.func,
+
+    // settings
+    useReset: PropTypes.bool,
+    hideReset: PropTypes.bool,
+    useSubmit: PropTypes.bool,
+    hideSubmit: PropTypes.bool,
+    resetOnSubmit: PropTypes.bool,    
+};
+
+UserSelect.defaultProps = {
+    title: "Suchen",
+
+    useReset: false,
+    useSubmit: false,
+
+    hideReset: false,
+    hideSubmit: false,
+
+    resetOnSubmit: false,
+};
+
+export default UserSelect;

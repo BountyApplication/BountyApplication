@@ -1,22 +1,42 @@
 import React from 'react';
 import Product from './Product';
+import PropTypes from "prop-types";
 
-export default function ProductDisplay(props) {
+ProductDisplay.propTypes = {
+    products: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        price: PropTypes.number,
+        amount: PropTypes.number
+    })).isRequired,
+    setProducts: PropTypes.func.isRequired,
+    tryRemove: PropTypes.bool,
+};
+
+ProductDisplay.defaultProps = {
+    products: [],
+    setProducts: (p) => {},
+    tryRemove: false,
+};
+
+export default function ProductDisplay({products, setProducts, tryRemove}) {
     const updateProductAmount = (id, amount) => {
-        const product = props.products.find(product => product.id === id);
+        const product = products.find(product => product.id === id);
         if (product) {
             const updatedProduct = { ...product, amount };
-            const updatedProducts = props.products.map(product => {return product.id===id?updatedProduct:product})
-            props.setProducts(updatedProducts);
+            const updatedProducts = products.map(product => product.id===id ? updatedProduct : product)
+            setProducts(updatedProducts);
         }
     }
     
     return(
         <div className="rubric">
             <div className='title'>{"Einkaufen"}</div>
-            <div className='wrapper'>{props.products.map(({id, name, price, amount}) => { 
-                return <Product remove={props.remove} key={id} id={id} name={name} price={price} amount={amount} setAmount={updateProductAmount}/>
-            })}</div>
+            <div className='wrapper'>
+                {products.map(({id, name, price, amount}) => { 
+                    return <Product tryRemove={tryRemove} key={id} id={id} name={name} price={price} amount={amount} setAmount={updateProductAmount}/>
+                })}
+            </div>
         </div>
     );
 
