@@ -7,6 +7,8 @@ import BalanceCorrection from './BalanceCorrection';
 import CashPayment from './ChashPayment';
 import LastBookings from './LastBookings';
 import { getProducts, getUserBalance, commitBooking } from '../util/Database';
+// import BarcodeScannerComponent from "react-qr-barcode-scanner";
+import Html5QrcodePlugin from '../util/scanner';
 
 const debug = true;
 
@@ -24,10 +26,17 @@ export default function GeneralUi({showAdminLink = false}) {
     
     const [resetUserCallback, setResetUserCallback] = useState();
 
+    const [data, setData] = useState('No result');
+
     // temp vars for easier access
     const total = calculateTotal();
     const isSufficient = total<=userBalance;
     const hasInput = (total!==0 || correctionPlus || paymentIn);
+
+    // executes in beginning
+    useEffect(() => {
+        
+    }, []);
     
     // get user balance when user gets selected
     useEffect(() => {
@@ -88,6 +97,11 @@ export default function GeneralUi({showAdminLink = false}) {
         resetProducts();
     }
 
+    function onNewScanResult(decodedText, decodedResult) {
+        console.log(decodedResult+" "+decodedText);
+        setData(decodedText);
+    }
+
     return(
         <div className="main">
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
@@ -99,6 +113,20 @@ export default function GeneralUi({showAdminLink = false}) {
             {user && <LastBookings />}
             {hasInput && <button className='wrapper' onClick={resetProducts}>{"reset"}</button>}
             {hasInput && isSufficient && user && <button className="wrapper" onClick={submit}>{"Buchen"}</button>}
+            {/* <BarcodeScannerComponent
+                width={500}
+                height={500}
+                onUpdate={(err, result) => {
+                if (result) setData(result.text);
+                else setData("Not Found");
+                }}
+            /> */}
+            {/* <Html5QrcodePlugin 
+                fps={10}
+                qrbox={250}
+                disableFlip={false}
+                qrCodeSuccessCallback={onNewScanResult}/> */}
+      <p>{data}</p>
         </div>
     );
 }

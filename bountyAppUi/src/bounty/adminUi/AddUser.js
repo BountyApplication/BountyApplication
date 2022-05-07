@@ -8,7 +8,7 @@ export default function Add(props) {
     // vars
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
-    const [balance, setBalance] = useState(null);
+    const [balance, setBalance] = useState();
 
     function reset() {
         setFirstname("");
