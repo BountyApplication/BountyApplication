@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import UserSelect from '../util/UserSelect';
 import NumberInput from '../util/NumberInput';
 import { changeUser, getUserBalance } from '../util/Database';
+import {Form} from 'react-bootstrap';
+import Input from '../util/Input';
+
+const changeBalance = false;
 
 export default function ChangeUser(props) {
     // vars
@@ -57,9 +61,11 @@ export default function ChangeUser(props) {
     function changeUserUi() {
         return(
             <div>
-                <div className='wrapper'>{"Vorname: "} <input value={newUser.firstname} onChange={event => setNewUser({...newUser, firstname: event.target.value})} /></div>
-                <div className='wrapper'>{"Nachname: "} <input value={newUser.lastname} onChange={event => setNewUser({...newUser, lastname: event.target.value})} /></div>
-                <div className='wrapper'>{"Kontostand: "} <NumberInput value={newBalance} setValue={setNewBalance} /></div>
+                <Form>
+                    <Input title="Vorname" value={newUser.firstname} setValue={name => setNewUser({...newUser, firstname: name})} />
+                    <Input title="Nachname" value={newUser.lastname} setValue={name => setNewUser({...newUser, lastname: name})} />
+                    {changeBalance && <Input type="number" title="Kontostand" value={newBalance} setValue={setNewBalance} />}
+                </Form>
                 {(newUser!==user || balance!==newBalance) && <button className='wrapper' onClick={reset}>{"reset"}</button>}
                 {(newUser!==user || balance!==newBalance) && <button className='wrapper' onClick={submit}>{"submit"}</button>}
             </div>

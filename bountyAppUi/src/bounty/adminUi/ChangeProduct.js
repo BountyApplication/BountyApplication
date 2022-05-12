@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
 import NumberInput from '../util/NumberInput';
 import { changeProduct } from '../util/Database';
+import {Form} from 'react-bootstrap';
+import Input from '../util/Input';
 
 export default function ChangeProduct(props) {
     // vars
@@ -46,8 +48,10 @@ export default function ChangeProduct(props) {
     function changeProductUi() {
         return(
             <div>
-                <div className='wrapper'>{"Name: "} <input value={updatedProduct.name} onChange={event=>{setUpdatedProduct({...updatedProduct, name: event.target.value})}} /></div>
-                <div className='wrapper'>{"Price: "} <NumberInput value={updatedProduct.price} setValue={value => setUpdatedProduct({...updatedProduct, price: value})} /></div>
+                <Form>
+                    <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
+                    <Input title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
+                </Form>
                 {updatedProduct!==product && <button className='wrapper' onClick={reset.bind(this)}>{"reset"}</button>}
                 {updatedProduct!==product && <button className='wrapper' onClick={submit.bind(this)}>{"submit"}</button>}
             </div>

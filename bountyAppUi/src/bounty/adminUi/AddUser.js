@@ -1,8 +1,9 @@
-// import '../App.css';
 import React, {useState} from 'react';
 import NumberInput from '../util/NumberInput';
-import {Form, FormControl, FormGroup, InputGroup} from 'react-bootstrap';
+import {Form} from 'react-bootstrap';
 import { addUser } from '../util/Database';
+import TextInput from '../util/TextInput';
+import Input from '../util/Input';
 
 export default function Add(props) {
     // vars
@@ -34,17 +35,10 @@ export default function Add(props) {
         <div className='rubric'>
             <div className='title'>{"Add "}</div>
             <Form>
-                <FormGroup>
-                    <Form.Label>Vorname</Form.Label>
-                    <InputGroup>
-                        <FormControl type="text" placeholder="Vorname" value={firstname} onChange={event => setFirstname(event.target.value)}/>
-                        <InputGroup.Text>€</InputGroup.Text>
-                    </InputGroup>
-                </FormGroup>
+                <Input title="Vorname" value={firstname} setValue={setFirstname}/>
+                <Input title="Nachname" value={lastname} setValue={setLastname}/>
+                <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
             </Form>
-            <div className="wrapper">{"Vorname: "} <input className='wrapper' value={firstname} onChange={event => setFirstname(event.target.value)}/></div>
-            <div className="wrapper"> {"Nachname: "} <input className='wrapper' value={lastname} onChange={event => setLastname(event.target.value)} /></div><br className='wrapper' />
-            <div className='wrapper'>{"Kontostand: "} <NumberInput value={balance} setValue={setBalance} /></div>
             {(firstname!=="" || lastname!=="" || balance!=null) && <button className="wrapper" onClick={reset}>{"reset"}</button>}
             {(firstname!=="" && lastname!=="" && balance!=null) && <button className='wrapper' onClick={submit}>{"submit"}</button>}
         </div>
