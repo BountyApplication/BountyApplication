@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
 import NumberInput from '../util/NumberInput';
 import { changeProduct } from '../util/Database';
-import {Form} from 'react-bootstrap';
+import {Form, Button} from 'react-bootstrap';
 import Input from '../util/Input';
 
 export default function ChangeProduct(props) {
@@ -51,9 +51,9 @@ export default function ChangeProduct(props) {
                 <Form>
                     <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
                     <Input title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
-                </Form>
-                {updatedProduct!==product && <button className='wrapper' onClick={reset.bind(this)}>{"reset"}</button>}
-                {updatedProduct!==product && <button className='wrapper' onClick={submit.bind(this)}>{"submit"}</button>}
+                    {updatedProduct!==product && <Button className='ms-2' onClick={reset.bind(this)}>{"reset"}</Button>}
+                    {updatedProduct!==product && <Button className='ms-2' onClick={submit.bind(this)}>{"submit"}</Button>}
+            </Form>
             </div>
         );
     }

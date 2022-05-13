@@ -21,8 +21,8 @@ export default function CashPayment({inVal, outVal, setIn, setOut}) {
     return(
         <div className="rubric">
             <div className="title">{"Bargeld"}</div>
-            <div className="wrapper">{"Bar-Einzahlung: "} <NumberInput value={inVal} setValue={setIn} /></div>
-            <div className="wrapper">{"Bar-Auszahlung: "} <NumberInput value={outVal} setValue={setOut} /></div>
+            <div className="wrapper"><NumberInput title="Bar-Einzahlung" value={inVal} setValue={setIn} /></div>
+            <div className="wrapper"><NumberInput title="Bar-Auszahlung" value={outVal} setValue={setOut} /></div>
         </div>
     );
 }

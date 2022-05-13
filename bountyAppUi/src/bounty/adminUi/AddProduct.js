@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import NumberInput from '../util/NumberInput';
 import { addProduct } from '../util/Database';
-import { Form } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import Input from '../util/Input';
 
 const debug = true;
@@ -35,8 +35,9 @@ export default function AddProduct(props) {
             <Form>
                 <Input title="Name" value={productName} setValue={setProductName} />
                 <Input type="number" title="Price" value={productPrice} setValue={setProductPrice} />
+                {(productName!=="" || productPrice!=null) && <Button className="ms-2" onClick={reset}>{"reset"}</Button>}
+                {(productName!==""&&productPrice!=null)   && <Button className='ms-2' onClick={submit.bind(this)}>{"submit"}</Button>}
             </Form>
-            {(productName!=="" || productPrice!=null) && <button className='wrapper' onClick={reset}>{"reset"}</button>}                {(productName!==""&&productPrice!=null)&&<button className='wrapper' onClick={submit.bind(this)}>{"submit"}</button>}
         </div>
     );
 }

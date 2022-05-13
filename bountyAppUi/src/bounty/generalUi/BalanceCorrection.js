@@ -21,8 +21,8 @@ export default function BalanceCorrection({plus, minus, setPlus, setMinus}) {
     return(
         <div className='rubric'>
             <div className='title'>{"Korrekturbuchung"}</div>
-            <div className='wrapper'>{"Plus-Korrektur: "} <NumberInput value={plus} setValue={setPlus} /></div>
-            <div className='wrapper'>{"Minus-Korrektur: "} <NumberInput value={minus} setValue={setMinus} /></div>
+            <div className='wrapper'><NumberInput title="Plus-Korrektur" value={plus} setValue={setPlus} /></div>
+            <div className='wrapper'><NumberInput title="Minus-Korrektur" value={minus} setValue={setMinus} /></div>
         </div>
     );
 }

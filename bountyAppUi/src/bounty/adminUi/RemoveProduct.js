@@ -1,6 +1,7 @@
 import React from 'react';
 import ProductSelect from '../util/ProductSelect';
 import { removeProduct } from '../util/Database';
+import { Button } from 'react-bootstrap';
 
 export default function RemoveProduct() {
 

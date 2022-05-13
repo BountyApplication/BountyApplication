@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import UserSelect from '../util/UserSelect';
 import NumberInput from '../util/NumberInput';
 import { changeUser, getUserBalance } from '../util/Database';
-import {Form} from 'react-bootstrap';
+import {Form, Button} from 'react-bootstrap';
 import Input from '../util/Input';
 
 const changeBalance = false;
@@ -65,9 +65,9 @@ export default function ChangeUser(props) {
                     <Input title="Vorname" value={newUser.firstname} setValue={name => setNewUser({...newUser, firstname: name})} />
                     <Input title="Nachname" value={newUser.lastname} setValue={name => setNewUser({...newUser, lastname: name})} />
                     {changeBalance && <Input type="number" title="Kontostand" value={newBalance} setValue={setNewBalance} />}
+                    {(newUser!==user || balance!==newBalance) && <Button className='ms-2' onClick={reset}>{"reset"}</Button>}
+                    {(newUser!==user || balance!==newBalance) && <Button className='ms-2' onClick={submit}>{"submit"}</Button>}
                 </Form>
-                {(newUser!==user || balance!==newBalance) && <button className='wrapper' onClick={reset}>{"reset"}</button>}
-                {(newUser!==user || balance!==newBalance) && <button className='wrapper' onClick={submit}>{"submit"}</button>}
             </div>
         );
     }

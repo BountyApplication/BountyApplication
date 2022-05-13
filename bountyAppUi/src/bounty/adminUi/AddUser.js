@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import NumberInput from '../util/NumberInput';
-import {Form} from 'react-bootstrap';
+import {Form, Button} from 'react-bootstrap';
 import { addUser } from '../util/Database';
 import TextInput from '../util/TextInput';
 import Input from '../util/Input';
@@ -33,14 +33,14 @@ export default function Add(props) {
 
     return(
         <div className='rubric'>
-            <div className='title'>{"Add "}</div>
+            <div className='title'>{"Add User"}</div>
             <Form>
                 <Input title="Vorname" value={firstname} setValue={setFirstname}/>
                 <Input title="Nachname" value={lastname} setValue={setLastname}/>
                 <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
+                {(firstname!=="" || lastname!=="" || balance!=null) && <Button className="ms-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>}
+                {(firstname!=="" && lastname!=="" && balance!=null) && <Button className="ms-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>}
             </Form>
-            {(firstname!=="" || lastname!=="" || balance!=null) && <button className="wrapper" onClick={reset}>{"reset"}</button>}
-            {(firstname!=="" && lastname!=="" && balance!=null) && <button className='wrapper' onClick={submit}>{"submit"}</button>}
         </div>
     );
 }
