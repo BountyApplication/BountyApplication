@@ -1,6 +1,8 @@
 import React from 'react';
 import Product from './Product';
 import PropTypes from "prop-types";
+import { Card, CardGroup, Row, Col } from 'react-bootstrap';
+import CardHeader from 'react-bootstrap/esm/CardHeader';
 
 ProductDisplay.propTypes = {
     products: PropTypes.arrayOf(PropTypes.shape({
@@ -30,14 +32,22 @@ export default function ProductDisplay({products, setProducts, tryRemove}) {
     }
     
     return(
-        <div className="rubric">
-            <div className='title'>{"Einkaufen"}</div>
-            <div className='wrapper'>
+        // <div className="border">
+        //     <div className='title'>{"Einkaufen"}</div>
+        //     <div className='wrapper'>
+        <Card>
+            <Card.Header>{"Einkaufen"}</Card.Header>
+            <Card.Body>
+                <Card.Title>{"Einkaufen"}</Card.Title>
+                <Row>
                 {products.map(({id, name, price, amount}) => { 
                     return <Product tryRemove={tryRemove} key={id} id={id} name={name} price={price} amount={amount} setAmount={updateProductAmount}/>
                 })}
-            </div>
-        </div>
+                </Row>
+            {/* </div>
+        </div> */}
+            </Card.Body>
+        </Card>
     );
 
 }

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import NumberInput from '../util/NumberInput';
-import {Form, Button} from 'react-bootstrap';
+import {Form, Button, Collapse} from 'react-bootstrap';
 import { addUser } from '../util/Database';
 import TextInput from '../util/TextInput';
 import Input from '../util/Input';
@@ -38,8 +38,12 @@ export default function Add(props) {
                 <Input title="Vorname" value={firstname} setValue={setFirstname}/>
                 <Input title="Nachname" value={lastname} setValue={setLastname}/>
                 <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
-                {(firstname!=="" || lastname!=="" || balance!=null) && <Button className="ms-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>}
-                {(firstname!=="" && lastname!=="" && balance!=null) && <Button className="ms-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>}
+                <Collapse in={(firstname!=="" || lastname!=="" || balance!=null)}>
+                    <Button className="ms-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
+                </Collapse>
+                <Collapse in={(firstname!=="" && lastname!=="" && balance!=null)}>
+                    <Button className="ms-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
+                </Collapse>
             </Form>
         </div>
     );

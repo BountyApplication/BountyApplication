@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { getProducts } from './Database';
+import { Form, Button, Collapse } from 'react-bootstrap';
 
 const debug = true;
 
@@ -96,16 +97,23 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
 
     return(
         <div className="wrapper">
-            <div className='wrapper'>{"Product: "}
-                <select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
-                    {<option value={-1}>{""}</option>}
-                    {products.map(({id, name, price}) => {
-                        return <option key={id} value={id}>{getProductString(name, price)}</option>
-                    })}
-                </select>
-            </div>
-            {useReset  && (!hideReset  || productSelected) &&   <button className='wrapper' onClick={reset}>{"reset"}</button>}
-            {useSubmit && (!hideSubmit || productSelected) &&   <button className='wrapper' onClick={submit}>{"submit"}</button>}
+            <Form>
+                <Form.Group controlId={"productSelect"}>
+                    <Form.Label>Protuct: </Form.Label>
+                    <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
+                        {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
+                        {products.map(({id, name, price}) => {
+                            return <option key={id} value={id}>{getProductString(name, price)}</option>
+                        })}
+                    </Form.Select>
+                </Form.Group>
+                <Collapse in={useReset && (productSelected || !hideReset)}>
+                    <Button variant="secondary" type="reset" className='wrapper' onClick={reset}>{"reset"}</Button>
+                </Collapse>
+                <Collapse in={useSubmit && (productSelected || !hideSubmit)}>
+                    <Button variant="primary" type="submit" onClick={submit}>{"submit"}</Button>
+                </Collapse>
+            </Form>
         </div>
     );
 }

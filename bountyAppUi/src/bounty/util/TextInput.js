@@ -21,7 +21,7 @@ export default function TextInput({title, placeholder, value, setValue}) {
         <Form.Group className="mb-3" controlId={title}>
             <Form.Label>{title}</Form.Label>
             <InputGroup>
-                <FormControl type="text" placeholder={placeholder==null? `${title} eingeben` : placeholder}
+                <FormControl type="text" placeholder={placeholder==null ? `${title} eingeben` : placeholder}
                     value={value}
                     onChange={event => setValue(event.target.value)}
                 />

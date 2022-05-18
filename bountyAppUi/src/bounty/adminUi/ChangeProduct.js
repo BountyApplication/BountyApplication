@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
 import NumberInput from '../util/NumberInput';
 import { changeProduct } from '../util/Database';
-import {Form, Button} from 'react-bootstrap';
+import {Form, Button, Collapse} from 'react-bootstrap';
 import Input from '../util/Input';
 
 export default function ChangeProduct(props) {
@@ -50,10 +50,14 @@ export default function ChangeProduct(props) {
             <div>
                 <Form>
                     <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
-                    <Input title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
-                    {updatedProduct!==product && <Button className='ms-2' onClick={reset.bind(this)}>{"reset"}</Button>}
-                    {updatedProduct!==product && <Button className='ms-2' onClick={submit.bind(this)}>{"submit"}</Button>}
-            </Form>
+                    <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
+                    <Collapse in={updatedProduct!==product}>
+                        <div>
+                            <Button variant="secondary" type="reset" className='ms-2' onClick={reset.bind(this)}>{"reset"}</Button>
+                            <Button type="submit" className='ms-2' onClick={submit.bind(this)}>{"submit"}</Button>
+                        </div>
+                    </Collapse>
+                </Form>
             </div>
         );
     }
@@ -62,7 +66,11 @@ export default function ChangeProduct(props) {
         <div className='rubric'>
             <div className='title'>{"Change Product"}</div>
             <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true}/>
-            {updatedProduct!=null && changeProductUi()}
+            <Collapse in={updatedProduct}>
+                <div>
+                    {updatedProduct && changeProductUi()} 
+                </div>
+            </Collapse>
         </div>
     );
 }

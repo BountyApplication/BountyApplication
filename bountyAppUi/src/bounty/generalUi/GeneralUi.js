@@ -9,6 +9,7 @@ import LastBookings from './LastBookings';
 import { getProducts, getUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import Html5QrcodePlugin from '../util/scanner';
+import { Col, Collapse, Button } from 'react-bootstrap';
 
 const debug = true;
 
@@ -106,13 +107,21 @@ export default function GeneralUi({showAdminLink = false}) {
         <div className="main">
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} />
-            <ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} />
-            <BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} />
-            <CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/>
-            {userBalance && <BalanceInfos balance={userBalance} sum={total} />}
-            {user && <LastBookings />}
-            {hasInput && <button className='wrapper' onClick={resetProducts}>{"reset"}</button>}
-            {hasInput && isSufficient && user && <button className="wrapper" onClick={submit}>{"Buchen"}</button>}
+            <Collapse in={user&&userBalance}>
+                <div>
+                    <ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} />
+                    <BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} />
+                    <CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/>
+                    <BalanceInfos balance={userBalance} sum={total} />
+                    <LastBookings />
+                </div>
+            </Collapse>
+            <Collapse in={hasInput}>
+                <Button type="reset" variant="secondary" className='wrapper' onClick={resetProducts}>{"reset"}</Button>
+            </Collapse>
+            <Collapse in={hasInput && isSufficient && user}>
+                <Button type="submit" className="wrapper" onClick={submit}>{"Buchen"}</Button>
+            </Collapse>
             {/* <BarcodeScannerComponent
                 width={500}
                 height={500}
@@ -126,7 +135,7 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrbox={250}
                 disableFlip={false}
                 qrCodeSuccessCallback={onNewScanResult}/> */}
-      <p>{data}</p>
+               {/* <p>{data}</p> */}
         </div>
     );
 }

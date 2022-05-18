@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { getUsers } from './Database';
+import { Col, Collapse, Form, Button } from 'react-bootstrap';
 
 const debug = true;
 
@@ -106,27 +107,32 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
     function nameSelectUi(isFirstname) {
         let userName = isFirstname?userFirstname:userLastname;
         return(
-            <select value={userName} onChange={event => updateName(isFirstname, event.target.value)}>
-                <option value="">{userName!==""?"delete":""}</option>
-                {getSortedUsers(isFirstname).map(({id, firstname, lastname}) => {
-                    let name=isFirstname?firstname:lastname;
-                    return <option key={id} value={name}>{name}</option>
-                })}
-            </select>
+            <Form.Group className="mb-3" controlId={isFirstname?"firstname":"lastname"}>
+                <Form.Label>{isFirstname?"Vorname":"Nachname"}</Form.Label>
+                <Form.Select value={userName} onChange={event => updateName(isFirstname, event.target.value)}>
+                    <option value="">{userName!==""?"Auswahl löschen":`${isFirstname?"Vorname":"Nachname"} auswählen`}</option>
+                    {getSortedUsers(isFirstname).map(({id, firstname, lastname}) => {
+                        let name=isFirstname?firstname:lastname;
+                        return <option key={id} value={name}>{name}</option>
+                    })}
+                </Form.Select>
+            </Form.Group>
         );
     }
     
     return(
         <div className="rubric">
             <div className='title'>{title}</div>
-            <div className='wrapper'>
-                {"Vorname "}{nameSelectUi(NameType.FIRSTNAME)}
-            </div>
-            <div className='wrapper'>
-                {"Nachname "}{nameSelectUi(NameType.LASTNAME)}
-            </div>
-            {useReset  && (!hideReset  || hasFirstname || hasLastname) &&   <button className='wrapper' onClick={reset}>{"reset"}</button>}
-            {useSubmit && (!hideSubmit || filteredUsers.length===1)    &&   <button className='wrapper' onClick={submit}>{"submit"}</button>}
+            <Form>
+                {nameSelectUi(NameType.FIRSTNAME)}
+                {nameSelectUi(NameType.LASTNAME)}
+                <Collapse in={useReset  && (!hideReset  || hasFirstname || hasLastname)}>
+                    <Button variant="secondary" type="reset" className='wrapper' onClick={reset}>{"reset"}</Button>
+                </Collapse>
+                <Collapse in={useSubmit && (!hideSubmit || filteredUsers.length===1)}>
+                    <Button variant="primary" type="submit" className='wrapper' onClick={submit}>{"submit"}</Button>
+                </Collapse>
+            </Form>
         </div>
     );
 }

@@ -15,7 +15,7 @@ export default function RemoveProduct() {
     return(
         <div className='rubric'>
             <div className='title'>{"Remove Product"}</div>
-            <ProductSelect runCallback={run} useReset={true} useSubmit={true} resetSubmit={true} hideReset={true} hideSubmit={true} />
+            <ProductSelect runCallback={run} useReset={true} useSubmit={true} resetOnSubmit={true} hideReset={true} hideSubmit={true} />
         </div>
     );
 }

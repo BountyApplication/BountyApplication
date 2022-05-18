@@ -36,14 +36,23 @@
 }
 
 .product {
-    width: 50px;
-    height: auto;
-    font-size: x-small;
-    /* overflow: hidden; */
-    text-overflow: ellipsis;
-    /* overflow: hidde#n; */
-    white-space: pre-line;
-    margin: 2px;
+    /* max-width: 20%; */
+    display:inline-block;
+    font-size: 0.5em;
+    
+    margin: 0;
+}
+
+.card-title {
+    font-size: 0.1em;
+}
+
+.product Button {
+    display:inline-block;
+    /* font-size: small; */
+    font-size: 1em;
+    margin: 0;
+ 
 }
 
 .redText {
