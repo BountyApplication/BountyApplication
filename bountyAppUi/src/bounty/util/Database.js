@@ -57,10 +57,10 @@ export function getUserBalance(id) {
 export function getLastBookings() {
     //do server 
     const bookings = [
-        {id: 0, amount: -5.3}, 
-        {id: 1, amount: -0.83, correction: +2.1},
-        {id: 2, amount: -1.4},
-        {id: 3, amount: 5},
+        {id: 0, sum: -5.3, products: [{ name: 'Cola', price: 0.5, amount: 2 }, { name: 'Bonbon', price: 0.05, amount: 10 }]}, 
+        {id: 1, sum: -0.83, correction: +2.1, products: [{ name: 'ESP', price: 5, amount: 10 }, { name: 'Slush', price: 0.20, amount: 3 }]},
+        {id: 2, sum: -1.4, products: [{ name:'Bibel', price: 15, amount: 1 }, { name: 'T-shirt', price: 12, amount: 1 }, { name: 'Cola', price: 0.5, amount: 2 }, { name: 'Bonbon', price: 0.05, amount: 10 }]},
+        {id: 3, sum: 5, products: [{ name: 'Cola', price: 0.5, amount: 2 }, { name: 'Bonbon', price: 0.05, amount: 10 }]},
     ];
     return bookings;
 }

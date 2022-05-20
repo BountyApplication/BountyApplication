@@ -1,4 +1,4 @@
-import NumberInput from '../util/NumberInput';
+import Input from '../util/Input';
 import PropTypes from 'prop-types';
 
 BalanceCorrection.propTypes = {
@@ -21,8 +21,8 @@ export default function BalanceCorrection({plus, minus, setPlus, setMinus}) {
     return(
         <div className='rubric'>
             <div className='title'>{"Korrekturbuchung"}</div>
-            <div className='wrapper'><NumberInput title="Plus-Korrektur" value={plus} setValue={setPlus} /></div>
-            <div className='wrapper'><NumberInput title="Minus-Korrektur" value={minus} setValue={setMinus} /></div>
+            <div className='wrapper'><Input type="number" title="Plus-Korrektur" value={plus} setValue={setPlus} /></div>
+            <div className='wrapper'><Input type="number" title="Minus-Korrektur" value={minus} setValue={setMinus} /></div>
         </div>
     );
 }

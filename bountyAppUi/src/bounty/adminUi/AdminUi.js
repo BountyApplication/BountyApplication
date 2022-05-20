@@ -14,11 +14,6 @@ export default function AdminUi(props) {
     const location = useLocation();
     const params = new URLSearchParams(location.hash);
 
-    console.log(JSON.stringify([...params.entries()]));
-    console.log(params.values());
-
-    console.log(params.has("#link"))
-
     return(
         <div className="main">
         <Navbar bg="light" expand="lg">
@@ -44,7 +39,27 @@ export default function AdminUi(props) {
         {params.has("#addProduct") && <AddProduct />}
         {params.has("#removeProduct") && <RemoveProduct />}
         {params.has("#changeProduct") && <ChangeProduct />}
-
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
         <Tabs  defaultActiveKey="addUser" id="noanim-tab-example" className="mb-3">
             <Tab eventKey="addUser" title="Add User">
                 <AddUser />

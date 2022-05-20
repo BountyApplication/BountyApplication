@@ -107,7 +107,7 @@ export default function GeneralUi({showAdminLink = false}) {
         <div className="main">
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} />
-            <Collapse in={user&&userBalance}>
+            <Collapse in={user != null && userBalance != null}>
                 <div>
                     <ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} />
                     <BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} />
@@ -119,7 +119,7 @@ export default function GeneralUi({showAdminLink = false}) {
             <Collapse in={hasInput}>
                 <Button type="reset" variant="secondary" className='wrapper' onClick={resetProducts}>{"reset"}</Button>
             </Collapse>
-            <Collapse in={hasInput && isSufficient && user}>
+            <Collapse in={hasInput && isSufficient && user != null}>
                 <Button type="submit" className="wrapper" onClick={submit}>{"Buchen"}</Button>
             </Collapse>
             {/* <BarcodeScannerComponent

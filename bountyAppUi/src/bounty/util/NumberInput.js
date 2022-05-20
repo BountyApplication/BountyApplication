@@ -5,7 +5,7 @@ import {Form, FormControl, InputGroup} from 'react-bootstrap';
 NumberInput.propTypes = {
     title: PropTypes.string,
     placeholder: PropTypes.string,
-    value: PropTypes.number.isRequired,
+    value: PropTypes.number,
     setValue: PropTypes.func.isRequired,
 };
 
