@@ -9,7 +9,7 @@ import LastBookings from './LastBookings';
 import { getProducts, getUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import Html5QrcodePlugin from '../util/scanner';
-import { Col, Collapse, Button } from 'react-bootstrap';
+import { Col, Row, Container, Collapse, Button } from 'react-bootstrap';
 
 const debug = true;
 
@@ -109,11 +109,11 @@ export default function GeneralUi({showAdminLink = false}) {
             <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} />
             <Collapse in={user != null && userBalance != null}>
                 <div>
-                    <ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} />
-                    <BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} />
-                    <CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/>
-                    <BalanceInfos balance={userBalance} sum={total} />
-                    <LastBookings />
+                    <Row><ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} /></Row>
+                    <Row><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
+                    <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
+                    <Row className="justify-content-evenly"><Col className='col-auto'><BalanceInfos balance={userBalance} sum={total} /></Col>
+                    <Col className="col-auto"><LastBookings /></Col></Row>
                 </div>
             </Collapse>
             <Collapse in={hasInput}>

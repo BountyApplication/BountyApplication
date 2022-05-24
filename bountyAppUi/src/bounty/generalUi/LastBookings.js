@@ -6,7 +6,7 @@ export default function LastBookings(props) {
     return(
         <div className="rubric">
             <div className="title">{"Letzte Buchungen"}</div>
-            <Accordion defaultActiveKey={0}>
+            <Accordion>
                 {getLastBookings().map(({id, sum, correction, products}) =>
                     <Accordion.Item key={id} eventKey={id}>
                         <Accordion.Header>{`#${id} | Summe: ${sum}€ ${correction ? ` | Korrektur: ${correction>0?"+":""}${(correction.toFixed(2))}€` : ``} `}</Accordion.Header>

@@ -35,11 +35,10 @@ export default function ProductDisplay({products, setProducts, tryRemove}) {
         // <div className="border">
         //     <div className='title'>{"Einkaufen"}</div>
         //     <div className='wrapper'>
-        <Card>
-            <Card.Header>{"Einkaufen"}</Card.Header>
+        <Card className="m-3">
+            <Card.Header><Card.Title className='m-0'>{"Einkaufen"}</Card.Title></Card.Header>
             <Card.Body>
-                <Card.Title>{"Einkaufen"}</Card.Title>
-                <Row>
+                <Row className="gap-2">
                 {products.map(({id, name, price, amount}) => { 
                     return <Product tryRemove={tryRemove} key={id} id={id} name={name} price={price} amount={amount} setAmount={updateProductAmount}/>
                 })}

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
+import {Container, Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
 
 Input.propTypes = {
     type: PropTypes.string,
@@ -21,13 +21,10 @@ Input.defaultProps = {
 export default function Input({type, title, placeholder, value, setValue}) {
 
     return(
-        <Form.Group className="mb-3" controlId={title}>
+        <Form.Group controlId={title} className="m-0">
             {/* { <Form.Label>{title}</Form.Label> } */}
-            <InputGroup>
-                <FloatingLabel
-                    controlId="floatingInput"
-                    label={title}
-                    className="mb-1">
+            <InputGroup className="">
+                <FloatingLabel className="col" controlId="floatingInput" label={title}>
                     <FormControl type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title} eingeben` : placeholder}
                         value={ type!=="number" ? value : !value ? " " : value.toString() }
                         onChange={event => {
@@ -42,7 +39,7 @@ export default function Input({type, title, placeholder, value, setValue}) {
                         }}
                     />
                 </FloatingLabel>
-                { type==="number" && <InputGroup.Text className="mb-1">€</InputGroup.Text> }
+                { type==="number" && <InputGroup.Text className="col-auto">  €</InputGroup.Text> }
             </InputGroup>
         </Form.Group>
     );
