@@ -67,8 +67,8 @@ export default function ChangeUser(props) {
                     {changeBalance && <Input type="number" title="Kontostand" value={newBalance} setValue={setNewBalance} />}
                     <Collapse in={(newUser!==user || balance!==newBalance)}>
                         <div>
-                            <Button type="reset" variant="secondary" className='ms-2' onClick={reset}>{"reset"}</Button>
-                            <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                            <Button type="reset" variant="secondary" className='ms-2 mb-2' onClick={reset}>{"reset"}</Button>
+                            <Button type="submit" className='ms-2 mb-2' onClick={submit}>{"submit"}</Button>
                         </div>
                     </Collapse>
                 </Form>

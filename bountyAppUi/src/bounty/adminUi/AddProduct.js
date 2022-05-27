@@ -45,10 +45,10 @@ export default function AddProduct({}) {
                 <Input title="Name" value={productName} setValue={setProductName} />
                 <Input type="number" title="Price" value={productPrice} setValue={setProductPrice} />
                 <Collapse in={productName!=="" || productPrice!=null}>
-                    <Button type="reset" variant="secondary" className="ms-2" onClick={reset}>{"reset"}</Button>
+                    <Button type="reset" variant="secondary" className="mb-2" onClick={reset}>{"reset"}</Button>
                 </Collapse>
                 <Collapse in={productName!=="" && productPrice!=null}>
-                    <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                    <Button type="submit" className='ms-2 mb-2' onClick={submit}>{"submit"}</Button>
                 </Collapse>
             </Form>
         </div>}

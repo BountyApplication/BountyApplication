@@ -53,8 +53,8 @@ export default function ChangeProduct(props) {
                     <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
                     <Collapse in={updatedProduct!==product}>
                         <div>
-                            <Button variant="secondary" type="reset" className='ms-2' onClick={reset.bind(this)}>{"reset"}</Button>
-                            <Button type="submit" className='ms-2' onClick={submit.bind(this)}>{"submit"}</Button>
+                            <Button variant="secondary" type="reset" className='mb-2' onClick={reset.bind(this)}>{"reset"}</Button>
+                            <Button type="submit" className='ms-2 mb-2' onClick={submit.bind(this)}>{"submit"}</Button>
                         </div>
                     </Collapse>
                 </Form>
@@ -65,7 +65,7 @@ export default function ChangeProduct(props) {
     return(
         <div className='rubric'>
             <div className='title'>{"Change Product"}</div>
-            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true}/>
+            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true} />
             <Collapse in={updatedProduct}>
                 <div>
                     {updatedProduct && changeProductUi()} 

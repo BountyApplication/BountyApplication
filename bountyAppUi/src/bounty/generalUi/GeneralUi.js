@@ -106,13 +106,13 @@ export default function GeneralUi({showAdminLink = false}) {
     return(
         <div className="main">
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} />
+            <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>
                 <div>
-                    <Row><ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} /></Row>
-                    <Row><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
+                    <Row className="m-0 p-3"><ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} /></Row>
+                    <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
                     <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
-                    <Row className="justify-content-evenly"><Col className='col-auto'><BalanceInfos balance={userBalance} sum={total} /></Col>
+                    <Row className="m-0 p-3 justify-content-evenly"><Col className='col-auto'><BalanceInfos balance={userBalance} sum={total} /></Col>
                     <Col className="col-auto"><LastBookings /></Col></Row>
                 </div>
             </Collapse>

@@ -17,6 +17,9 @@ ProductSelect.propTypes = {
     useSubmit: PropTypes.bool,
     hideSubmit: PropTypes.bool,
     resetOnSubmit: PropTypes.bool,
+    isVertical: PropTypes.bool,
+
+    submitDescription: PropTypes.string,
 };
 
 ProductSelect.defaultProps = {
@@ -27,9 +30,12 @@ ProductSelect.defaultProps = {
     hideSubmit: false,
 
     resetOnSubmit: false,
+    isVertical: false,
+
+    submitDescription: "submit",
 };
 
-export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit}) {
+export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, submitDescription}) {
     // vars
     const [products, setProducts] = useState(getProducts);
     const [selectedProductId, setSelectedProductId] = useState(-1);
@@ -96,10 +102,10 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     }
 
     return(
-        <div className="wrapper">
-            <Form>
-                <Form.Group controlId={"productSelect"}>
-                    <Form.Label>Protuct: </Form.Label>
+        <div className="wrapper p-2">
+            <Form className={!isVertical?'row':''}>
+                <Form.Group className="col mb-2" controlId={"productSelect"}>
+                    <Form.Label className="ps-1">{"Product:"} </Form.Label>
                     <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
                         {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
                         {products.map(({id, name, price}) => {
@@ -107,11 +113,11 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
                         })}
                     </Form.Select>
                 </Form.Group>
-                <Collapse in={useReset && (productSelected || !hideReset)}>
-                    <Button variant="secondary" type="reset" className='wrapper' onClick={reset}>{"reset"}</Button>
+                <Collapse className={`${!isVertical?'collapse-horizontal':''} me-2 mb-2`} in={useReset && (productSelected || !hideReset)}>
+                    <Button className="button align-self-end" variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>
                 </Collapse>
-                <Collapse in={useSubmit && (productSelected || !hideSubmit)}>
-                    <Button variant="primary" type="submit" onClick={submit}>{"submit"}</Button>
+                <Collapse className={`${!isVertical?'collapse-horizontal':''} mb-2`} in={useSubmit && (productSelected || !hideSubmit)}>
+                    <Button className="button align-self-end" variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
                 </Collapse>
             </Form>
         </div>

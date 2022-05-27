@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {Container, Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
 
 Input.propTypes = {
+    className: PropTypes.string,
     type: PropTypes.string,
     title: PropTypes.string,
     placeholder: PropTypes.string,
@@ -11,6 +12,7 @@ Input.propTypes = {
 };
 
 Input.defaultProps = {
+    className: "m-2",
     type: "text",
     title: "",
     placeholder: null,
@@ -18,10 +20,10 @@ Input.defaultProps = {
     setValue: (v) => {},
 };
 
-export default function Input({type, title, placeholder, value, setValue}) {
+export default function Input({className, type, title, placeholder, value, setValue}) {
 
     return(
-        <Form.Group controlId={title} className="m-0">
+        <Form.Group controlId={title} className={className}>
             {/* { <Form.Label>{title}</Form.Label> } */}
             <InputGroup className="">
                 <FloatingLabel className="col" controlId="floatingInput" label={title}>

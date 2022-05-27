@@ -48,10 +48,10 @@ export default function Add(props) {
                 <Input title="Nachname" value={lastname} setValue={setLastname}/>
                 <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
                 <Collapse in={(firstname!=="" || lastname!=="" || balance!=null)}>
-                    <Button className="ms-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
+                    <Button className="me-2 mb-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
                 </Collapse>
-                <Collapse in={true||(firstname!=="" && lastname!=="" && balance!=null)}>
-                    <Button className="ms-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
+                <Collapse in={(firstname!=="" && lastname!=="" && balance!=null)}>
+                    <Button className="mb-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
                 </Collapse>
             </Form>
         </div>}

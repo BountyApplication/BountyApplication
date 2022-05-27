@@ -58,3 +58,16 @@
 .redText {
     color: red;
 }
+
+.productDisplay {
+    max-width: 60%;
+    width: 60%;
+    max-width: inherit;
+    width: 10vw;
+}
+
+.button {
+    max-width: min-content;
+    min-width: min-content;
+    height: max-content;
+}
