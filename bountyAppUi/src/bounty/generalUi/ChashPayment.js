@@ -31,8 +31,8 @@ export default function CashPayment({inVal, outVal, setIn, setOut}) {
             <Card.Body className='px-4'>
                 <Row><Input value={inMode?inVal:outVal} setValue={inMode?setIn:setOut} type="number" className="p-0 mb-3"/></Row>
                 <Row>
-                    <Button className='col me-3' variant="outline-primary" active={!inMode} onClick={()=>{setInMode(false);setOut(inVal);setIn(null);}}>Auszahlung</Button>
-                    <Button className='col' variant="outline-primary" active={inMode} onClick={()=>{setInMode(true);setIn(outVal);setOut(null);}}>Einzahlung</Button>
+                    <Button className='col me-3 mb-2' variant="outline-primary" active={!inMode} onClick={()=>{setInMode(false);setOut(inVal);setIn(null);}}>Auszahlung</Button>
+                    <Button className='col mb-2' variant="outline-primary" active={inMode} onClick={()=>{setInMode(true);setIn(outVal);setOut(null);}}>Einzahlung</Button>
                 </Row>
             </Card.Body>
         </Card>
