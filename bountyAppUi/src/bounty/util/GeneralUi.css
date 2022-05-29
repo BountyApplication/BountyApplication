@@ -43,10 +43,6 @@
     margin: 0;
 }
 
-.card-title {
-    font-size: 0.1em;
-}
-
 .product Button {
     display:inline-block;
     /* font-size: small; */
@@ -71,3 +67,4 @@
     min-width: min-content;
     height: max-content;
 }
+

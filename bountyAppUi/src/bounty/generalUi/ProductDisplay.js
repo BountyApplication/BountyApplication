@@ -53,12 +53,12 @@ export default function ProductDisplay({products, setProducts, isSufficient}) {
     
     return(
         <Card className="m-0 p-0">
-            <Card.Header><Card.Title>{"Einkaufen"}</Card.Title></Card.Header>
+            <Card.Header><Card.Title className='mb-0'>{"Einkaufen"}</Card.Title></Card.Header>
             <Card.Body>
                 <Row className="gap-2">
-                {products.map(({id, name, price, amount}) => { 
-                    return <Product tryRemove={tryRemove} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
-                })}
+                    {products.map(({id, name, price, amount}) => 
+                    <Product tryRemove={tryRemove} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
+                )}
                 </Row>
             </Card.Body>
         </Card>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import {Container, Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
 
@@ -21,26 +21,33 @@ Input.defaultProps = {
 };
 
 export default function Input({className, type, title, placeholder, value, setValue}) {
+    const [focused, setFocused] = useState(false);
+
+    function renderInput() {
+        return(
+            <FormControl type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
+                value={ type!=="number" ? value : !value ? " " : focused?value.toString():value.toFixed(2) }
+                onChange={event => {
+                    if(type!=="number") return setValue(event.target.value);
+                    
+                    let newValue = parseFloat(event.target.value);
+                    setValue(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100);
+                }}
+                onKeyPress={event => {
+                    if(type!=="number") return;
+                    if(!/[0-9|.]/.test(event.key)) event.preventDefault();
+                }}
+                onBlur={()=>{setFocused(false);}}
+                onFocus={()=>{setFocused(true);}}
+            />
+        )
+    }
 
     return(
         <Form.Group controlId={title} className={className}>
             {/* { <Form.Label>{title}</Form.Label> } */}
-            <InputGroup className="">
-                <FloatingLabel className="col" controlId="floatingInput" label={title}>
-                    <FormControl type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title} eingeben` : placeholder}
-                        value={ type!=="number" ? value : !value ? " " : value.toString() }
-                        onChange={event => {
-                            if(type!=="number") return setValue(event.target.value);
-                            
-                            let newValue = parseFloat(event.target.value);
-                            setValue(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100);
-                        }}
-                        onKeyPress={event => {
-                            if(type!=="number") return;
-                            if(!/[0-9|.]/.test(event.key)) event.preventDefault();
-                        }}
-                    />
-                </FloatingLabel>
+            <InputGroup>
+                {title!=="" ? <FloatingLabel className="col" controlId="floatingInput" label={title}>{renderInput()}</FloatingLabel> : renderInput()}
                 { type==="number" && <InputGroup.Text className="col-auto">  €</InputGroup.Text> }
             </InputGroup>
         </Form.Group>

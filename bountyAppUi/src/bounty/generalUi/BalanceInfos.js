@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { ListGroup } from 'react-bootstrap';
+import { Card, ListGroup } from 'react-bootstrap';
 
 BalanceInfos.propTypes = {
     balance: PropTypes.number,
@@ -13,13 +13,11 @@ BalanceInfos.defaultProps = {
 
 export default function BalanceInfos({balance, sum}) {
     return(
-        <div className="rubric">
-            <div className="title">{"Kontodaten"}</div>
-            <ListGroup>
-                <ListGroup.Item>{`Stand: ${balance != null? `${balance.toFixed(2)}€` : null}`}</ListGroup.Item>
-                <ListGroup.Item>{`Summe: ${sum != null ? `${sum.toFixed(2)}€` : null}`}</ListGroup.Item>
-                <ListGroup.Item>{`Neu: ${(balance-sum) != null ? `${(balance-sum).toFixed(2)}€` : null}`}</ListGroup.Item>
-            </ListGroup>
-        </div>
+        <ListGroup style={{width: '25vw'}}>
+            <ListGroup.Item className="bg-light fw-bold">Kontodaten</ListGroup.Item>
+            <ListGroup.Item className="d-flex w-100 justify-content-between">Kontostand<div className='px-1 bg-success text-light rounded'>{balance?`${balance.toFixed(2)}€`:'null'}</div></ListGroup.Item>
+            <ListGroup.Item className="d-flex w-100 justify-content-between">Summe Warenkorb<div className='px-1 bg-success text-light rounded'>{sum?`${sum.toFixed(2)}€`:'null'}</div></ListGroup.Item>
+            <ListGroup.Item className="d-flex w-100 justify-content-between">Kontostand Neu<div className='px-1 bg-success text-light rounded'>{balance&&sum?`${(balance-sum).toFixed(2)}€`:'null'}</div></ListGroup.Item>
+        </ListGroup>
     );
 }
