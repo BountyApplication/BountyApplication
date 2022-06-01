@@ -6,8 +6,8 @@ export default function BookingDisplay({booking}) {
         <Table striped hover size="sm" className='m-0'>
             <thead>
                 <th>#</th>
-                <th>Stück</th>
                 <th>Produkt</th>
+                <th>Stück</th>
                 <th>Preis</th>
                 <th>Summe</th>
             </thead>
@@ -15,10 +15,10 @@ export default function BookingDisplay({booking}) {
                 {booking.map(({name, price, amount}) => 
                     <tr>
                         <td>{count++}</td>
-                        <td>{amount}</td>
                         <td>{name}</td>
+                        <td>{amount}</td>
                         <td>{`${price.toFixed(2)}€`}</td>
-                        <td>{`${price.toFixed(2)}€`}</td>
+                        <td>{`${(price*amount).toFixed(2)}€`}</td>
                     </tr>
                 )}
             </tbody>

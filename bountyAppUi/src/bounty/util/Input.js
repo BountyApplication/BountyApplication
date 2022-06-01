@@ -31,11 +31,11 @@ export default function Input({className, type, title, placeholder, value, setVa
                     if(type!=="number") return setValue(event.target.value);
                     
                     let newValue = parseFloat(event.target.value);
-                    setValue(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100);
+                    setValue(Math.max(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100,0));
                 }}
                 onKeyPress={event => {
                     if(type!=="number") return;
-                    if(!/[0-9|.]/.test(event.key)) event.preventDefault();
+                    if(!/[0-9|,|.]/.test(event.key)) event.preventDefault();
                 }}
                 onBlur={()=>{setFocused(false);}}
                 onFocus={()=>{setFocused(true);}}

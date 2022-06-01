@@ -40,8 +40,13 @@ export default function ProductDisplay({products, setProducts, isSufficient}) {
     }
 
     useEffect(() => {
-        document.addEventListener("keydown", checkRemove(true), false);
-        document.addEventListener("keyup", checkRemove(false), false);
+        document.addEventListener("keydown", checkRemove(true));
+        document.addEventListener("keyup", checkRemove(false));
+
+        return (() => {
+            document.removeEventListener("keydown", checkRemove(true));
+            document.removeEventListener("keyup", checkRemove(false));
+        });
     }, [])
     
     function checkRemove(isPressed) {

@@ -10,11 +10,12 @@ import { getProducts, getUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import Html5QrcodePlugin from '../util/scanner';
 import { Col, Row, Container, Collapse, Button } from 'react-bootstrap';
+import BookingInfo from './BookingInfo';
 
 const debug = true;
 
 export default function GeneralUi({showAdminLink = false}) {
-    // vars
+    // vars   
     const [user, setUser] = useState();
     const [userBalance, setUserBalance] = useState();
 
@@ -28,16 +29,34 @@ export default function GeneralUi({showAdminLink = false}) {
     const [resetUserCallback, setResetUserCallback] = useState();
 
     const [data, setData] = useState('No result');
+    const [width, setWidth] = useState(0);
 
     // temp vars for easier access
+    const sum = calculateSum();
     const total = calculateTotal();
     const isSufficient = total<=userBalance;
     const hasInput = (total!==0 || correctionPlus || paymentIn);
+    const booking = {
+        old: userBalance,
+        new: userBalance-total,
+        sum: sum,
+        correction: -correctionMinus+correctionPlus,
+        cashPayment: -paymentOut+paymentIn,
+        products: products,
+    };
 
     // executes in beginning
     useEffect(() => {
-        
+        window.addEventListener('resize', updateWindowDimensions)
+
+        return () => {
+            window.removeEventListener('resize', updateWindowDimensions)
+        }
     }, []);
+
+    function updateWindowDimensions() {
+        setWidth(window.innerWidth)
+    }
     
     // get user balance when user gets selected
     useEffect(() => {
@@ -47,10 +66,13 @@ export default function GeneralUi({showAdminLink = false}) {
         if(debug) console.log(`Balance: ${balance}`);
         setUserBalance(balance);
     }, [user]);
+    
+    function calculateSum() {
+        return products.reduce((sum, {price, amount}) => sum+price*amount, 0);
+    }
 
     function calculateTotal() {
-        const productSum = products.reduce((sum, {price, amount}) => sum+price*amount, 0);
-        return productSum - correctionPlus + correctionMinus - paymentIn + paymentOut;
+        return calculateSum() - correctionPlus + correctionMinus - paymentIn + paymentOut;
     }
 
     function resetUser() {
@@ -104,7 +126,8 @@ export default function GeneralUi({showAdminLink = false}) {
     }
 
     return(
-        <div className="main">
+        <>
+        <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>
@@ -117,10 +140,10 @@ export default function GeneralUi({showAdminLink = false}) {
                 </div>
             </Collapse>
             <Collapse in={hasInput}>
-                <Button type="reset" variant="secondary" className='wrapper' onClick={resetProducts}>{"reset"}</Button>
+                <Button type="reset" variant="secondary" className="mb-4" onClick={resetProducts}>{"reset"}</Button>
             </Collapse>
             <Collapse in={hasInput && isSufficient && user != null}>
-                <Button type="submit" className="wrapper" onClick={submit}>{"Buchen"}</Button>
+                <Button type="submit"  className="ms-2 mb-4" onClick={submit} >{"Buchen"}</Button>
             </Collapse>
             {/* <BarcodeScannerComponent
                 width={500}
@@ -137,5 +160,7 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrCodeSuccessCallback={onNewScanResult}/> */}
                {/* <p>{data}</p> */}
         </div>
+        <BookingInfo show={user != null} user={user} booking={booking} />
+        </>
     );
 }
