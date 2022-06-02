@@ -20,7 +20,7 @@ Product.defaultProps = {
     tryRemove: false,
 };
 
-export default function Product({id, name, price, amount, onClick, tryRemove}) {
+export default function Product({id, name, price, amount, onClick, tryRemove, increment}) {
     return(
         <Card className="w-auto p-0" border="primary">
             <Card.Body className="p-2 pb-1">
@@ -30,7 +30,7 @@ export default function Product({id, name, price, amount, onClick, tryRemove}) {
                 
                 <Button className="me-1" variant="outline-secondary" onClick={onClick.bind(null, id, true)}>{amount}</Button>
                 <Button className="" style={{width: '3.5rem'}} variant="outline-primary" onClick={onClick.bind(null, id, undefined)}>
-                    {tryRemove?"del.":"add"}
+                    {increment===1 ? (tryRemove?"del.":"add") : ((tryRemove?'-':'+')+increment)}
                 </Button>
             </Card.Body>
         </Card>

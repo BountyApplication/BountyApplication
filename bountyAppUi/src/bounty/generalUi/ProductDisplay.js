@@ -3,6 +3,7 @@ import Product from './Product';
 import PropTypes from "prop-types";
 import { Card, CardGroup, Row, Col } from 'react-bootstrap';
 import CardHeader from 'react-bootstrap/esm/CardHeader';
+import { useKeyPress } from '../util/Util';
 
 ProductDisplay.propTypes = {
     products: PropTypes.arrayOf(PropTypes.shape({
@@ -23,41 +24,41 @@ ProductDisplay.defaultProps = {
 
 export default function ProductDisplay({products, setProducts, isSufficient}) {
     // vars
-    const [remove, setRemove] = useState(false);
-    const [amount, setAmount] = useState(1);
+    // const [shift, setShift] = useState(false);
+    const [increment, setIncrement] = useState(1);
+
+    const shift = useKeyPress('Shift');
 
     // temp vars
-    const tryRemove = remove || !isSufficient;
+    const tryRemove = shift || !isSufficient;
 
     // helper function
-    const handleProductClick = (id, remove = tryRemove) => {
+    function handleProductClick(id, remove = tryRemove) {
         const product = products.find(product => product.id === id);
         if(!product) return;
         if(remove && product.amount === 0) return;
-        const newAmount = Math.max(product.amount + (remove ? -1 : 1)*amount, 0);
+        const newAmount = Math.max(product.amount + (remove ? -1 : 1)*increment, 0);
         const updatedProduct = { ...product, amount: newAmount};
         const updatedProducts = products.map(product => product.id===id ? updatedProduct : product)
         setProducts(updatedProducts);
-        console.log(remove);
+        if(increment !== 1) setIncrement(1);
     }
 
     useEffect(() => {
-        document.addEventListener("keydown", checkKey(true));
-        document.addEventListener("keyup", checkKey(false));
+        document.addEventListener("keydown", checkKey, false);
 
         return (() => {
-            document.removeEventListener("keydown", checkKey(true));
-            document.removeEventListener("keyup", checkKey(false));
+            document.removeEventListener("keydown", checkKey, false);
         });
-    }, [])
+    }, [increment])
     
-    function checkKey(isPressed) {
-        return ({key}) => {
-            if(key === "Shift") return setRemove(isPressed);
-            if(!isPressed) return;
-            if(key === "0") return setAmount(10);
-            if(!isNaN(parseFloat(key))) return setAmount(parseFloat(key));
-        }
+    function checkKey({key}) {
+        const num = parseFloat(key);
+        if(isNaN(num)) return;
+        if(increment === num || (num === 0 && increment === 10)) return;
+        console.log(num);
+        if(num === 0) return setIncrement(10);
+        setIncrement(Number(num));
     }
     
     return(
@@ -66,7 +67,7 @@ export default function ProductDisplay({products, setProducts, isSufficient}) {
             <Card.Body>
                 <Row className="gap-2">
                     {products.map(({id, name, price, amount}) => 
-                    <Product tryRemove={tryRemove} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
+                    <Product tryRemove={tryRemove} increment={increment} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
                 )}
                 </Row>
             </Card.Body>
