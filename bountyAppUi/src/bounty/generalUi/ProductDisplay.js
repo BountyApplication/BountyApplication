@@ -24,6 +24,7 @@ ProductDisplay.defaultProps = {
 export default function ProductDisplay({products, setProducts, isSufficient}) {
     // vars
     const [remove, setRemove] = useState(false);
+    const [amount, setAmount] = useState(1);
 
     // temp vars
     const tryRemove = remove || !isSufficient;
@@ -33,7 +34,7 @@ export default function ProductDisplay({products, setProducts, isSufficient}) {
         const product = products.find(product => product.id === id);
         if(!product) return;
         if(remove && product.amount === 0) return;
-        const newAmount = product.amount + (remove ? -1 : 1);
+        const newAmount = Math.max(product.amount + (remove ? -1 : 1)*amount, 0);
         const updatedProduct = { ...product, amount: newAmount};
         const updatedProducts = products.map(product => product.id===id ? updatedProduct : product)
         setProducts(updatedProducts);
@@ -41,19 +42,21 @@ export default function ProductDisplay({products, setProducts, isSufficient}) {
     }
 
     useEffect(() => {
-        document.addEventListener("keydown", checkRemove(true));
-        document.addEventListener("keyup", checkRemove(false));
+        document.addEventListener("keydown", checkKey(true));
+        document.addEventListener("keyup", checkKey(false));
 
         return (() => {
-            document.removeEventListener("keydown", checkRemove(true));
-            document.removeEventListener("keyup", checkRemove(false));
+            document.removeEventListener("keydown", checkKey(true));
+            document.removeEventListener("keyup", checkKey(false));
         });
     }, [])
     
-    function checkRemove(isPressed) {
+    function checkKey(isPressed) {
         return ({key}) => {
-            if(key !== "Shift")  return;
-                setRemove(isPressed);
+            if(key === "Shift") return setRemove(isPressed);
+            if(!isPressed) return;
+            if(key === "0") return setAmount(10);
+            if(!isNaN(parseFloat(key))) return setAmount(parseFloat(key));
         }
     }
     
