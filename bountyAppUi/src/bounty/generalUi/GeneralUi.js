@@ -9,13 +9,11 @@ import LastBookings from './LastBookings';
 import { getProducts, getUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import Html5QrcodePlugin from '../util/scanner';
-import { Col, Row, Container, Collapse, Button } from 'react-bootstrap';
-import BookingInfo from './BookingInfo';
 
 const debug = true;
 
 export default function GeneralUi({showAdminLink = false}) {
-    // vars   
+    // vars
     const [user, setUser] = useState();
     const [userBalance, setUserBalance] = useState();
 
@@ -29,34 +27,16 @@ export default function GeneralUi({showAdminLink = false}) {
     const [resetUserCallback, setResetUserCallback] = useState();
 
     const [data, setData] = useState('No result');
-    const [width, setWidth] = useState(0);
 
     // temp vars for easier access
-    const sum = calculateSum();
     const total = calculateTotal();
     const isSufficient = total<=userBalance;
     const hasInput = (total!==0 || correctionPlus || paymentIn);
-    const booking = {
-        oldBalance: userBalance,
-        newBalance: userBalance-total,
-        productSum: sum,
-        correction: -correctionMinus+correctionPlus,
-        cashPayment: -paymentOut+paymentIn,
-        products: products.filter(({amount}) => amount !== 0),
-    };
 
     // executes in beginning
     useEffect(() => {
-        window.addEventListener('resize', updateWindowDimensions)
-
-        return () => {
-            window.removeEventListener('resize', updateWindowDimensions)
-        }
+        
     }, []);
-
-    function updateWindowDimensions() {
-        setWidth(window.innerWidth)
-    }
     
     // get user balance when user gets selected
     useEffect(() => {
@@ -66,13 +46,10 @@ export default function GeneralUi({showAdminLink = false}) {
         if(debug) console.log(`Balance: ${balance}`);
         setUserBalance(balance);
     }, [user]);
-    
-    function calculateSum() {
-        return products.reduce((sum, {price, amount}) => sum+price*amount, 0);
-    }
 
     function calculateTotal() {
-        return calculateSum() - correctionPlus + correctionMinus - paymentIn + paymentOut;
+        const productSum = products.reduce((sum, {price, amount}) => sum+price*amount, 0);
+        return productSum - correctionPlus + correctionMinus - paymentIn + paymentOut;
     }
 
     function resetUser() {
@@ -102,17 +79,13 @@ export default function GeneralUi({showAdminLink = false}) {
         let correctionTotal = correctionPlus - correctionMinus;
         let cashPaymentTotal = paymentIn - paymentOut;
         
-        // let booking = [
-        //     {id: 0, name: "correction", amount: correctionTotal},
-        //     {id: 1, name: "cashpayment", amount: cashPaymentTotal},
-        // ].concat(products);
-        booking.products.concat([
+        let booking = [
             {id: 0, name: "correction", amount: correctionTotal},
             {id: 1, name: "cashpayment", amount: cashPaymentTotal},
-        ]);
+        ].concat(products);
 
         // filter out unbought products
-        // booking = booking.filter(({amount}) => amount!==0);
+        booking = booking.filter(({amount}) => amount!==0);
 
         if(debug) console.log(booking);
 
@@ -130,25 +103,16 @@ export default function GeneralUi({showAdminLink = false}) {
     }
 
     return(
-        <>
-        <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
+        <div className="main">
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} hideDescription={true} />
-            <Collapse in={user != null && userBalance != null}>
-                <div>
-                    <Row className="m-0 p-3"><ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} /></Row>
-                    <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
-                    <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
-                    <Row className="m-0 p-3 justify-content-evenly"><Col className='col-auto'><BalanceInfos balance={userBalance} sum={total} /></Col>
-                    <Col className="col-auto"><LastBookings /></Col></Row>
-                </div>
-            </Collapse>
-            <Collapse in={hasInput}>
-                <Button type="reset" variant="secondary" className="mb-4" onClick={resetProducts}>{"reset"}</Button>
-            </Collapse>
-            <Collapse in={hasInput && isSufficient && user != null}>
-                <Button type="submit"  className="ms-2 mb-4" onClick={submit} >{"Buchen"}</Button>
-            </Collapse>
+            <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} />
+            <ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} />
+            <BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} />
+            <CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/>
+            {userBalance && <BalanceInfos balance={userBalance} sum={total} />}
+            {user && <LastBookings />}
+            {hasInput && <button className='wrapper' onClick={resetProducts}>{"reset"}</button>}
+            {hasInput && isSufficient && user && <button className="wrapper" onClick={submit}>{"Buchen"}</button>}
             {/* <BarcodeScannerComponent
                 width={500}
                 height={500}
@@ -162,9 +126,7 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrbox={250}
                 disableFlip={false}
                 qrCodeSuccessCallback={onNewScanResult}/> */}
-               {/* <p>{data}</p> */}
+      <p>{data}</p>
         </div>
-        <BookingInfo show={user != null} user={user} booking={booking} />
-        </>
     );
 }
