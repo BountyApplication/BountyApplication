@@ -14,15 +14,17 @@ ProductDisplay.propTypes = {
     })).isRequired,
     setProducts: PropTypes.func.isRequired,
     isSufficient: PropTypes.bool,
+    availableBalance: PropTypes.number,
 };
 
 ProductDisplay.defaultProps = {
     products: [],
     setProducts: (p) => {},
     isSufficient: true,
+    availableBalance: 0,
 };
 
-export default function ProductDisplay({products, setProducts, isSufficient}) {
+export default function ProductDisplay({products, setProducts, isSufficient, availableBalance}) {
     // vars
     // const [shift, setShift] = useState(false);
     const [increment, setIncrement] = useState(1);
@@ -67,7 +69,7 @@ export default function ProductDisplay({products, setProducts, isSufficient}) {
             <Card.Body>
                 <Row className="gap-2">
                     {products.map(({id, name, price, amount}) => 
-                    <Product tryRemove={tryRemove} increment={increment} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
+                    <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
                 )}
                 </Row>
             </Card.Body>

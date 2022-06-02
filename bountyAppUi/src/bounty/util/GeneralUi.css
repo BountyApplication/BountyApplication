@@ -80,3 +80,7 @@
         width: 90%;
     }
 }
+
+.card.disabled {
+    background-color: lightgrey;
+}

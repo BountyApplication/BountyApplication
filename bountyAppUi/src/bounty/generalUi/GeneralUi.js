@@ -136,7 +136,7 @@ export default function GeneralUi({showAdminLink = false}) {
             <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>
                 <div>
-                    <Row className="m-0 p-3"><ProductDisplay tryRemove={!isSufficient} products={products} setProducts={setProducts} /></Row>
+                    <Row className="m-0 p-3"><ProductDisplay availableBalance={booking.newBalance} isSufficient={!isSufficient} products={products} setProducts={setProducts} /></Row>
                     <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
                     <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
                     <Row className="m-0 p-3 justify-content-evenly"><Col className='col-auto'><BalanceInfos balance={userBalance} sum={total} /></Col>
