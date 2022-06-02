@@ -82,5 +82,7 @@
 }
 
 .card.disabled {
-    background-color: lightgrey;
+    /* background-color: lightgrey; */
+    /* color: grey;
+    border-color: grey; */
 }

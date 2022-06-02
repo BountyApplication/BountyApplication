@@ -30,9 +30,12 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
     const [increment, setIncrement] = useState(1);
 
     const shift = useKeyPress('Shift');
+    console.log(shift);
 
     // temp vars
     const tryRemove = shift || !isSufficient;
+    console.log(tryRemove);
+    console.log(isSufficient);
 
     // helper function
     function handleProductClick(id, remove = tryRemove) {
