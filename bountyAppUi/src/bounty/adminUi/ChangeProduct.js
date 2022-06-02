@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
 import NumberInput from '../util/NumberInput';
 import { changeProduct } from '../util/Database';
+import {Form, Button, Collapse} from 'react-bootstrap';
+import Input from '../util/Input';
 
 export default function ChangeProduct(props) {
     // vars
@@ -46,10 +48,16 @@ export default function ChangeProduct(props) {
     function changeProductUi() {
         return(
             <div>
-                <div className='wrapper'>{"Name: "} <input value={updatedProduct.name} onChange={event=>{setUpdatedProduct({...updatedProduct, name: event.target.value})}} /></div>
-                <div className='wrapper'>{"Price: "} <NumberInput value={updatedProduct.price} setValue={value => setUpdatedProduct({...updatedProduct, price: value})} /></div>
-                {updatedProduct!==product && <button className='wrapper' onClick={reset.bind(this)}>{"reset"}</button>}
-                {updatedProduct!==product && <button className='wrapper' onClick={submit.bind(this)}>{"submit"}</button>}
+                <Form>
+                    <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
+                    <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
+                    <Collapse in={updatedProduct!==product}>
+                        <div>
+                            <Button variant="secondary" type="reset" className='mb-2' onClick={reset.bind(this)}>{"reset"}</Button>
+                            <Button type="submit" className='ms-2 mb-2' onClick={submit.bind(this)}>{"submit"}</Button>
+                        </div>
+                    </Collapse>
+                </Form>
             </div>
         );
     }
@@ -57,8 +65,12 @@ export default function ChangeProduct(props) {
     return(
         <div className='rubric'>
             <div className='title'>{"Change Product"}</div>
-            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true}/>
-            {updatedProduct!=null && changeProductUi()}
+            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true} />
+            <Collapse in={updatedProduct}>
+                <div>
+                    {updatedProduct && changeProductUi()} 
+                </div>
+            </Collapse>
         </div>
     );
 }
