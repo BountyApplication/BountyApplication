@@ -21,7 +21,7 @@ Product.defaultProps = {
 };
 
 export default function Product({id, name, price, amount, onClick, tryRemove, increment, availableBalance}) {
-    const disabled = (tryRemove&&amount<increment) || availableBalance < price*increment;
+    const disabled = (tryRemove&&amount<increment) || (!tryRemove&&availableBalance < price*increment);
     return(
         <Card className={`w-auto p-0 ${disabled ? 'disabled text-secondary' : ''}`} border={disabled?'secondary':"primary"}>
             <Card.Body className="p-2 pb-1">
