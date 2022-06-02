@@ -42,6 +42,23 @@ export function getProducts() {
         { id: 16, name: "ESP", price: 5 },
         { id: 17, name: "Bonbon", price: .05 },
         { id: 18, name: "Schokoriegel", price: .7},
+        { id: 19, name: "Loli", price: .5 },
+        { id: 20, name: "Kracher", price: .1 },
+        { id: 21, name: "Slush", price: .2 },
+        { id: 22, name: "M&M", price: .3 },
+        { id: 23, name: "Schlangen", price: .1 },
+        { id: 24, name: "Snickers", price: .6 },
+        { id: 25, name: "T-shirt", price: 15 },
+        { id: 26, name: "Cappy", price: 8 },
+        { id: 27, name: "CD", price: 10 },
+        { id: 28, name: "Bibel", price: 20 },
+        { id: 29, name: "Sprudel", price: 0.8 },
+        { id: 30, name: "Apfelschorle", price: 1 },
+        { id: 32, name: "Cola", price: 1.5 },
+        { id: 33, name: "Reis", price: 2 },
+        { id: 34, name: "ESP", price: 5 },
+        { id: 35, name: "Bonbon", price: .05 },
+        { id: 36, name: "Schokoriegel", price: .7},
     ];
 
     // add amount property
@@ -57,10 +74,10 @@ export function getUserBalance(id) {
 export function getLastBookings() {
     //do server 
     const bookings = [
-        {id: 0, amount: -5.3}, 
-        {id: 1, amount: -0.83, correction: +2.1},
-        {id: 2, amount: -1.4},
-        {id: 3, amount: 5},
+        {id: 0, sum: -5.3, products: [{ name: 'Cola', price: 0.5, amount: 2 }, { name: 'Bonbon', price: 0.05, amount: 10 }]}, 
+        {id: 1, sum: -0.83, correction: +2.1, products: [{ name: 'ESP', price: 5, amount: 10 }, { name: 'Slush', price: 0.20, amount: 3 }]},
+        {id: 2, sum: -1.4, products: [{ name:'Bibel', price: 15, amount: 1 }, { name: 'T-shirt', price: 12, amount: 1 }, { name: 'Cola', price: 0.5, amount: 2 }, { name: 'Bonbon', price: 0.05, amount: 10 }]},
+        {id: 3, sum: 5, products: [{ name: 'Cola', price: 0.5, amount: 2 }, { name: 'Bonbon', price: 0.05, amount: 10 }]},
     ];
     return bookings;
 }
