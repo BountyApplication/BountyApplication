@@ -28,8 +28,8 @@ export default function Product({id, name, price, amount, onClick, tryRemove}) {
                 
                 <Card.Text className='mb-1 mt-0'>{`${price.toFixed(2)}€`}</Card.Text>
                 
-                <p className="d-inline border border-dark rounded px-3 pt-2 pb-2">{amount}</p>
-                <Button className="ms-2 mb-1" style={{width: '3.5rem'}} variant="outline-primary" onClick={onClick.bind(null, id)}>
+                <Button className="me-1" variant="outline-secondary" onClick={onClick.bind(null, id, true)}>{amount}</Button>
+                <Button className="" style={{width: '3.5rem'}} variant="outline-primary" onClick={onClick.bind(null, id, undefined)}>
                     {tryRemove?"del.":"add"}
                 </Button>
             </Card.Body>

@@ -29,14 +29,15 @@ export default function ProductDisplay({products, setProducts, isSufficient}) {
     const tryRemove = remove || !isSufficient;
 
     // helper function
-    const handleProductClick = (id) => {
+    const handleProductClick = (id, remove = tryRemove) => {
         const product = products.find(product => product.id === id);
         if(!product) return;
-        if(tryRemove && product.amount === 0) return;
-        const newAmount = product.amount + (tryRemove ? -1 : 1);
+        if(remove && product.amount === 0) return;
+        const newAmount = product.amount + (remove ? -1 : 1);
         const updatedProduct = { ...product, amount: newAmount};
         const updatedProducts = products.map(product => product.id===id ? updatedProduct : product)
         setProducts(updatedProducts);
+        console.log(remove);
     }
 
     useEffect(() => {

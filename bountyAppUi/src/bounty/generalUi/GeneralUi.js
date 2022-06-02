@@ -37,12 +37,12 @@ export default function GeneralUi({showAdminLink = false}) {
     const isSufficient = total<=userBalance;
     const hasInput = (total!==0 || correctionPlus || paymentIn);
     const booking = {
-        old: userBalance,
-        new: userBalance-total,
-        sum: sum,
+        oldBalance: userBalance,
+        newBalance: userBalance-total,
+        productSum: sum,
         correction: -correctionMinus+correctionPlus,
         cashPayment: -paymentOut+paymentIn,
-        products: products,
+        products: products.filter(({amount}) => amount !== 0),
     };
 
     // executes in beginning
@@ -102,13 +102,17 @@ export default function GeneralUi({showAdminLink = false}) {
         let correctionTotal = correctionPlus - correctionMinus;
         let cashPaymentTotal = paymentIn - paymentOut;
         
-        let booking = [
+        // let booking = [
+        //     {id: 0, name: "correction", amount: correctionTotal},
+        //     {id: 1, name: "cashpayment", amount: cashPaymentTotal},
+        // ].concat(products);
+        booking.products.concat([
             {id: 0, name: "correction", amount: correctionTotal},
             {id: 1, name: "cashpayment", amount: cashPaymentTotal},
-        ].concat(products);
+        ]);
 
         // filter out unbought products
-        booking = booking.filter(({amount}) => amount!==0);
+        // booking = booking.filter(({amount}) => amount!==0);
 
         if(debug) console.log(booking);
 

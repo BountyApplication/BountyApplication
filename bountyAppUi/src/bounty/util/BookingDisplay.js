@@ -1,9 +1,9 @@
 import {Table} from 'react-bootstrap';
 
-export default function BookingDisplay({booking}) {
+export default function BookingDisplay({className, booking}) {
     var count = 0;
     return(
-        <Table striped hover size="sm" className='m-0'>
+        <Table striped hover size="sm" className={className}>
             <thead>
                 <th>#</th>
                 <th>Produkt</th>
@@ -13,7 +13,7 @@ export default function BookingDisplay({booking}) {
             </thead>
             <tbody>
                 {booking.map(({name, price, amount}) => 
-                    <tr>
+                    <tr key={name}>
                         <td>{count++}</td>
                         <td>{name}</td>
                         <td>{amount}</td>

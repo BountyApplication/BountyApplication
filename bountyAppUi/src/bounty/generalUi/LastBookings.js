@@ -12,7 +12,7 @@ export default function LastBookings(props) {
                     <Accordion.Item key={id} eventKey={id}>
                         <Accordion.Header>{`#${id} | Summe: ${sum}€ ${correction ? ` | Korrektur: ${correction>0?"+":""}${(correction.toFixed(2))}€` : ``} `}</Accordion.Header>
                         <Accordion.Collapse eventKey={id}><>
-                            <BookingDisplay booking={products}/></>
+                            <BookingDisplay className="m-0" booking={products}/></>
                         </Accordion.Collapse>
                     </Accordion.Item>
                 )}
