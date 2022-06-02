@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { getProducts } from './Database';
-import { Form, Button, Collapse } from 'react-bootstrap';
 
 const debug = true;
 
@@ -17,9 +16,6 @@ ProductSelect.propTypes = {
     useSubmit: PropTypes.bool,
     hideSubmit: PropTypes.bool,
     resetOnSubmit: PropTypes.bool,
-    isVertical: PropTypes.bool,
-
-    submitDescription: PropTypes.string,
 };
 
 ProductSelect.defaultProps = {
@@ -30,12 +26,9 @@ ProductSelect.defaultProps = {
     hideSubmit: false,
 
     resetOnSubmit: false,
-    isVertical: false,
-
-    submitDescription: "submit",
 };
 
-export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, submitDescription}) {
+export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit}) {
     // vars
     const [products, setProducts] = useState(getProducts);
     const [selectedProductId, setSelectedProductId] = useState(-1);
@@ -102,24 +95,17 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     }
 
     return(
-        <div className="wrapper p-2">
-            <Form className={!isVertical?'row':''}>
-                <Form.Group className="col mb-2" controlId={"productSelect"}>
-                    <Form.Label className="ps-1">{"Product:"} </Form.Label>
-                    <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
-                        {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
-                        {products.map(({id, name, price}) => {
-                            return <option key={id} value={id}>{getProductString(name, price)}</option>
-                        })}
-                    </Form.Select>
-                </Form.Group>
-                <Collapse className={`${!isVertical?'collapse-horizontal':''} me-2 mb-2`} in={useReset && (productSelected || !hideReset)}>
-                    <Button className="button align-self-end" variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>
-                </Collapse>
-                <Collapse className={`${!isVertical?'collapse-horizontal':''} mb-2`} in={useSubmit && (productSelected || !hideSubmit)}>
-                    <Button className="button align-self-end" variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
-                </Collapse>
-            </Form>
+        <div className="wrapper">
+            <div className='wrapper'>{"Product: "}
+                <select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
+                    {<option value={-1}>{""}</option>}
+                    {products.map(({id, name, price}) => {
+                        return <option key={id} value={id}>{getProductString(name, price)}</option>
+                    })}
+                </select>
+            </div>
+            {useReset  && (!hideReset  || productSelected) &&   <button className='wrapper' onClick={reset}>{"reset"}</button>}
+            {useSubmit && (!hideSubmit || productSelected) &&   <button className='wrapper' onClick={submit}>{"submit"}</button>}
         </div>
     );
 }
