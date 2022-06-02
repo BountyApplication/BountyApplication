@@ -1,14 +1,19 @@
-// import '../App.css';
 import React, {useState} from 'react';
 import NumberInput from '../util/NumberInput';
-import {Form, FormControl, FormGroup, InputGroup} from 'react-bootstrap';
+import {Form, Button, Collapse, Alert} from 'react-bootstrap';
 import { addUser } from '../util/Database';
+import TextInput from '../util/TextInput';
+import Input from '../util/Input';
+import Warning from '../util/Warning';
+import Confirm from '../util/Confirm';
 
 export default function Add(props) {
     // vars
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [balance, setBalance] = useState();
+    const [showWarning, setShowWarning] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     function reset() {
         setFirstname("");
@@ -19,34 +24,37 @@ export default function Add(props) {
     function submit() {
         if(firstname === "" || lastname === "" || balance === null || isNaN(balance)) {
             console.log("Error no valid entries");
-            window.alert("Error: no valid entries");
+            setShowWarning(true);
             return;
         }
-        if(window.confirm("Add  "+firstname+" "+lastname+" with a balance of "+balance+"€ ?")) {
-            console.log(`Add User: ${firstname} ${lastname} (${balance}€)`);
-            addUser(firstname, lastname, balance);
+        setShowConfirm(true);   
+    }
 
-            reset();
-        }       
+    function run() {
+        console.log(`Add User: ${firstname} ${lastname} (${balance}€)`);
+        addUser(firstname, lastname, balance);
+
+        reset();
     }
 
     return(
+        <>
+        {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}{
+        showConfirm ? <Confirm text={`Willst du den User [${firstname} ${lastname}] mit einem Kontostand von ${balance}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
         <div className='rubric'>
-            <div className='title'>{"Add "}</div>
+            <div className='title'>{"Add User"}</div>
             <Form>
-                <FormGroup>
-                    <Form.Label>Vorname</Form.Label>
-                    <InputGroup>
-                        <FormControl type="text" placeholder="Vorname" value={firstname} onChange={event => setFirstname(event.target.value)}/>
-                        <InputGroup.Text>€</InputGroup.Text>
-                    </InputGroup>
-                </FormGroup>
+                <Input title="Vorname" value={firstname} setValue={setFirstname}/>
+                <Input title="Nachname" value={lastname} setValue={setLastname}/>
+                <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
+                <Collapse in={(firstname!=="" || lastname!=="" || balance!=null)}>
+                    <Button className="me-2 mb-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
+                </Collapse>
+                <Collapse in={(firstname!=="" && lastname!=="" && balance!=null)}>
+                    <Button className="mb-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
+                </Collapse>
             </Form>
-            <div className="wrapper">{"Vorname: "} <input className='wrapper' value={firstname} onChange={event => setFirstname(event.target.value)}/></div>
-            <div className="wrapper"> {"Nachname: "} <input className='wrapper' value={lastname} onChange={event => setLastname(event.target.value)} /></div><br className='wrapper' />
-            <div className='wrapper'>{"Kontostand: "} <NumberInput value={balance} setValue={setBalance} /></div>
-            {(firstname!=="" || lastname!=="" || balance!=null) && <button className="wrapper" onClick={reset}>{"reset"}</button>}
-            {(firstname!=="" && lastname!=="" && balance!=null) && <button className='wrapper' onClick={submit}>{"submit"}</button>}
-        </div>
+        </div>}
+        </>
     );
 }
