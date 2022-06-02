@@ -13,8 +13,7 @@ export function useKeyPress(targetKey) {
         return ({key}) => {
             if(key !== targetKey) return;
             setKeyPressed(isPressed);
-            if(keyPressed) return;
-
+            console.log("test");
         }
     }
 

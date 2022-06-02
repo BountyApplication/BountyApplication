@@ -15,7 +15,7 @@ RowText.defaultProps = {
 
 export default function RowText({className, left, right}) {
     return(
-        <Row className={"justify-content-between"}>
+        <Row className={"w-100 justify-content-between"}>
             <Col className={className}>{left}</Col>
             <Col className={className} style={{maxWidth: "max-content"}}>{right}</Col>
         </Row>
