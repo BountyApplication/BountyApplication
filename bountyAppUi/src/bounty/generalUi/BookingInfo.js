@@ -1,4 +1,4 @@
-import { Offcanvas, Row, Col, Collapse, Container } from "react-bootstrap";
+import { Offcanvas, Row, Col, Collapse } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import BookingDisplay from '../util/BookingDisplay';
 import RowText from '../util/RowText';
@@ -40,7 +40,7 @@ export default function BookingInfo({show, user, booking: {oldBalance, newBalanc
         </Offcanvas.Header>
         <Offcanvas.Body className="d-flex align-items-start flex-column">
             <Collapse in={oldBalance!=null}><RowText className={labelTextImportant} left={'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>
-            <Collapse className="mb-auto" in={products.length!==0}><div><BookingDisplay className="mt-3" booking={products.filter(({amount}) => amount!==0) } /></div></Collapse>
+            <Collapse className="mb-auto w-100" in={products.length!==0}><div><BookingDisplay className="mt-3" booking={products.filter(({amount}) => amount!==0) } /></div></Collapse>
             <Collapse in={productSum!==0}><RowText className={labelTextImportant} left={'Summe'} right={toCurrency(productSum)} /></Collapse>
             <Collapse in={correction!==0}><RowText className={labelText} left={'Korrektur'} right={toCurrency(correction)} /></Collapse>
             <Collapse in={cashPayment!==0}><RowText className={labelText} left={'Barzahlung'} right={toCurrency(cashPayment)} /></Collapse>
