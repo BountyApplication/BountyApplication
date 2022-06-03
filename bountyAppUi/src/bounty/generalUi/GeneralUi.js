@@ -143,12 +143,6 @@ export default function GeneralUi({showAdminLink = false}) {
                     <Col className="col-auto"><LastBookings /></Col></Row>
                 </div>
             </Collapse>
-            <Collapse in={hasInput}>
-                <Button type="reset" variant="secondary" className="mb-4" onClick={resetProducts}>{"reset"}</Button>
-            </Collapse>
-            <Collapse in={hasInput && isSufficient && user != null}>
-                <Button type="submit"  className="ms-2 mb-4" onClick={submit} >{"Buchen"}</Button>
-            </Collapse>
             {/* <BarcodeScannerComponent
                 width={500}
                 height={500}
@@ -162,9 +156,9 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrbox={250}
                 disableFlip={false}
                 qrCodeSuccessCallback={onNewScanResult}/> */}
-               {/* <p>{data}</p> */}
+            {/* <p>{data}</p> */}
         </div>
-        <BookingInfo show={user != null} user={user} booking={booking} />
+        <BookingInfo show={user != null} user={user} booking={booking} reset={resetProducts} submit={submit} />
         </>
     );
 }

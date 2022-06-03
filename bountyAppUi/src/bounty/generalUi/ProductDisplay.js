@@ -30,12 +30,9 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
     const [increment, setIncrement] = useState(1);
 
     const shift = useKeyPress('Shift');
-    console.log(shift);
-
+    
     // temp vars
     const tryRemove = shift || !isSufficient;
-    console.log(tryRemove);
-    console.log(isSufficient);
 
     // helper function
     function handleProductClick(id, remove = tryRemove) {
@@ -58,6 +55,7 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
     }, [increment])
     
     function checkKey({key}) {
+        if(document.activeElement.className==="form-control") return;
         const num = parseFloat(key);
         if(isNaN(num)) return;
         if(increment === num || (num === 0 && increment === 10)) return;
@@ -72,8 +70,8 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
             <Card.Body>
                 <Row className="gap-2">
                     {products.map(({id, name, price, amount}) => 
-                    <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
-                )}
+                        <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
+                    )}
                 </Row>
             </Card.Body>
         </Card>
