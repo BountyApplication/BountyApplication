@@ -3,8 +3,8 @@ import {Table} from 'react-bootstrap';
 export default function BookingDisplay({className, booking}) {
     var count = 0;
     return(
-        <Table striped hover size="sm" className={className}>
-            <thead>
+        <Table striped hover size="sm" className={className+" bookingDisplay"}>
+            <thead className='d-sticky'>
                 <th>#</th>
                 <th>Produkt</th>
                 <th>Stück</th>
