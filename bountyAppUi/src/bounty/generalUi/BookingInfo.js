@@ -33,8 +33,8 @@ BookingInfo.defaultProps = {
 };
 
 export default function BookingInfo({show, user, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}, reset, submit}) {
-    const labelText = "fs-4 mx-3";
-    const labelTextImportant = "fs-4 fw-bold mx-3";
+    const labelText = "fs-4 px-0";
+    const labelTextImportant = "fs-4 fw-bold px-0";
     const props = {className: labelText, style: {maxWidth: "auto"}};
     const hasInput = newBalance!==oldBalance || correction!==0 || cashPayment!==0
     return(
