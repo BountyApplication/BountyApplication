@@ -29,7 +29,7 @@ export default function Product({id, name, price, amount, onClick, tryRemove, in
                 
                 <Card.Text className='mb-1 mt-0'>{`${price.toFixed(2)}€`}</Card.Text>
                 
-                <Button className="me-1" variant="outline-secondary" onClick={onClick.bind(null, id, true)} disabled={disabled}>{amount}</Button>
+                <Button className="me-1" variant={disabled?'outline-danger':"outline-secondary"} onClick={onClick.bind(null, id, true)}>{amount}</Button>
                 <Button className="" style={{width: '3.5rem'}} variant={disabled?'outline-secondary': "outline-primary"} onClick={onClick.bind(null, id, undefined)} disabled={disabled}>
                     {increment===1 ? (tryRemove?"del.":"add") : ((tryRemove?'-':'+')+increment)}
                 </Button>
