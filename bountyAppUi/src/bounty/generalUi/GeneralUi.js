@@ -8,8 +8,8 @@ import CashPayment from './ChashPayment';
 import LastBookings from './LastBookings';
 import { getProducts, getUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
-import Html5QrcodePlugin from '../util/scanner';
-import { Col, Row, Container, Collapse, Button } from 'react-bootstrap';
+// import Html5QrcodePlugin from '../util/scanner';
+import { Col, Row, Collapse } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
 
 const debug = true;

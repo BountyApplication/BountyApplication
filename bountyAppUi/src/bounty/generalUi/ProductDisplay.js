@@ -30,6 +30,7 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
     const [increment, setIncrement] = useState(1);
 
     const shift = useKeyPress('Shift');
+    // const back = useKeyPress('Back')
     
     // temp vars
     const tryRemove = shift || !isSufficient;
@@ -56,6 +57,7 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
     
     function checkKey({key}) {
         if(document.activeElement.className==="form-control") return;
+        if(key === 'Delete' || key === "Escape" || key === "Backspace") return setIncrement(1);
         const num = parseFloat(key);
         if(isNaN(num)) return;
         if(increment === num || (num === 0 && increment === 10)) return;
