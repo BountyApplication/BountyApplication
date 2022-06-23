@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Card, Button, Container,Row, Col, CardTitle } from 'react-bootstrap';
+import {Card, Button} from 'react-bootstrap';
 
 Product.propTypes = {
     id: PropTypes.number.isRequired,

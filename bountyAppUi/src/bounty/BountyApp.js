@@ -4,7 +4,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
 } from "react-router-dom";
 import AdminUi from './adminUi/AdminUi';
 import GeneralUi from './generalUi/GeneralUi';

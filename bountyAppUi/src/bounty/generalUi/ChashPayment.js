@@ -1,6 +1,6 @@
 import Input from "../util/Input";
 import PropTypes from "prop-types";
-import { Card, Row, Col, Button } from "react-bootstrap";
+import { Card, Row, Button } from "react-bootstrap";
 import React, {useState} from 'react';
 
 CashPayment.propTypes = {

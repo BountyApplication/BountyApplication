@@ -5,6 +5,7 @@ import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
 import Input from './Input';
 
 const debug = true;
+const autoSelection = true;
 
 UserSelect.prototype = {
     title: PropTypes.string,
@@ -50,7 +51,12 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
     // set callback on beginning
     useEffect(() => {
       if(setResetCallback) setResetCallback(()=>reset);
-    }, []);
+    }, [setResetCallback]);
+
+    useEffect(() => {
+        if(!autoSelection) return;
+        if(filteredUsers.length === 1) setUser(filteredUsers[0]);
+    }, [filteredUsers])
 
     // runs if user selected
     useEffect(() => {

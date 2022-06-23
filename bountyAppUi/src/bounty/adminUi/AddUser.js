@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
-import NumberInput from '../util/NumberInput';
-import {Form, Button, Collapse, Alert} from 'react-bootstrap';
+import {Form, Button, Collapse} from 'react-bootstrap';
 import { addUser } from '../util/Database';
-import TextInput from '../util/TextInput';
 import Input from '../util/Input';
 import Warning from '../util/Warning';
 import Confirm from '../util/Confirm';

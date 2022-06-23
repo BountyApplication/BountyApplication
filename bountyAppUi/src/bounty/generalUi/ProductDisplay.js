@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Product from './Product';
 import PropTypes from "prop-types";
-import { Card, CardGroup, Row, Col } from 'react-bootstrap';
-import CardHeader from 'react-bootstrap/esm/CardHeader';
+import { Card, Row } from 'react-bootstrap';
 import { useKeyPress } from '../util/Util';
 
 ProductDisplay.propTypes = {

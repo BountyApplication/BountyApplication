@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
-import NumberInput from '../util/NumberInput';
 import { changeProduct } from '../util/Database';
 import {Form, Button, Collapse} from 'react-bootstrap';
 import Input from '../util/Input';

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { getUsers } from './Database';
-import { Container, Row, Col, Collapse, Form, Button } from 'react-bootstrap';
+import { Container, Col, Collapse, Form, Button } from 'react-bootstrap';
 
 const debug = true;
 

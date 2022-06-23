@@ -1,6 +1,5 @@
 import { getLastBookings } from "../util/Database";
-import { Accordion, ListGroup } from "react-bootstrap";
-import AccordionHeader from "react-bootstrap/esm/AccordionHeader";
+import { Accordion } from "react-bootstrap";
 import BookingDisplay from "../util/BookingDisplay";
 
 export default function LastBookings(props) {

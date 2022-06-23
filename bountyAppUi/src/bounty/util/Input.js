@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {Container, Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
+import {Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
 
 Input.propTypes = {
     className: PropTypes.string,

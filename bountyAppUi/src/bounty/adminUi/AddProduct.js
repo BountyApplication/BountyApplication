@@ -1,14 +1,11 @@
 import React, {useState} from 'react';
-import NumberInput from '../util/NumberInput';
 import { addProduct } from '../util/Database';
 import { Form, Button, Collapse } from 'react-bootstrap';
 import Input from '../util/Input';
 import Warning from '../util/Warning';
 import Confirm from '../util/Confirm';
 
-const debug = true;
-
-export default function AddProduct({}) {
+export default function AddProduct() {
     //vars
     const [productName, setProductName] = useState("");
     const [productPrice, setProductPrice] = useState(null);
