@@ -11,6 +11,7 @@ import { getProducts, getUserBalance, commitBooking } from '../util/Database';
 // import Html5QrcodePlugin from '../util/scanner';
 import { Col, Row, Collapse } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
+import { useKeyPress } from '../util/Util';
 
 const debug = true;
 
@@ -27,15 +28,17 @@ export default function GeneralUi({showAdminLink = false}) {
     const [products, setProducts] = useState(getProducts());
     
     const [resetUserCallback, setResetUserCallback] = useState();
+    
+    const [openUserSelect, setOpenUserSelect] = useState(true);
 
     const [data, setData] = useState('No result');
-    const [width, setWidth] = useState(0);
+
+    if(useKeyPress("Escape") && openUserSelect) setOpenUserSelect(false);
 
     // temp vars for easier access
     const sum = calculateSum();
     const total = calculateTotal();
     const isSufficient = total<=userBalance;
-    const hasInput = (total!==0 || correctionPlus || paymentIn);
     const booking = {
         oldBalance: userBalance,
         newBalance: userBalance-total,
@@ -45,19 +48,11 @@ export default function GeneralUi({showAdminLink = false}) {
         products: products.filter(({amount}) => amount !== 0),
     };
 
-    // executes in beginning
     useEffect(() => {
-        window.addEventListener('resize', updateWindowDimensions)
+        if(user == null) return;
+        setOpenUserSelect(false);
+    }, [user]);
 
-        return () => {
-            window.removeEventListener('resize', updateWindowDimensions)
-        }
-    }, []);
-
-    function updateWindowDimensions() {
-        setWidth(window.innerWidth)
-    }
-    
     // get user balance when user gets selected
     useEffect(() => {
         if(!user) return;
@@ -78,6 +73,7 @@ export default function GeneralUi({showAdminLink = false}) {
     function resetUser() {
         setUser(null);
         setUserBalance(null);
+        setOpenUserSelect(true);
     }
 
     function runResetUser() {
@@ -135,9 +131,9 @@ export default function GeneralUi({showAdminLink = false}) {
 
     return(
         <>
-        <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
+        <div className="main" style={{width: '80vw'}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
+            <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} closeCallback={setOpenUserSelect.bind(this, false)} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>
                 <div>
                     <Row className="m-0 p-3"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>
@@ -162,7 +158,7 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrCodeSuccessCallback={onNewScanResult}/> */}
             {/* <p>{data}</p> */}
         </div>
-        <BookingInfo show={user != null} user={user} resetUserCallback={runResetUser} booking={booking} reset={resetProducts} submit={submit} />
+        <BookingInfo show={true} user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} reset={resetProducts} submit={submit} />
         </>
     );
 }

@@ -67,22 +67,3 @@
     min-width: min-content;
     height: max-content;
 }
-
-.offcanvas {
-  width: 370px;
-}
-
-@media (max-width: 992px) {
-    .offcanvas {
-        position: relative;
-        margin-left: 5%;
-        border: 0;
-        width: 90%;
-    }
-}
-
-.card.disabled {
-    /* background-color: lightgrey; */
-    /* color: grey;
-    border-color: grey; */
-}

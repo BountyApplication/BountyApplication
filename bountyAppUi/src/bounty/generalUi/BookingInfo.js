@@ -8,7 +8,7 @@ import React from 'react';
 BookingInfo.propTypes = {
     show: PropTypes.bool.isRequired,
     user: PropTypes.object,
-    resetUserCallback: PropTypes.func,
+    openUserSelectCallback: PropTypes.func,
     booking: PropTypes.shape({
         id: PropTypes.number,
         oldBalance: PropTypes.number,
@@ -35,37 +35,33 @@ BookingInfo.defaultProps = {
 };
 
 UserButton.propTypes = {
-    user: PropTypes.object.isRequired,
-    resetUserCallback: PropTypes.func.isRequired,
+    user: PropTypes.object,
+    openUserSelectCallback: PropTypes.func,
 }
 
-function UserButton({user, resetUserCallback}) {
-    const {firstname, lastname} = user;
+function UserButton({user, openUserSelectCallback}) {
     return <OverlayTrigger
         placement={'auto'}
         overlay={
             <Tooltip>
-                { user == null ? 'User auswählen' : 'User neu auswählen' }
+                { user == null ? 'Benutzer auswählen' : 'Benutzer ändern' }
             </Tooltip>
         }
     >
-        <Button variant="secondary" onClick={resetUserCallback}>{ user == null ? 'kein User' : `${firstname} ${lastname}` }</Button>
+        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Benutzer' : `${user.firstname} ${user.lastname}` }</Button>
     </OverlayTrigger>
 }
 
-export default function BookingInfo({show, user, resetUserCallback, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}, reset, submit}) {
+export default function BookingInfo({show, user, openUserSelectCallback, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}, reset, submit}) {
     const labelText = "fs-4 px-0";
     const labelTextImportant = "fs-4 fw-bold px-0";
-    const props = {className: labelText, style: {maxWidth: "auto"}};
-    const hasInput = newBalance!==oldBalance || correction!==0 || cashPayment!==0
+    const hasInput = user != null && (newBalance!==oldBalance || correction!==0 || cashPayment!==0)
     const ref = React.createRef();
-
     return(
-    <Offcanvas show={show} placement={'end'} backdrop={false} scroll={true}>
+    <Offcanvas className="" style={{width: '20vw'}} show={show} placement={'end'} backdrop={false} scroll={true}>
         <Offcanvas.Header className="pb-0">
             <Offcanvas.Title className="fs-3 fw-bold">Buchung</Offcanvas.Title>
-            {/* <p>{user?`${user.firstname} ${user.lastname}`:null}</p> */}
-            <UserButton user={user} resetUserCallback={resetUserCallback} />
+            <UserButton user={user} openUserSelectCallback={openUserSelectCallback} />
         </Offcanvas.Header>
         <Offcanvas.Body className="d-flex align-items-center flex-column">
             <Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>
@@ -75,8 +71,8 @@ export default function BookingInfo({show, user, resetUserCallback, booking: {ol
             <Collapse in={cashPayment!==0}><RowText ref={ref} className={labelText} left={'Barzahlung'} right={toCurrency(cashPayment)} /></Collapse>
             <Collapse in={hasInput} >
                 <Row className="w-100">
-                    <Button className="col my-1" type="reset" variant="secondary" onClick={reset}>{"reset"}</Button>
-                    <Button className="col ms-2 my-1" type="submit" variant={newBalance<0?'secondary':'primary'} disabled={newBalance<0} onClick={submit} >{"Buchen"}</Button>
+                    <Button className="col my-1" type="reset" variant="secondary" onClick={reset}>Zurücksetzten</Button>
+                    <Button className="col ms-2 my-1" type="submit" variant={newBalance<0?'secondary':'primary'} disabled={newBalance<0} onClick={submit} >Buchen</Button>
                 </Row>
             </Collapse>
             <Collapse in={hasInput}><RowText ref={ref} className={labelTextImportant} left={'Neu'} right={toCurrency(newBalance)} /></Collapse>

@@ -9,8 +9,10 @@ const debug = true;
 UserSelect.prototype = {
     title: PropTypes.string,
     submitDescription: PropTypes.string,
+    show: PropTypes.bool,
 
     // callbacks
+    closeCallback: PropTypes.func,
     runCallback: PropTypes.func,
     resetCallback: PropTypes.func,
     setResetCallback: PropTypes.func,
@@ -25,7 +27,8 @@ UserSelect.prototype = {
 
 UserSelect.defaultProps = {
     title: "Suchen",
-    submitDescription: "submit",
+    submitDescription: "Bestätigen",
+    show: false,
 
     useReset: false,
     useSubmit: false,
@@ -34,12 +37,11 @@ UserSelect.defaultProps = {
     hideSubmit: false,
 };
 
-function UserSelect({title, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
+function UserSelect({show, title, closeCallback, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
     // vars
     const [input, setInput] = useState("");
     const [users, setUsers] = useState(getUsers());
     const [user, setUser] = useState(null);
-    const [isSubmitted, setIsSubmitted] = useState(false);
 
     // temp var for easier access
     const hasInput = input !== '';
@@ -72,7 +74,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
     
     function checkName(name) {
         if(!hasInput) return true;
-        return input.split(" ").some(v => v!=='' && name.includes(v));
+        return input.toLocaleLowerCase().split(" ").some(v => v!=='' && name.toLocaleLowerCase().includes(v));
     }
 
     // sortes user selection alphabetically
@@ -102,7 +104,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
             return;
         }
 
-        setIsSubmitted(true);
+        closeCallback();
 
         if(runCallback != null) runCallback(user);
     }
@@ -110,8 +112,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
     function reset() {
         setInput('');
         setUser(null);
-        setIsSubmitted(false);
-        if(resetCallback != null && isSubmitted) resetCallback();
+        if(resetCallback != null) resetCallback();
     }
 
     function displayUsers() {
@@ -137,7 +138,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
 
     function searchUi() {
         return <div>
-            <Input value={input} setValue={setInput} title={"search user"} />
+            <Input value={input} setValue={setInput} title={title} />
             {displayUsers()}
         </div>
     }
@@ -149,9 +150,9 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
     }
     
     return(
-        <Modal show={user == null || !isSubmitted}>
-            <Modal.Header closeButton>
-                <Modal.Title className='fs-2'>User Selection</Modal.Title>
+        <Modal show={show}>
+            <Modal.Header closeButton onClick={closeCallback}>
+                <Modal.Title className='fs-2'>Benutzer Auswahl</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
@@ -161,7 +162,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
 
             <Modal.Footer>
                 <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
-                    <Button variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>
+                    <Button variant="secondary" type="reset" onClick={reset}>Zurücksetzten</Button>
                 </Collapse>
                 <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
                     <Button variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
