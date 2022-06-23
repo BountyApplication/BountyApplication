@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Link} from "react-router-dom";
 import ProductDisplay from './ProductDisplay';
-import UserSelect from '../util/UserSelect';
+import UserSelect from '../util/CombinedUserSearch';
 import BalanceInfos from './BalanceInfos';
 import BalanceCorrection from './BalanceCorrection';
 import CashPayment from './ChashPayment';

@@ -5,11 +5,13 @@ export default function BookingDisplay({className, booking}) {
     return(
         <Table striped hover size="sm" className={className+" bookingDisplay"}>
             <thead className='d-sticky'>
-                <th>#</th>
-                <th>Produkt</th>
-                <th>Stück</th>
-                <th>Preis</th>
-                <th>Summe</th>
+                <tr>
+                    <th>#</th>
+                    <th>Produkt</th>
+                    <th>Stück</th>
+                    <th>Preis</th>
+                    <th>Summe</th>
+                </tr>
             </thead>
             <tbody>
                 {booking.map(({name, price, amount}) => 
