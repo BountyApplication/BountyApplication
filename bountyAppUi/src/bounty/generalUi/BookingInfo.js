@@ -1,4 +1,4 @@
-import { Offcanvas, Collapse, Button, Row } from "react-bootstrap";
+import { Offcanvas, Collapse, Button, Row, OverlayTrigger, Tooltip } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import BookingDisplay from '../util/BookingDisplay';
 import RowText from '../util/RowText';
@@ -8,6 +8,7 @@ import React from 'react';
 BookingInfo.propTypes = {
     show: PropTypes.bool.isRequired,
     user: PropTypes.object,
+    resetUserCallback: PropTypes.func,
     booking: PropTypes.shape({
         id: PropTypes.number,
         oldBalance: PropTypes.number,
@@ -33,17 +34,38 @@ BookingInfo.defaultProps = {
     submit: ()=>{},
 };
 
-export default function BookingInfo({show, user, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}, reset, submit}) {
+UserButton.propTypes = {
+    user: PropTypes.object.isRequired,
+    resetUserCallback: PropTypes.func.isRequired,
+}
+
+function UserButton({user, resetUserCallback}) {
+    const {firstname, lastname} = user;
+    return <OverlayTrigger
+        placement={'auto'}
+        overlay={
+            <Tooltip>
+                { user == null ? 'User auswählen' : 'User neu auswählen' }
+            </Tooltip>
+        }
+    >
+        <Button variant="secondary" onClick={resetUserCallback}>{ user == null ? 'kein User' : `${firstname} ${lastname}` }</Button>
+    </OverlayTrigger>
+}
+
+export default function BookingInfo({show, user, resetUserCallback, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}, reset, submit}) {
     const labelText = "fs-4 px-0";
     const labelTextImportant = "fs-4 fw-bold px-0";
     const props = {className: labelText, style: {maxWidth: "auto"}};
     const hasInput = newBalance!==oldBalance || correction!==0 || cashPayment!==0
     const ref = React.createRef();
+
     return(
     <Offcanvas show={show} placement={'end'} backdrop={false} scroll={true}>
         <Offcanvas.Header className="pb-0">
             <Offcanvas.Title className="fs-3 fw-bold">Buchung</Offcanvas.Title>
-            <p>{user?`${user.firstname} ${user.lastname}`:null}</p>
+            {/* <p>{user?`${user.firstname} ${user.lastname}`:null}</p> */}
+            <UserButton user={user} resetUserCallback={resetUserCallback} />
         </Offcanvas.Header>
         <Offcanvas.Body className="d-flex align-items-center flex-column">
             <Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>

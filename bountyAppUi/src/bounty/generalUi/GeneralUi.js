@@ -80,6 +80,11 @@ export default function GeneralUi({showAdminLink = false}) {
         setUserBalance(null);
     }
 
+    function runResetUser() {
+        if(resetUserCallback)
+            resetUserCallback();
+    }
+
     function resetProducts() { 
         setProducts(products.map(product => ({...product, amount: 0})));
         setCorrectionPlus(null);
@@ -118,8 +123,7 @@ export default function GeneralUi({showAdminLink = false}) {
 
         commitBooking(user.id, booking);
 
-        if(resetUserCallback)
-            resetUserCallback();
+        runResetUser();
 
         resetProducts();
     }
@@ -158,7 +162,7 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrCodeSuccessCallback={onNewScanResult}/> */}
             {/* <p>{data}</p> */}
         </div>
-        <BookingInfo show={user != null} user={user} booking={booking} reset={resetProducts} submit={submit} />
+        <BookingInfo show={user != null} user={user} resetUserCallback={runResetUser} booking={booking} reset={resetProducts} submit={submit} />
         </>
     );
 }
