@@ -26,12 +26,12 @@ export default function Input({className, type, title, placeholder, value, setVa
     function renderInput() {
         return(
             <FormControl type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
-                value={ type!=="number" ? value : !value ? " " : focused?value.toString():value.toFixed(2) }
+                value={ type!=="number" ? value : value == null ? " " : focused?value.toString():value.toFixed(2) }
                 onChange={event => {
                     if(type!=="number") return setValue(event.target.value);
                     
                     let newValue = parseFloat(event.target.value);
-                    setValue(Math.max(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100,0));
+                    setValue(isNaN(newValue)?null:Math.max(Math.floor(newValue*100+0.01)/100,0));
                 }}
                 onKeyPress={event => {
                     if(type!=="number") return;
