@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { getUsers } from './Database';
-import { Container, Collapse, Form, Button, Table } from 'react-bootstrap';
+import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
 import Input from './Input';
 
 const debug = true;
@@ -18,7 +18,9 @@ UserSelect.prototype = {
     // settings
     useReset: PropTypes.bool,
     useSubmit: PropTypes.bool,
-    resetOnSubmit: PropTypes.bool,   
+
+    hideReset: PropTypes.bool,
+    hideSubmit: PropTypes.bool,
 };
 
 UserSelect.defaultProps = {
@@ -28,16 +30,19 @@ UserSelect.defaultProps = {
     useReset: false,
     useSubmit: false,
 
-    resetOnSubmit: false,
+    hideReset: false,
+    hideSubmit: false,
 };
 
-function UserSelect({title, runCallback, resetCallback, setResetCallback, useReset, useSubmit, resetOnSubmit, submitDescription}) {
+function UserSelect({title, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
     // vars
     const [input, setInput] = useState("");
     const [users, setUsers] = useState(getUsers());
     const [user, setUser] = useState(null);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     // temp var for easier access
+    const hasInput = input !== '';
     const filteredUsers = getFilteredUsers();
 
     // set callback on beginning
@@ -57,7 +62,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
     }
 
     function checkUser(firstname, lastname) {
-        if(input === '') return true;
+        if(!hasInput) return true;
         let hasFirstname = checkName(firstname);
         let hasLastname = checkName(lastname);
         let inputsCount = input.split(' ').filter(input => input !== '').length;
@@ -66,7 +71,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
     }
     
     function checkName(name) {
-        if(input === '') return true;
+        if(!hasInput) return true;
         return input.split(" ").some(v => v!=='' && name.includes(v));
     }
 
@@ -96,14 +101,17 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
             window.alert(`Error: user selection ambiguous`);
             return;
         }
-        
+
+        setIsSubmitted(true);
+
         if(runCallback != null) runCallback(user);
-        if(resetOnSubmit) reset();
     }
 
     function reset() {
+        setInput('');
         setUser(null);
-        if(resetCallback != null) resetCallback();
+        setIsSubmitted(false);
+        if(resetCallback != null && isSubmitted) resetCallback();
     }
 
     function displayUsers() {
@@ -136,17 +144,30 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
 
     function displayUi() {
         return <div>
-            {user!=null && <p>{`${user.firstname} ${user.lastname}`}</p>}
-            {useReset   && <Button className="mb-3 mx-2 align-self-end button" variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>}
-            {useSubmit  && <Button className="me-2 mb-3 button" variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>}
+            {user!=null && <div><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
         </div>
     }
     
     return(
-        <Container className="w-25">
-            <Collapse in={user == null}>{searchUi()}</Collapse>
-            <Collapse in={user != null}>{displayUi()}</Collapse>
-        </Container>
+        <Modal show={user == null || !isSubmitted}>
+            <Modal.Header closeButton>
+                <Modal.Title className='fs-2'>User Selection</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+                <Collapse in={user == null}>{searchUi()}</Collapse>
+                <Collapse in={user != null}>{displayUi()}</Collapse>
+            </Modal.Body>
+
+            <Modal.Footer>
+                <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
+                    <Button variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>
+                </Collapse>
+                <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
+                    <Button variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
+                </Collapse>
+            </Modal.Footer>
+        </Modal>
     );
 }
 
