@@ -147,7 +147,7 @@ export default function GeneralUi({showAdminLink = false}) {
         <>
         <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} closeCallback={setOpenUserSelect.bind(this, false)} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
+            <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>
                 <div>
                     <Row className="m-0 p-3"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>

@@ -44,7 +44,7 @@ function UserButton({user, openUserSelectCallback}) {
         placement={'auto'}
         overlay={
             <Tooltip>
-                { user == null ? 'Benutzer auswählen' : 'Benutzer ändern' }
+                { user == null ? 'Benutzer auswählen [s]' : 'Benutzer ändern [s]' }
             </Tooltip>
         }
     >

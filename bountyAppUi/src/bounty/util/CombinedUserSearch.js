@@ -14,7 +14,7 @@ UserSelect.prototype = {
     show: PropTypes.bool,
 
     // callbacks
-    closeCallback: PropTypes.func,
+    setShow: PropTypes.func,
     runCallback: PropTypes.func,
     resetCallback: PropTypes.func,
     setResetCallback: PropTypes.func,
@@ -39,7 +39,7 @@ UserSelect.defaultProps = {
     hideSubmit: false,
 };
 
-function UserSelect({show, title, closeCallback, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
+function UserSelect({show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
     // vars
     const [input, setInput] = useState("");
     const [users, setUsers] = useState(getUsers());
@@ -53,14 +53,19 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
         submit();
     });
     
-    useKeyPress("Escape", () => {
+    useKeyPress('Escape', () => {
         if(!show) return;
         if(user!=null) return reset(); 
-        if(closeCallback!=null) closeCallback(false);
+        if(setShow!=null) setShow(false);
     });
+
+    useKeyPress('s', () => {
+        if(setShow!=null) setShow(true);
+    })
 
     // set callback on beginning
     useEffect(() => {
+        console.log("test");
       if(setResetCallback) setResetCallback(()=>reset);
     }, [setResetCallback]);
 
@@ -74,6 +79,12 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
         if(user == null) return;
         run();
     }, [user]);
+
+    useEffect(() => {
+        if(show) return;
+        if(input === '') return;
+        setInput('');
+    }, [show]);
 
     // filters for current selection (firstname or lastname)
     function getFilteredUsers() {
@@ -121,7 +132,7 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
             return;
         }
 
-        closeCallback();
+        setShow();
 
         if(runCallback != null) runCallback(user);
     }
@@ -155,7 +166,7 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
 
     function searchUi() {
         return <div>
-            <Input value={input} setValue={setInput} title={title} isFocused />
+            <Input value={input} setValue={setInput} title={title} isFocused={user==null} />
             {displayUsers()}
         </div>
     }
@@ -168,7 +179,7 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
     
     return(
         <Modal show={show}>
-            <Modal.Header closeButton onClick={closeCallback}>
+            <Modal.Header closeButton onClick={setShow}>
                 <Modal.Title className='fs-2'>Benutzer Auswahl</Modal.Title>
             </Modal.Header>
 

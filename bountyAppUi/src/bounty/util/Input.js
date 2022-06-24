@@ -1,7 +1,6 @@
 import React, {useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
-import { useKeyPress } from './Util';
 
 Input.propTypes = {
     className: PropTypes.string,
@@ -29,16 +28,17 @@ export default function Input({className, type, title, placeholder, value, setVa
     const inputElement = useRef(null);
 
     useEffect(() => {
-        if (inputElement.current) {
-            setTimeout(() => {
-                inputElement.current.focus();
-            }, 0);
-        }
-    }, []);
+        if(!isFocused) return;
+        if(!inputElement.current) return;
+
+        setTimeout(() => {
+            inputElement.current.focus();
+        }, 0);
+    }, [isFocused]);
 
     function renderInput() {
         return(
-            <FormControl ref={inputElement} type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
+            <FormControl autoFocus={isFocused} ref={inputElement} type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
                 value={ type!=="number" ? value : value == null ? " " : focused?value.toString():value.toFixed(2) }
                 onChange={event => {
                     if(type!=="number") return setValue(event.target.value);
