@@ -38,7 +38,7 @@ export default function Input({className, type, title, placeholder, value, setVa
 
     function renderInput() {
         return(
-            <FormControl autoFocus={isFocused} ref={inputElement} type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
+            <FormControl autoComplete='off' autoFocus={isFocused} ref={inputElement} type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
                 value={ type!=="number" ? value : value == null ? " " : focused?value.toString():value.toFixed(2) }
                 onChange={event => {
                     if(type!=="number") return setValue(event.target.value);

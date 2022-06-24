@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { getUsers } from './Database';
-import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
+import { Modal, Collapse, Form, Button, Table, Col } from 'react-bootstrap';
 import Input from './Input';
 import { useKeyPress } from './Util';
 
@@ -52,10 +52,14 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
     useKeyPress('Enter', () => {
         submit();
     });
+
+    useKeyPress('Delete', () => {
+        reset();
+    });
     
     useKeyPress('Escape', () => {
         if(!show) return;
-        if(user!=null) return reset(); 
+        // if(user!=null) return reset(); 
         if(setShow!=null) setShow(false);
     });
 
@@ -85,6 +89,11 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
         if(input === '') return;
         setInput('');
     }, [show]);
+
+    function updateInput(newInput) {
+        if(input === '' && newInput !== '') reset();
+        setInput(newInput);
+    }
 
     // filters for current selection (firstname or lastname)
     function getFilteredUsers() {
@@ -138,13 +147,12 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
     }
 
     function reset() {
-        setInput('');
         setUser(null);
         if(resetCallback != null) resetCallback();
     }
 
     function displayUsers() {
-        return <Form className='overflow-auto' style={{height: '30vh'}}>
+        return <Form className='overflow-auto' style={{maxHeight: '30vh'}}>
             <Table striped hover size="sm">
                 <thead>
                     <tr>
@@ -166,14 +174,13 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
 
     function searchUi() {
         return <div>
-            <Input value={input} setValue={setInput} title={title} isFocused={user==null} />
-            {displayUsers()}
+            <Input value={input} setValue={updateInput} title={title} isFocused={show} />
         </div>
     }
 
     function displayUi() {
         return <div>
-            {user!=null && <div><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
+            {user!=null && <div className='mb-3 ms-1'><p className='fs-3 d-inline'>aktueller Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
         </div>
     }
     
@@ -184,8 +191,9 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
             </Modal.Header>
 
             <Modal.Body>
-                <Collapse in={user == null}>{searchUi()}</Collapse>
+                <Collapse in={true}>{searchUi()}</Collapse>
                 <Collapse in={user != null}>{displayUi()}</Collapse>
+                <Collapse in={filteredUsers.length>1}>{displayUsers()}</Collapse>
             </Modal.Body>
 
             <Modal.Footer>
