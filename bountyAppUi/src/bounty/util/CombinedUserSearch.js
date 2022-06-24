@@ -69,7 +69,6 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
 
     // set callback on beginning
     useEffect(() => {
-        console.log("test");
       if(setResetCallback) setResetCallback(()=>reset);
     }, [setResetCallback]);
 
@@ -180,13 +179,13 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
 
     function displayUi() {
         return <div>
-            {user!=null && <div className='mb-3 ms-1'><p className='fs-3 d-inline'>aktueller Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
+            {user!=null && <div className='mb-3 ms-1'><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
         </div>
     }
     
     return(
         <Modal show={show}>
-            <Modal.Header closeButton onClick={setShow}>
+            <Modal.Header closeButton onClick={setShow.bind(this, false)}>
                 <Modal.Title className='fs-2'>Benutzer Auswahl</Modal.Title>
             </Modal.Header>
 
