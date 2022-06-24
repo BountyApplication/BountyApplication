@@ -155,7 +155,7 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
 
     function searchUi() {
         return <div>
-            <Input value={input} setValue={setInput} title={title} />
+            <Input value={input} setValue={setInput} title={title} isFocused />
             {displayUsers()}
         </div>
     }

@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {Form, FormControl, InputGroup, FloatingLabel} from 'react-bootstrap';
+import { useKeyPress } from './Util';
 
 Input.propTypes = {
     className: PropTypes.string,
@@ -9,6 +10,7 @@ Input.propTypes = {
     placeholder: PropTypes.string,
     value: PropTypes.any,
     setValue: PropTypes.func.isRequired,
+    isFocused: PropTypes.bool,
 };
 
 Input.defaultProps = {
@@ -17,15 +19,26 @@ Input.defaultProps = {
     title: "",
     placeholder: null,
     value: null,
+    isFocused: false,
     setValue: (v) => {},
 };
 
-export default function Input({className, type, title, placeholder, value, setValue}) {
+export default function Input({className, type, title, placeholder, value, setValue, isFocused}) {
     const [focused, setFocused] = useState(false);
+
+    const inputElement = useRef(null);
+
+    useEffect(() => {
+        if (inputElement.current) {
+            setTimeout(() => {
+                inputElement.current.focus();
+            }, 0);
+        }
+    }, []);
 
     function renderInput() {
         return(
-            <FormControl type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
+            <FormControl ref={inputElement} type={type==="number"?"number":"text"} placeholder={placeholder==null ?`${title===""?"Betrag":title} eingeben` : placeholder}
                 value={ type!=="number" ? value : value == null ? " " : focused?value.toString():value.toFixed(2) }
                 onChange={event => {
                     if(type!=="number") return setValue(event.target.value);
