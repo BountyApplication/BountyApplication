@@ -63,3 +63,15 @@
     min-width: min-content;
     height: max-content;
 }
+
+/* Enable darkmode in a Bootstrap Page
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--bs-dark);
+        color: var(--bs-light);
+        --body-bg: #000;
+        --body-color: #fff;
+    }
+} */
+
+/* @import "./Custom.scss"; */

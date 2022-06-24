@@ -1,0 +1,10 @@
+:root {
+    --body-bg: #fff;
+    --body-color: #000;
+}
+
+$white: var(--body-bg);
+$black: var(--body-color);
+$body-color: var(--body-color);
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";

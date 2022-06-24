@@ -33,6 +33,8 @@ export default function GeneralUi({showAdminLink = false}) {
 
     const [data, setData] = useState('No result');
 
+    const [width, setWidth] = useState(0);
+
     if(useKeyPress("Escape") && openUserSelect) setOpenUserSelect(false);
 
     // temp vars for easier access
@@ -52,6 +54,19 @@ export default function GeneralUi({showAdminLink = false}) {
         if(user == null) return;
         setOpenUserSelect(false);
     }, [user]);
+
+     // executes in beginning
+     useEffect(() => {
+        window.addEventListener('resize', updateWindowDimensions)
+
+        return () => {
+            window.removeEventListener('resize', updateWindowDimensions)
+        }
+    }, []);
+
+    function updateWindowDimensions() {
+        setWidth(window.innerWidth)
+    }
 
     // get user balance when user gets selected
     useEffect(() => {
@@ -131,7 +146,7 @@ export default function GeneralUi({showAdminLink = false}) {
 
     return(
         <>
-        <div className="main" style={{width: '80vw'}}>
+        <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} closeCallback={setOpenUserSelect.bind(this, false)} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>

@@ -58,7 +58,7 @@ export default function BookingInfo({show, user, openUserSelectCallback, booking
     const hasInput = user != null && (newBalance!==oldBalance || correction!==0 || cashPayment!==0)
     const ref = React.createRef();
     return(
-    <Offcanvas className="" style={{width: '20vw'}} show={show} placement={'end'} backdrop={false} scroll={true}>
+    <Offcanvas className="" style={{width: '370px'}} show={show} placement={'end'} backdrop={false} scroll={true}>
         <Offcanvas.Header className="pb-0">
             <Offcanvas.Title className="fs-3 fw-bold">Buchung</Offcanvas.Title>
             <UserButton user={user} openUserSelectCallback={openUserSelectCallback} />
