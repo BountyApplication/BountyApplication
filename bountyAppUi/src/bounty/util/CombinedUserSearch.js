@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { getUsers } from './Database';
 import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
 import Input from './Input';
+import { useKeyPress } from './Util';
 
 const debug = true;
 const autoSelection = true;
@@ -47,6 +48,16 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
     // temp var for easier access
     const hasInput = input !== '';
     const filteredUsers = getFilteredUsers();
+
+    useKeyPress('Enter', () => {
+        submit();
+    });
+    
+    useKeyPress("Escape", () => {
+        if(!show) return;
+        if(user!=null) return reset(); 
+        if(closeCallback!=null) closeCallback(false);
+    });
 
     // set callback on beginning
     useEffect(() => {
@@ -105,8 +116,8 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
     function submit() {
         // checks if result valid
         if(user == null) {
-            console.log(`Error: user selection ambiguous`);
-            window.alert(`Error: user selection ambiguous`);
+            console.log(`Error: No User selected!`);
+            window.alert(`Error: No User selected!`);
             return;
         }
 

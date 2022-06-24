@@ -35,12 +35,6 @@ export default function GeneralUi({showAdminLink = false}) {
 
     const [width, setWidth] = useState(0);
 
-    useKeyPress("Escape", () => {
-        if(!openUserSelect) return;
-        if(user!=null) return resetUser(); 
-        setOpenUserSelect(false);
-    });
-
     // temp vars for easier access
     const sum = calculateSum();
     const total = calculateTotal();
