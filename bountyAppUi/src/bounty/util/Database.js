@@ -12,7 +12,7 @@ export function getUsers() {
     // // do server
 
     // useEffect(() => {
-        console.log(doRequest('accounts')); 
+        // console.log(doRequest('accounts')); 
     // }, []);
 
     // useEffect(() => {
