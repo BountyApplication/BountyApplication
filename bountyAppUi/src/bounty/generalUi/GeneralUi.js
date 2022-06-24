@@ -89,6 +89,7 @@ export default function GeneralUi({showAdminLink = false}) {
         setUser(null);
         setUserBalance(null);
         setOpenUserSelect(true);
+        resetProducts();
     }
 
     function runResetUser() {
