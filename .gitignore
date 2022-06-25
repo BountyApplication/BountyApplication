@@ -148,3 +148,5 @@ bountyAppUi/node_modules/.cache/default-development/15.pack
 bountyAppUi/node_modules/.cache/default-development/16.pack
 bountyAppUi/node_modules/.cache/default-development/index.pack
 bountyAppUi/node_modules/.cache/default-development/index.pack.old
+bountyAppUi/node_modules
+node_modules
