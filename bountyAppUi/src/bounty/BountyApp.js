@@ -1,4 +1,4 @@
-import '../App.css';
+// import '../App.css';
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -8,6 +8,7 @@ import {
 import AdminUi from './adminUi/AdminUi';
 import GeneralUi from './generalUi/GeneralUi';
 import TicTacToe from '../TicTacToe';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "./util/GeneralUi.css"
 
 export default function BountyApp() {

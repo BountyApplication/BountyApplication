@@ -33,7 +33,7 @@ export default function GeneralUi({showAdminLink = false}) {
 
     const [data, setData] = useState('No result');
 
-    if(useKeyPress("Escape") && openUserSelect) setOpenUserSelect(false);
+    const [width, setWidth] = useState(0);
 
     // temp vars for easier access
     const sum = calculateSum();
@@ -52,6 +52,19 @@ export default function GeneralUi({showAdminLink = false}) {
         if(user == null) return;
         setOpenUserSelect(false);
     }, [user]);
+
+     // executes in beginning
+     useEffect(() => {
+        window.addEventListener('resize', updateWindowDimensions)
+
+        return () => {
+            window.removeEventListener('resize', updateWindowDimensions)
+        }
+    }, []);
+
+    function updateWindowDimensions() {
+        setWidth(window.innerWidth)
+    }
 
     // get user balance when user gets selected
     useEffect(() => {
@@ -74,6 +87,7 @@ export default function GeneralUi({showAdminLink = false}) {
         setUser(null);
         setUserBalance(null);
         setOpenUserSelect(true);
+        resetProducts();
     }
 
     function runResetUser() {
@@ -131,15 +145,15 @@ export default function GeneralUi({showAdminLink = false}) {
 
     return(
         <>
-        <div className="main" style={{width: '80vw'}}>
+        <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} closeCallback={setOpenUserSelect.bind(this, false)} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
+            <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>
                 <div>
                     <Row className="m-0 p-3"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>
                     <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
                     <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
-                    <Row className="m-0 p-3 justify-content-evenly"><Col className='col-auto'><BalanceInfos balance={userBalance} sum={total} /></Col>
+                    <Row className="m-0 p-3 justify-content-evenly">
                     <Col className="col-auto"><LastBookings /></Col></Row>
                 </div>
             </Collapse>

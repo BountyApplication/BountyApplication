@@ -1,6 +1,25 @@
+import {useState, useEffect} from 'react';
+
+function doRequest(topic) {
+    fetch("http://127.0.0.1:5000/bounty/"+topic)
+    .then(response => response.json())
+    .then((data) => { console.log(data); })
+}
+
 
 export function getUsers() {
-    // do server
+    // const [users, setUsers] = useState();
+    // // do server
+
+    // useEffect(() => {
+        // console.log(doRequest('accounts')); 
+    // }, []);
+
+    // useEffect(() => {
+    //     console.log(users);
+    // }, [users]);
+    
+
     return [
         { id: 0, lastname: "Mauch", firstname: "Josua" },
         { id: 1, lastname: "Tappe", firstname: "Isajah" },

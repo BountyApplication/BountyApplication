@@ -6,8 +6,15 @@ export function toCurrency(number) {
     return `${number.toFixed(2)}€`;
 }
 
-export function useKeyPress(targetKey) {
+export function useKeyPress(targetKey, callback) {
     const [keyPressed, setKeyPressed] = useState(false);
+
+    useEffect(() => {
+      if(!keyPressed) return;
+      if(callback == null) return;
+      callback();
+    }, [keyPressed]);
+
 
     function getHandler(isPressed) {
         return ({key}) => {
@@ -28,7 +35,6 @@ export function useKeyPress(targetKey) {
         window.removeEventListener("keyup", upHandler);
       }
     }, []);
-    
+        
     return keyPressed;
-    
 }

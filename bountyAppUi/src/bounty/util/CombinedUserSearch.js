@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { getUsers } from './Database';
-import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
+import { Modal, Collapse, Form, Button, Table, Col } from 'react-bootstrap';
 import Input from './Input';
+import { useKeyPress } from './Util';
 
 const debug = true;
 const autoSelection = true;
@@ -13,7 +14,7 @@ UserSelect.prototype = {
     show: PropTypes.bool,
 
     // callbacks
-    closeCallback: PropTypes.func,
+    setShow: PropTypes.func,
     runCallback: PropTypes.func,
     resetCallback: PropTypes.func,
     setResetCallback: PropTypes.func,
@@ -38,7 +39,7 @@ UserSelect.defaultProps = {
     hideSubmit: false,
 };
 
-function UserSelect({show, title, closeCallback, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
+function UserSelect({show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
     // vars
     const [input, setInput] = useState("");
     const [users, setUsers] = useState(getUsers());
@@ -47,6 +48,24 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
     // temp var for easier access
     const hasInput = input !== '';
     const filteredUsers = getFilteredUsers();
+
+    useKeyPress('Enter', () => {
+        submit();
+    });
+
+    useKeyPress('Delete', () => {
+        reset();
+    });
+    
+    useKeyPress('Escape', () => {
+        if(!show) return;
+        // if(user!=null) return reset(); 
+        if(setShow!=null) setShow(false);
+    });
+
+    useKeyPress('s', () => {
+        if(setShow!=null) setShow(true);
+    })
 
     // set callback on beginning
     useEffect(() => {
@@ -63,6 +82,17 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
         if(user == null) return;
         run();
     }, [user]);
+
+    useEffect(() => {
+        if(show) return;
+        if(input === '') return;
+        setInput('');
+    }, [show]);
+
+    function updateInput(newInput) {
+        if(input === '' && newInput !== '') reset();
+        setInput(newInput);
+    }
 
     // filters for current selection (firstname or lastname)
     function getFilteredUsers() {
@@ -105,24 +135,23 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
     function submit() {
         // checks if result valid
         if(user == null) {
-            console.log(`Error: user selection ambiguous`);
-            window.alert(`Error: user selection ambiguous`);
+            console.log(`Error: No User selected!`);
+            window.alert(`Error: No User selected!`);
             return;
         }
 
-        closeCallback();
+        setShow();
 
         if(runCallback != null) runCallback(user);
     }
 
     function reset() {
-        setInput('');
         setUser(null);
         if(resetCallback != null) resetCallback();
     }
 
     function displayUsers() {
-        return <Form className='overflow-auto' style={{height: '30vh'}}>
+        return <Form className='overflow-auto' style={{maxHeight: '30vh'}}>
             <Table striped hover size="sm">
                 <thead>
                     <tr>
@@ -144,26 +173,26 @@ function UserSelect({show, title, closeCallback, runCallback, resetCallback, set
 
     function searchUi() {
         return <div>
-            <Input value={input} setValue={setInput} title={title} />
-            {displayUsers()}
+            <Input value={input} setValue={updateInput} title={title} isFocused={show} />
         </div>
     }
 
     function displayUi() {
         return <div>
-            {user!=null && <div><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
+            {user!=null && <div className='mb-3 ms-1'><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
         </div>
     }
     
     return(
         <Modal show={show}>
-            <Modal.Header closeButton onClick={closeCallback}>
+            <Modal.Header closeButton onClick={setShow.bind(this, false)}>
                 <Modal.Title className='fs-2'>Benutzer Auswahl</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                <Collapse in={user == null}>{searchUi()}</Collapse>
+                <Collapse in={true}>{searchUi()}</Collapse>
                 <Collapse in={user != null}>{displayUi()}</Collapse>
+                <Collapse in={filteredUsers.length>1}>{displayUsers()}</Collapse>
             </Modal.Body>
 
             <Modal.Footer>

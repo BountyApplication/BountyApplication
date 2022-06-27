@@ -52,15 +52,14 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
         return (() => {
             document.removeEventListener("keydown", checkKey, false);
         });
-    }, [increment])
+    }, [])
     
     function checkKey({key}) {
         if(document.activeElement.className==="form-control") return;
         if(key === 'Delete' || key === "Escape" || key === "Backspace") return setIncrement(1);
         const num = parseFloat(key);
         if(isNaN(num)) return;
-        if(increment === num || (num === 0 && increment === 10)) return;
-        console.log(num);
+        // if(increment === num || (num === 0 && increment === 10)) return;
         if(num === 0) return setIncrement(10);
         setIncrement(Number(num));
     }
