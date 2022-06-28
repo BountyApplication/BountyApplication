@@ -55,6 +55,9 @@ export default function GeneralUi({showAdminLink = false}) {
 
      // executes in beginning
      useEffect(() => {
+        document.title = "Bounty Bezahlungssystem";
+
+
         window.addEventListener('resize', updateWindowDimensions)
 
         return () => {

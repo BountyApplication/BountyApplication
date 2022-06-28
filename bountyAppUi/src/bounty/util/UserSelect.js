@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { getUsers } from './Database';
+import { useGetUsers } from './Database';
 import { Container, Col, Collapse, Form, Button } from 'react-bootstrap';
 
 const debug = true;
@@ -47,7 +47,7 @@ UserSelect.defaultProps = {
 
 function UserSelect({title, runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, hideDescription, isVertical, submitDescription}) {
     // vars
-    const [users, setUsers] = useState(getUsers());
+    const users = useGetUsers();
     const [userFirstname, setUserFirstname] = useState("");
     const [userLastname, setUserLastname] = useState("");
 

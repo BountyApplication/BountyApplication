@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { getUsers } from './Database';
+import { useGetUsers } from './Database';
 import { Modal, Collapse, Form, Button, Table, Col } from 'react-bootstrap';
 import Input from './Input';
 import { useKeyPress } from './Util';
@@ -42,7 +42,7 @@ UserSelect.defaultProps = {
 function UserSelect({show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
     // vars
     const [input, setInput] = useState("");
-    const [users, setUsers] = useState(getUsers());
+    const users = useGetUsers();
     const [user, setUser] = useState(null);
 
     // temp var for easier access

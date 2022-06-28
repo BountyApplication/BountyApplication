@@ -1,26 +1,29 @@
 import {useState, useEffect} from 'react';
+import {arrayEquals} from './Util';
 
-function doRequest(topic) {
+const updateRate = 6*1000;
+
+function doRequest(topic, data, setData, defaultData) {
     fetch("http://127.0.0.1:5000/bounty/"+topic)
     .then(response => response.json())
-    .then((data) => { console.log(data); })
+    .then(({accounts}) => {
+        if(arrayEquals(accounts, data)) return;
+        console.log(accounts);
+        console.log(data);
+        if(setData!=null) setData(accounts);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        if(arrayEquals(defaultData, data)) return;
+        if(setData!=null) setData(defaultData);
+    })
 }
 
 
-export function getUsers() {
-    // const [users, setUsers] = useState();
-    // // do server
+export function useGetUsers() {
 
-    // useEffect(() => {
-        // console.log(doRequest('accounts')); 
-    // }, []);
-
-    // useEffect(() => {
-    //     console.log(users);
-    // }, [users]);
     
-
-    return [
+    const defaultUsers = [
         { id: 0, lastname: "Mauch", firstname: "Josua" },
         { id: 1, lastname: "Tappe", firstname: "Isajah" },
         { id: 2, lastname: "Braun", firstname: "Jonas" },
@@ -39,6 +42,33 @@ export function getUsers() {
         { id: 15, lastname: "Mustermann", firstname: "Fridolin"},
         { id: 16, lastname: "Maurer", firstname: "Jakob"},
     ];
+
+    const [users, setUsers] = useState(null);
+
+    // function init() {
+    //     console.log('start loop');
+    //     const updateLoop = setInterval(() => {
+    //         doRequest('accounts', users, setUsers, defaultUsers);
+    //     }, 6*1000);
+    //     return defaultUsers;
+    // }
+
+    useEffect(() => {
+        // if(users == null) return;
+        console.log('start loop');
+        const updateLoop = setInterval(() => {
+            doRequest('accounts', users, setUsers, defaultUsers);
+        }, updateRate);
+
+        return () => {
+            console.log('stop loop');
+            clearInterval(updateLoop);
+        }
+    }, [users]);
+
+    if(users == null || users === undefined) return defaultUsers;
+
+    return users;
 }
 
 export function getProducts() {
@@ -121,10 +151,10 @@ export function addUser(firstname, lastname, balance) {
     // do server
 }
 
-export function removeUser(user) {
+export function removeUser(users) {
     // do server
 }
 
-export function changeUser(user, newUser) {
+export function changeUser(users, newUser) {
     // do server
 }
