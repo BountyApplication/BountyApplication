@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import {Table} from 'react-bootstrap';
 
 export default function BookingDisplay({className, booking}) {
-    var count = 0;
+    var count = 1;
     return(
         <Table striped hover size="sm" className={className+" bookingDisplay"}>
             <thead className='d-sticky'>
