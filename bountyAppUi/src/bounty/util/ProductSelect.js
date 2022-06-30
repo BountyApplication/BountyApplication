@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { getProducts } from './Database';
+import { useGetProducts } from './Database';
 import { Form, Button, Collapse } from 'react-bootstrap';
 
 const debug = true;
@@ -37,7 +37,7 @@ ProductSelect.defaultProps = {
 
 export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, submitDescription}) {
     // vars
-    const [products, setProducts] = useState(getProducts);
+    const products = useGetProducts();
     const [selectedProductId, setSelectedProductId] = useState(-1);
 
     // temp vars vor easier access

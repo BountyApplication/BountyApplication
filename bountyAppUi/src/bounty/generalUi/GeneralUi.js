@@ -6,12 +6,12 @@ import BalanceInfos from './BalanceInfos';
 import BalanceCorrection from './BalanceCorrection';
 import CashPayment from './ChashPayment';
 import LastBookings from './LastBookings';
-import { getProducts, getUserBalance, commitBooking } from '../util/Database';
+import { useGetProducts, getUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 // import Html5QrcodePlugin from '../util/scanner';
 import { Col, Row, Collapse } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
-import { useKeyPress } from '../util/Util';
+import { useKeyPress, } from '../util/Util';
 
 const debug = true;
 
@@ -25,7 +25,7 @@ export default function GeneralUi({showAdminLink = false}) {
     const [paymentIn, setPaymentIn] = useState(null);
     const [paymentOut, setPaymentOut] = useState(null);
 
-    const [products, setProducts] = useState(getProducts());
+    const [products, setProducts] = useState([]);
     
     const [resetUserCallback, setResetUserCallback] = useState();
     
@@ -34,6 +34,8 @@ export default function GeneralUi({showAdminLink = false}) {
     const [data, setData] = useState('No result');
 
     const [width, setWidth] = useState(0);
+
+    useGetProducts((products) => setProducts(products.map(product => ({...product, amount: 0}))));
 
     // temp vars for easier access
     const sum = calculateSum();
@@ -124,6 +126,7 @@ export default function GeneralUi({showAdminLink = false}) {
         //     {id: 0, name: "correction", amount: correctionTotal},
         //     {id: 1, name: "cashpayment", amount: cashPaymentTotal},
         // ].concat(products);
+
         booking.products.concat([
             {id: 0, name: "correction", amount: correctionTotal},
             {id: 1, name: "cashpayment", amount: cashPaymentTotal},

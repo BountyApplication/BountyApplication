@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 
-export function arrayEquals(a, b) {
-    return Array.isArray(a) &&
-        Array.isArray(b) &&
-        a.length === b.length &&
-        a.every((val, index) => val === b[index]);
+export function arraysEqual(a1,a2) {
+    /* WARNING: arrays must not contain {objects} or behavior may be undefined */
+    return JSON.stringify(a1)===JSON.stringify(a2);
 }
 
 export function toCurrency(number) {

@@ -1,28 +1,48 @@
 import {useState, useEffect} from 'react';
-import {arrayEquals} from './Util';
+import {arraysEqual} from './Util';
 
 const updateRate = 6*1000;
 
-function doRequest(topic, data, setData, defaultData) {
+function doRequest(topic, oldData, setData, defaultData) {
     fetch("http://127.0.0.1:5000/bounty/"+topic)
     .then(response => response.json())
-    .then(({accounts}) => {
-        if(arrayEquals(accounts, data)) return;
-        console.log(accounts);
-        console.log(data);
-        if(setData!=null) setData(accounts);
+    .then(data => {
+        if(arraysEqual(data, oldData)) return;
+        console.log('new data: '); console.log(data);
+        console.log(`old data: `); console.log(oldData);
+        if(setData!=null) setData(data);
     })
     .catch((error) => {
         console.error('Error:', error);
-        if(arrayEquals(defaultData, data)) return;
+        if(arraysEqual(defaultData, oldData)) return;
         if(setData!=null) setData(defaultData);
     })
 }
 
+function useGetData(topic, defaultData, callback) {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        // console.log('start loop');
+        const updateLoop = setInterval(() => {
+            doRequest(topic, data, setData, defaultData);
+        }, updateRate);
+
+        if(callback != null) callback(data==null?defaultData:data);
+
+        return () => {
+            // console.log('stop loop');
+            clearInterval(updateLoop);
+        }
+    }, [data]);
+
+    if(data == null || data === undefined) return defaultData;
+
+    return data;
+}
+
 
 export function useGetUsers() {
-
-    
     const defaultUsers = [
         { id: 0, lastname: "Mauch", firstname: "Josua" },
         { id: 1, lastname: "Tappe", firstname: "Isajah" },
@@ -45,23 +65,16 @@ export function useGetUsers() {
 
     const [users, setUsers] = useState(null);
 
-    // function init() {
-    //     console.log('start loop');
-    //     const updateLoop = setInterval(() => {
-    //         doRequest('accounts', users, setUsers, defaultUsers);
-    //     }, 6*1000);
-    //     return defaultUsers;
-    // }
-
     useEffect(() => {
         // if(users == null) return;
-        console.log('start loop');
+        // console.log('start loop');
         const updateLoop = setInterval(() => {
-            doRequest('accounts', users, setUsers, defaultUsers);
+            doRequest('accounts', {accounts: users}, ({accounts}) => setUsers(accounts), defaultUsers);
+            // doRequest('accounts', users, setUsers, defaultUsers);
         }, updateRate);
 
         return () => {
-            console.log('stop loop');
+            // console.log('stop loop');
             clearInterval(updateLoop);
         }
     }, [users]);
@@ -71,9 +84,8 @@ export function useGetUsers() {
     return users;
 }
 
-export function getProducts() {
-    // do sever
-    let products = [
+export function useGetProducts(callback) {
+    const defaultProducts = [
         { id: 2, name: "Loli", price: .5 },
         { id: 3, name: "Kracher", price: .1 },
         { id: 4, name: "Slush", price: .2 },
@@ -110,8 +122,26 @@ export function getProducts() {
         { id: 36, name: "Schokoriegel", price: .7},
     ];
 
-    // add amount property
-    products.forEach(product => product.amount = 0);
+    const [products, setProducts] = useState(null);
+
+    useEffect(() => {
+        // if(users == null) return;
+        // console.log('start loop');
+        const updateLoop = setInterval(() => {
+            doRequest('products', {products: products}, ({products}) => setProducts(products), defaultProducts);
+            // doRequest('accounts', users, setUsers, defaultUsers);
+        }, updateRate);
+
+        // if(products != null)
+            if(callback != null) callback(products==null?defaultProducts:products);
+
+        return () => {
+            // console.log('stop loop');
+            clearInterval(updateLoop);
+        }
+    }, [products]);
+
+    if(products == null || products === undefined) return defaultProducts;
 
     return products;
 }

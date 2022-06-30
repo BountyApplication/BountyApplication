@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {Table} from 'react-bootstrap';
 
 export default function BookingDisplay({className, booking}) {
@@ -14,8 +15,8 @@ export default function BookingDisplay({className, booking}) {
                 </tr>
             </thead>
             <tbody>
-                {booking.map(({name, price, amount}) => 
-                    <tr key={name}>
+                {booking.map(({id, name, price, amount}) => 
+                    <tr key={id}>
                         <td>{count++}</td>
                         <td>{name}</td>
                         <td>{amount}</td>
