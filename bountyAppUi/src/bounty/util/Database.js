@@ -7,15 +7,14 @@ const updateRate = 6*1000;
 function doRequest(topic, method, params, oldData, setData, defaultData) {
     fetch("http://127.0.0.1:5000/bounty/"+topic, {
         method: method,
-        // headers: { 'Content-Type': 'application/json' },
-        body: params!=null ? JSON.stringify(params) : null,
+        headers: params,
     })
     .then(response => response.json())
     .then(data => {
         if(method === 'PULL') return console.log(data);
         if(arraysEqual(data, oldData)) return;
-        console.log('new data: '); console.log(data);
-        console.log(`old data: `); console.log(oldData);
+        // console.log('new data: '); console.log(data);
+        // console.log(`old data: `); console.log(oldData);
         if(setData!=null) setData(data);
     })
     .catch((error) => {
@@ -25,19 +24,25 @@ function doRequest(topic, method, params, oldData, setData, defaultData) {
     })
 }
 
-function useGetData(topic, method, defaultData, callback) {
+function useGetData(topic, method, defaultData, callback = null, continues = true) {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        console.log('start loop');
+        doRequest(topic, method, {}, data, setData, defaultData);
+    }, []);
+
+    useEffect(() => {
+        if(!continues) return;
+
+        // console.log('start loop');
         const updateLoop = setInterval(() => {
-            doRequest(topic, method, null, data, setData, defaultData);
+            doRequest(topic, method, {}, data, setData, defaultData);
         }, updateRate);
 
         if(callback != null) callback(data==null?defaultData:data);
 
         return () => {
-            console.log('stop loop');
+            // console.log('stop loop');
             clearInterval(updateLoop);
         }
     }, [data]);
@@ -48,9 +53,7 @@ function useGetData(topic, method, defaultData, callback) {
 }
 
 export function useGetUsers(callback) {
-    const result = useGetData('accounts', 'GET', defaultUsers.map(({id, firstname, lastname}) => ({accountId: id, fname: firstname, lname: lastname})), callback).map(({accountId, lname, fname}) => ({id: accountId, firstname: fname, lastname: lname}));
-    console.log(result);
-    return result;
+    return useGetData('accounts', 'GET', defaultUsers.map(({id, firstname, lastname}) => ({accountId: id, fname: firstname, lname: lastname})), callback).map(({accountId, lname, fname}) => ({id: accountId, firstname: fname, lastname: lname}));
 }
 
 export function useGetProducts(callback) {
@@ -61,13 +64,14 @@ export function getUserBalance(id) {
     return 20;
 }
 
-export function getLastBookings() {
-    //do server 
-    return defaultBookings;
+export function useGetLastBookings(id) {
+    //do server
+    return useGetData('accounts/'+id, 'GET', defaultBookings, null, false);
 }
 
 export function commitBooking(id, booking) {
     // do server
+    doRequest('accounts/'+id, 'POST', booking);
 }
 
 export function addProduct(productName, productPrice) {
@@ -93,7 +97,7 @@ export function removeUser(user) {
     // do server
 }
 
-export function changeUser(user, {id, firstname, lastname, balance}) {
+export function changeUser(user, {id, firstname, lastname}) {
     // do server
-    // doRequest('accounts', 'PUT', {accountId: id, fname: firstname, lname: lastname, balance: balance});
+    doRequest('accounts/'+id, 'PUT', {fname: firstname, lname: lastname});
 }

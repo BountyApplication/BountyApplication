@@ -163,7 +163,7 @@ export default function GeneralUi({showAdminLink = false}) {
                     <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
                     <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
                     <Row className="m-0 p-3 justify-content-evenly">
-                    <Col className="col-auto"><LastBookings /></Col></Row>
+                    {user!=null&&<Col className="col-auto"><LastBookings id={user.id} /></Col>}</Row>
                 </div>
             </Collapse>
             {/* <BarcodeScannerComponent
