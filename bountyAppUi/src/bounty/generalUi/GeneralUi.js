@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Link} from "react-router-dom";
 import ProductDisplay from './ProductDisplay';
 import UserSelect from '../util/CombinedUserSearch';
@@ -9,9 +9,9 @@ import LastBookings from './LastBookings';
 import { useGetProducts, getUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 // import Html5QrcodePlugin from '../util/scanner';
-import { Col, Row, Collapse } from 'react-bootstrap';
+import { Col, Row, Collapse, Button } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
-import { useKeyPress, } from '../util/Util';
+import { ThemeContext } from "../../themes/ThemeProvider.js";
 
 const debug = true;
 
@@ -34,6 +34,8 @@ export default function GeneralUi({showAdminLink = false}) {
     const [data, setData] = useState('No result');
 
     const [width, setWidth] = useState(0);
+
+    const { theme, toggleTheme } = useContext(ThemeContext);
 
     useGetProducts((products) => setProducts(products.map(product => ({...product, amount: 0}))));
 
@@ -153,6 +155,7 @@ export default function GeneralUi({showAdminLink = false}) {
         <>
         <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
+            <Button onClick={ toggleTheme}>{theme==='light-theme'?'Dark Mode':'Light Mode'}</Button>
             <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
             <Collapse in={user != null && userBalance != null}>
                 <div>
