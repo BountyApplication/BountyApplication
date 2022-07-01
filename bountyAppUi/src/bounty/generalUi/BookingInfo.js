@@ -10,14 +10,14 @@ BookingInfo.propTypes = {
     user: PropTypes.object,
     openUserSelectCallback: PropTypes.func,
     booking: PropTypes.shape({
-        id: PropTypes.number,
+        bookingId: PropTypes.number,
         oldBalance: PropTypes.number,
         newBalance: PropTypes.number,
         productSum: PropTypes.number,
         correction: PropTypes.number,
         cashPayment: PropTypes.number,
         products: PropTypes.arrayOf(PropTypes.shape({
-            id: PropTypes.number,
+            productId: PropTypes.number,
             name: PropTypes.string.isRequired,
             price: PropTypes.number.isRequired,
             amount: PropTypes.number.isRequired,

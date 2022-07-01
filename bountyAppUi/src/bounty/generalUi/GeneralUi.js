@@ -6,7 +6,7 @@ import BalanceInfos from './BalanceInfos';
 import BalanceCorrection from './BalanceCorrection';
 import CashPayment from './ChashPayment';
 import LastBookings from './LastBookings';
-import { useGetProducts, getUserBalance, commitBooking } from '../util/Database';
+import { useGetProducts, useGetUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
 // import Html5QrcodePlugin from '../util/scanner';
 import { Col, Row, Collapse, Button } from 'react-bootstrap';
@@ -18,7 +18,7 @@ const debug = true;
 export default function GeneralUi({showAdminLink = false}) {
     // vars   
     const [user, setUser] = useState();
-    const [userBalance, setUserBalance] = useState();
+    const userBalance = useGetUserBalance(user);
 
     const [correctionPlus, setCorrectionPlus] = useState(null);
     const [correctionMinus, setCorrectionMinus] = useState(null);
@@ -46,6 +46,7 @@ export default function GeneralUi({showAdminLink = false}) {
     const booking = {
         oldBalance: userBalance,
         newBalance: userBalance-total,
+        total: total,
         productSum: sum,
         correction: -correctionMinus+correctionPlus,
         cashPayment: -paymentOut+paymentIn,
@@ -77,9 +78,7 @@ export default function GeneralUi({showAdminLink = false}) {
     useEffect(() => {
         if(!user) return;
         
-        let balance = getUserBalance(user.id);
-        if(debug) console.log(`Balance: ${balance}`);
-        setUserBalance(balance);
+        if(debug) console.log(`Balance: ${userBalance}`);
     }, [user]);
     
     function calculateSum() {
@@ -92,7 +91,6 @@ export default function GeneralUi({showAdminLink = false}) {
 
     function resetUser() {
         setUser(null);
-        setUserBalance(null);
         setOpenUserSelect(true);
         resetProducts();
     }
@@ -125,21 +123,21 @@ export default function GeneralUi({showAdminLink = false}) {
         let cashPaymentTotal = paymentIn - paymentOut;
         
         // let booking = [
-        //     {id: 0, name: "correction", amount: correctionTotal},
-        //     {id: 1, name: "cashpayment", amount: cashPaymentTotal},
+        //     {productId: 0, name: "correction", amount: correctionTotal},
+        //     {productId: 1, name: "cashpayment", amount: cashPaymentTotal},
         // ].concat(products);
 
-        booking.products.concat([
-            {id: 0, name: "correction", amount: correctionTotal},
-            {id: 1, name: "cashpayment", amount: cashPaymentTotal},
-        ]);
+        // booking.products.concat([
+        //     {productId: 0, name: "correction", amount: correctionTotal},
+        //     {productId: 1, name: "cashpayment", amount: cashPaymentTotal},
+        // ]);
 
         // filter out unbought products
         // booking = booking.filter(({amount}) => amount!==0);
 
         if(debug) console.log(booking);
 
-        commitBooking(user.id, booking);
+        commitBooking(user.userId, booking);
 
         runResetUser();
 
@@ -163,7 +161,7 @@ export default function GeneralUi({showAdminLink = false}) {
                     <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
                     <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
                     <Row className="m-0 p-3 justify-content-evenly">
-                    {user!=null&&<Col className="col-auto"><LastBookings id={user.id} /></Col>}</Row>
+                    {user!=null&&<Col className="col-auto"><LastBookings userId={user.userId} /></Col>}</Row>
                 </div>
             </Collapse>
             {/* <BarcodeScannerComponent

@@ -56,7 +56,7 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     function getSelectedProduct() {
         if(!productSelected) return null;
 
-        return products.find(product => product.id===selectedProductId);
+        return products.find(product => product.productId===selectedProductId);
     }
     
     function getProductString(name, price) {
@@ -70,11 +70,11 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
         return getProductString(product.name, product.price);
     }
 
-    function updateProduct(id) {
+    function updateProduct(productId) {
         // resets if product selection deleted
-        if(id===-1) return reset();
+        if(productId===-1) return reset();
            
-        return setSelectedProductId(id);
+        return setSelectedProductId(productId);
     }
 
     function run() {
@@ -108,8 +108,8 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
                     <Form.Label className="ps-1">{"Product:"} </Form.Label>
                     <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
                         {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
-                        {products.map(({id, name, price}) => {
-                            return <option key={id} value={id}>{getProductString(name, price)}</option>
+                        {products.map(({productId, name, price}) => {
+                            return <option key={productId} value={productId}>{getProductString(name, price)}</option>
                         })}
                     </Form.Select>
                 </Form.Group>

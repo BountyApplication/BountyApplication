@@ -161,7 +161,7 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
                 </thead>
                 <tbody>
                     {getSortedUsers().map(user => 
-                        <tr key={user.id} onClick={setUser.bind(this, user)}>
+                        <tr key={user.userId} onClick={setUser.bind(this, user)}>
                             <td>{user.firstname}</td>
                             <td>{user.lastname}</td>
                         </tr>

@@ -6,7 +6,7 @@ import { useKeyPress } from '../util/Util';
 
 ProductDisplay.propTypes = {
     products: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.number,
+        productId: PropTypes.number,
         name: PropTypes.string,
         price: PropTypes.number,
         amount: PropTypes.number
@@ -35,13 +35,13 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
     const tryRemove = shift || !isSufficient;
 
     // helper function
-    function handleProductClick(id, remove = tryRemove) {
-        const product = products.find(product => product.id === id);
+    function handleProductClick(productId, remove = tryRemove) {
+        const product = products.find(product => product.productId === productId);
         if(!product) return;
         if(remove && product.amount === 0) return;
         const newAmount = Math.max(product.amount + (remove ? -1 : 1)*increment, 0);
         const updatedProduct = { ...product, amount: newAmount};
-        const updatedProducts = products.map(product => product.id===id ? updatedProduct : product)
+        const updatedProducts = products.map(product => product.productId===productId ? updatedProduct : product)
         setProducts(updatedProducts);
         if(increment !== 1) setIncrement(1);
     }
@@ -69,8 +69,8 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
             <Card.Header><Card.Title className='mb-0'>{"Einkaufen"}</Card.Title></Card.Header>
             <Card.Body>
                 <Row className="gap-2">
-                    {products.map(({id, name, price, amount}) => 
-                        <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
+                    {products.map(({productId, name, price, amount}) => 
+                        <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={productId} productId={productId} name={name} price={price} amount={amount} onClick={handleProductClick}/>
                     )}
                 </Row>
             </Card.Body>

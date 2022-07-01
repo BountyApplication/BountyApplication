@@ -1,8 +1,9 @@
 import {useState, useEffect} from 'react';
 import {arraysEqual} from './Util';
-import { defaultUsers, defaultProducts, defaultBookings } from './DefaultData';
+import { defaultUsers, defaultProducts, defaultBookings, defaultBalance } from './DefaultData';
 
 const updateRate = 6*1000;
+const debug = false
 
 function doRequest(topic, method, params, oldData, setData, defaultData) {
     fetch("http://127.0.0.1:5000/bounty/"+topic, {
@@ -13,8 +14,8 @@ function doRequest(topic, method, params, oldData, setData, defaultData) {
     .then(data => {
         if(method === 'PULL') return console.log(data);
         if(arraysEqual(data, oldData)) return;
-        // console.log('new data: '); console.log(data);
-        // console.log(`old data: `); console.log(oldData);
+        if(debug) console.log('new data: '); console.log(data);
+        if(debug) console.log(`old data: `); console.log(oldData);
         if(setData!=null) setData(data);
     })
     .catch((error) => {
@@ -24,17 +25,17 @@ function doRequest(topic, method, params, oldData, setData, defaultData) {
     })
 }
 
-function useGetData(topic, method, defaultData, callback = null, continues = true) {
+function useGetData(topic, defaultData, callback = null, continues = true, method = 'GET', params = {}) {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        doRequest(topic, method, {}, data, setData, defaultData);
+        doRequest(topic, method, params, data, setData, defaultData);
     }, []);
 
     useEffect(() => {
         if(!continues) return;
 
-        // console.log('start loop');
+        if(debug) console.log('start loop');
         const updateLoop = setInterval(() => {
             doRequest(topic, method, {}, data, setData, defaultData);
         }, updateRate);
@@ -42,7 +43,7 @@ function useGetData(topic, method, defaultData, callback = null, continues = tru
         if(callback != null) callback(data==null?defaultData:data);
 
         return () => {
-            // console.log('stop loop');
+            if(debug) console.log('stop loop');
             clearInterval(updateLoop);
         }
     }, [data]);
@@ -53,25 +54,37 @@ function useGetData(topic, method, defaultData, callback = null, continues = tru
 }
 
 export function useGetUsers(callback) {
-    return useGetData('accounts', 'GET', defaultUsers.map(({id, firstname, lastname}) => ({accountId: id, fname: firstname, lname: lastname})), callback).map(({accountId, lname, fname}) => ({id: accountId, firstname: fname, lastname: lname}));
+    return useGetData('accounts', defaultUsers, callback);
 }
 
 export function useGetProducts(callback) {
-    return useGetData('products', 'GET', defaultProducts, callback);
+    return useGetData('products', defaultProducts, callback);
 }
 
-export function getUserBalance(id) {
-    return 20;
+export function useGetUserBalance(user) {
+    if(user==null || user===undefined)
+        user = {userId: -1};
+    let account = useGetData('accounts/'+user.userId, [{balance: defaultBalance}]);
+    if(user == null || user === undefined) return null;
+    return account[0].balance;
 }
 
-export function useGetLastBookings(id) {
+export function useGetLastBookings(userId) {
     //do server
-    return useGetData('accounts/'+id, 'GET', defaultBookings, null, false);
+    let history = useGetData('history/'+userId, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), null, false).map((booking) => ({...booking, products: JSON.parse(booking.products)}));
+    return history;
 }
 
-export function commitBooking(id, booking) {
+export function commitBooking(userId, booking) {
     // do server
-    doRequest('accounts/'+id, 'POST', booking);
+    console.log({...booking, products: JSON.stringify(booking.products)});
+    doRequest('accounts/'+userId, 'POST', {...booking, products: JSON.stringify(booking.products)}, null, (result) => {
+        console.log(result); 
+        if(result.balance!==booking.newBalance) {
+            window.alert(`Error: No User selected!`);
+            console.log("ERROR: false user balance");
+        }
+    });
 }
 
 export function addProduct(productName, productPrice) {
@@ -83,21 +96,21 @@ export function removeProduct(product) {
     // do server
 }
 
-export function changeProduct(product, {id, name, price}) {
+export function changeProduct(product, newProduct) {
     // do server
-    doRequest('products', 'PUT', {id: id, name: name, price: price});
+    doRequest('products', 'PUT', newProduct);
 }
 
 export function addUser(firstname, lastname, balance) {
     // do server
-    doRequest('accounts', 'POST', {fname: firstname, lname: lastname, balance: balance});
+    doRequest('accounts', 'POST', {firstname: firstname, lastname: lastname, balance: balance});
 }
 
 export function removeUser(user) {
     // do server
 }
 
-export function changeUser(user, {id, firstname, lastname}) {
+export function changeUser(user, newUser) {
     // do server
-    doRequest('accounts/'+id, 'PUT', {fname: firstname, lname: lastname});
+    doRequest('accounts/'+user.userId, 'PUT', newUser);
 }

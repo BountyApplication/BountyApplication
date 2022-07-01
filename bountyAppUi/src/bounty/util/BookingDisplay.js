@@ -15,8 +15,8 @@ export default function BookingDisplay({className, booking}) {
                 </tr>
             </thead>
             <tbody>
-                {booking.map(({id, name, price, amount}) => 
-                    <tr key={id}>
+                {booking.map(({productId, name, price, amount}) => 
+                    <tr key={productId}>
                         <td>{count++}</td>
                         <td>{name}</td>
                         <td>{amount}</td>

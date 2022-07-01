@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserSelect from '../util/UserSelect';
-import { changeUser, getUserBalance } from '../util/Database';
+import { changeUser, useGetUserBalance } from '../util/Database';
 import {Form, Button, Collapse} from 'react-bootstrap';
 import Input from '../util/Input';
 
@@ -9,26 +9,24 @@ const changeBalance = false;
 export default function ChangeUser(props) {
     // vars
     const [user, setUser] = useState(null);
+    const balance = useGetUserBalance(user);
     const [newUser, setNewUser] = useState(null);
-    const [balance, setBalance] = useState(null);
     const [newBalance, setNewBalance] = useState(null);
 
     const [resetCallback, setResetCallback] = useState(null);
 
     useEffect(() => {
         if(!user) return;
-        let b = getUserBalance(user);
-        console.log(`${user.firstname} ${user.lastname} (${b}€)`);
+        
+        console.log(`${user.firstname} ${user.lastname} (${balance}€)`);
 
         setNewUser(user);
-        setBalance(b);
-        setNewBalance(b);
+        setNewBalance(balance);
     }, [user]);
 
     function resetAll() {
         setUser(null);
         setNewUser(null);
-        setBalance(null);
         setNewBalance(null);
     }
     
