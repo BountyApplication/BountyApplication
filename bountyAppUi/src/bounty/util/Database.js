@@ -72,14 +72,16 @@ export function commitBooking(id, booking) {
 
 export function addProduct(productName, productPrice) {
     // do server
+    doRequest('products', 'POST', {name: productName, price: productPrice});
 }
 
 export function removeProduct(product) {
     // do server
 }
 
-export function changeProduct(product, newProduct) {
+export function changeProduct(product, {id, name, price}) {
     // do server
+    doRequest('products', 'PUT', {id: id, name: name, price: price});
 }
 
 export function addUser(firstname, lastname, balance) {
@@ -87,10 +89,11 @@ export function addUser(firstname, lastname, balance) {
     doRequest('accounts', 'POST', {fname: firstname, lname: lastname, balance: balance});
 }
 
-export function removeUser(users) {
+export function removeUser(user) {
     // do server
 }
 
-export function changeUser(users, newUser) {
+export function changeUser(user, {id, firstname, lastname, balance}) {
     // do server
+    // doRequest('accounts', 'PUT', {accountId: id, fname: firstname, lname: lastname, balance: balance});
 }
