@@ -16,7 +16,6 @@ const getTheme = () => {
 const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(getTheme);
   function toggleTheme() {
-    console.log(theme);
     if (theme === "dark-theme") {
       setTheme("light-theme");
       window.location.reload(false);
@@ -26,7 +25,6 @@ const ThemeProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log(theme);
     const refreshTheme = () => {
       localStorage.setItem("theme", theme);
     };
