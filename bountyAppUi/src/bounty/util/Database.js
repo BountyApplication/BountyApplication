@@ -94,6 +94,7 @@ export function addProduct(productName, productPrice) {
 
 export function removeProduct(product) {
     // do server
+    doRequest('products', 'PUT', {...product, active: 0});
 }
 
 export function changeProduct(product, newProduct) {

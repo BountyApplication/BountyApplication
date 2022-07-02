@@ -18,6 +18,7 @@ ProductSelect.propTypes = {
     hideSubmit: PropTypes.bool,
     resetOnSubmit: PropTypes.bool,
     isVertical: PropTypes.bool,
+    onlyActive: PropTypes.bool,
 
     submitDescription: PropTypes.string,
 };
@@ -32,12 +33,14 @@ ProductSelect.defaultProps = {
     resetOnSubmit: false,
     isVertical: false,
 
+    onlyActive: true,
+
     submitDescription: "submit",
 };
 
-export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, submitDescription}) {
+export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, onlyActive, submitDescription}) {
     // vars
-    const products = useGetProducts();
+    const products = useGetProducts().filter(({active}) => !onlyActive || active===1);
     const [selectedProductId, setSelectedProductId] = useState(-1);
 
     // temp vars vor easier access
@@ -108,8 +111,8 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
                     <Form.Label className="ps-1">{"Product:"} </Form.Label>
                     <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
                         {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
-                        {products.map(({productId, name, price}) => {
-                            return <option key={productId} value={productId}>{getProductString(name, price)}</option>
+                        {products.map(({productId, name, price, active}) => {
+                            return <option className={active!==1?'fw-light fst-italic':''} key={productId} value={productId}>{getProductString(name, price)}</option>
                         })}
                     </Form.Select>
                 </Form.Group>

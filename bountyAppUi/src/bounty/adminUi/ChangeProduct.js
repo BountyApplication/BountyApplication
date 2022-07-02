@@ -50,6 +50,11 @@ export default function ChangeProduct(props) {
                 <Form>
                     <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
                     <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
+                    <div class="form-check form-switch w-100 d-flex justify-content-left ps-0 mb-3">
+                        <label class="form-check-label fs-5 ms-3" for="flexSwitchCheckChecked">Aktiv:</label>
+                        <input className="form-check-input d-inline float-end ms-3" style={{height: '3.5vh', width: '6vw'}} type="checkbox" checked={updatedProduct.active===1} onChange={()=>{setUpdatedProduct({...updatedProduct, active: (updatedProduct.active?0:1)});}}b></input>
+                    </div>
+                    
                     <Collapse in={updatedProduct!==product}>
                         <div>
                             <Button variant="secondary" type="reset" className='mb-2' onClick={reset.bind(this)}>{"reset"}</Button>
@@ -64,7 +69,7 @@ export default function ChangeProduct(props) {
     return(
         <div className='rubric'>
             <div className='title'>{"Change Product"}</div>
-            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true} />
+            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true} onlyActive={false} />
             <Collapse in={updatedProduct}>
                 <div>
                     {updatedProduct && changeProductUi()} 
