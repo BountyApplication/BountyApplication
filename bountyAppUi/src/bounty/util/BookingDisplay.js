@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import {Table} from 'react-bootstrap';
 
-export default function BookingDisplay({className, booking}) {
+export default function BookingDisplay({className, products}) {
     var count = 1;
     return(
         <Table striped hover size="sm" className={className+" bookingDisplay"}>
@@ -15,7 +15,7 @@ export default function BookingDisplay({className, booking}) {
                 </tr>
             </thead>
             <tbody>
-                {booking.map(({productId, name, price, amount}) => 
+                {products!=null && products.map(({productId, name, price, amount}) => 
                     <tr key={productId}>
                         <td>{count++}</td>
                         <td>{name}</td>

@@ -40,7 +40,7 @@ ProductSelect.defaultProps = {
 
 export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, onlyActive, submitDescription}) {
     // vars
-    const products = useGetProducts().filter(({active}) => !onlyActive || active===1);
+    const products = useGetProducts(null, onlyActive);
     const [selectedProductId, setSelectedProductId] = useState(-1);
 
     // temp vars vor easier access
@@ -111,9 +111,9 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
                     <Form.Label className="ps-1">{"Product:"} </Form.Label>
                     <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
                         {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
-                        {products.map(({productId, name, price, active}) => {
+                        {/* {products!=null && products.map(({productId, name, price, active}) => {
                             return <option className={active!==1?'fw-light fst-italic':''} key={productId} value={productId}>{getProductString(name, price)}</option>
-                        })}
+                        })} */}
                     </Form.Select>
                 </Form.Group>
                 <Collapse className={`${!isVertical?'collapse-horizontal':''} me-2 mb-2`} in={useReset && (productSelected || !hideReset)}>

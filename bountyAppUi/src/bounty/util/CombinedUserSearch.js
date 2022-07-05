@@ -140,7 +140,7 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
             return;
         }
 
-        setShow();
+        setShow(false);
 
         if(runCallback != null) runCallback(user);
     }

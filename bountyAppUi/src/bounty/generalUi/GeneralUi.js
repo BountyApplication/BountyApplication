@@ -55,7 +55,8 @@ export default function GeneralUi({showAdminLink = false}) {
 
     useEffect(() => {
         if(user == null) return;
-        setOpenUserSelect(false);
+        setOpenUserSelect(false);        
+        if(debug) console.log(`Balance: ${userBalance}`);
     }, [user]);
 
      // executes in beginning
@@ -74,13 +75,6 @@ export default function GeneralUi({showAdminLink = false}) {
         setWidth(window.innerWidth)
     }
 
-    // get user balance when user gets selected
-    useEffect(() => {
-        if(!user) return;
-        
-        if(debug) console.log(`Balance: ${userBalance}`);
-    }, [user]);
-    
     function calculateSum() {
         return products.reduce((sum, {price, amount}) => sum+price*amount, 0);
     }
