@@ -4,8 +4,8 @@ import React from 'react';
 
 const RowText = React.forwardRef(({innerRef, className, left, right}, ref) => (
     <Row ref={ref} className={"w-100 justify-content-between"}>
-        <Col className={className}>{left}</Col>
-        <Col className={className} style={{maxWidth: "max-content"}}>{right}</Col>
+        <Col className={className+' w-auto col-1'}>{left}</Col>
+        <Col className={className+' w-auto col-1'}>{right}</Col>
     </Row>
 ));
 
