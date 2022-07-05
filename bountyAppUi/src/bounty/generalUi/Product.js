@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Card, Button} from 'react-bootstrap';
+import {useEffect,useState} from 'react';
+import { Ellipsis } from 'react-bootstrap/esm/PageItem';
 
 Product.propTypes = {
     productId: PropTypes.number.isRequired,
@@ -22,10 +24,33 @@ Product.defaultProps = {
 
 export default function Product({productId, name, price, amount, onClick, tryRemove, increment, availableBalance}) {
     const disabled = (tryRemove&&amount<increment) || (!tryRemove&&availableBalance < price*increment);
+    
+    const title = document.getElementById(productId);
+
+    function resize_to_fit() {
+        while(title.clientHeight > 30) {
+            var fontSize = parseInt(window.getComputedStyle(title).fontSize)-1;
+            console.log(fontSize);
+            title.style.fontSize = fontSize + 'px';
+            // if(fontSize <= 16) {
+            //     title.style.textOverflow = 'ellipsis';
+            //     break;
+            // }
+            if(fontSize <= 1) break;
+        }
+        title.style.marginBottom = 30-title.clientHeight+'px';
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            resize_to_fit();
+        }, 0); 
+    });
+
     return(
         <Card className={`p-0 ${disabled ? 'disabled text-secondary' : ''}`} style={{width: '120px'}} border={disabled?'secondary':"primary"}>
             <Card.Body className="p-2 pb-1">
-                <Card.Title className="fs-6 fw-bold p-1 m-0 overflow-auto text-nowrap">{name}</Card.Title>
+                <Card.Title className="fw-bold p-1" id={productId}>{name}</Card.Title>
                 
                 <Card.Text className='mb-1 mt-0'>{`${price.toFixed(2)}€`}</Card.Text>
                 
