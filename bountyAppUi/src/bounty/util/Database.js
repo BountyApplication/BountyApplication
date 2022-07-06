@@ -41,8 +41,8 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
         const updateLoop = setInterval(() => {
             doRequest(topic, method, params, data, setData, defaultData, calculate);
         }, updateRate);
-
-        if(callback != null) callback(data==null ? calculate!=null ? calculate(defaultData) : defaultData : data);
+        
+        if(callback != null) callback(data==null ? (calculate!=null ? calculate(defaultData) : defaultData) : data);
 
         return () => {
             if(debug) console.log('stop loop');
@@ -64,7 +64,7 @@ export function useGetProducts(callback, onlyActive = true) {
 }
 
 export function useGetUserBalance(user) {
-    if(user==null || user===undefined)
+    if(user==null || user===undefined || user.balance==null || user.blanace===undefined)
         // user = {userId: -1};
         return defaultBalance;
     return user.balance;

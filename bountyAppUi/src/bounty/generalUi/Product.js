@@ -28,6 +28,7 @@ export default function Product({productId, name, price, amount, onClick, tryRem
     const title = document.getElementById(productId);
 
     function resize_to_fit() {
+        if(title == null) return;
         while(title.clientHeight > 30) {
             var fontSize = parseInt(window.getComputedStyle(title).fontSize)-1;
             console.log(fontSize);
