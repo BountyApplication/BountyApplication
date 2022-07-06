@@ -26,7 +26,7 @@ export default function LastBookings({userId}) {
                     </ListGroup>
                 </Col>
                 {activeBooking!=null && <Col lg>
-                    <BookingDisplay booking={bookings.find(({bookingId}) => bookingId === activeBooking)}/>
+                    <BookingDisplay booking={bookings.find(({bookingId}) => bookingId === activeBooking)} isHistory={true}/>
                 </Col>}
             </Card.Body>
         </Card>

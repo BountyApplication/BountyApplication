@@ -31,19 +31,19 @@ export function ProductList({className, products}) {
     )
 }
 
-export default function BookingDisplay({children, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}}) {
+export default function BookingDisplay({children, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}, isHistory = false}) {
     const labelText = "fs-4 px-0";
     const labelTextImportant = "fs-4 fw-bold px-0";
     const hasInput = (newBalance!==oldBalance || correction!==0 || cashPayment!==0)
     const ref = React.createRef();
     return <Container className="d-flex h-100 align-items-center flex-column">
-        <Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={'Guthaben vorher'} right={toCurrency(oldBalance)} /></Collapse>
+        <Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={isHistory?'Guthaben vorher':'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>
         <Collapse in={products!=null&&products.length!==0}><div className='overflow-auto w-100'><ProductList className="mt-3" products={products.filter(({amount}) => amount!==0) } /></div></Collapse>
         <div className="mb-auto w-100" />
         <Collapse in={productSum!==0}><RowText ref={ref} className={labelTextImportant} left={'Summe'} right={toCurrency(productSum)} /></Collapse>
         <Collapse in={correction!==0}><RowText ref={ref} className={labelText} left={'Korrektur'} right={toCurrency(correction)} /></Collapse>
         <Collapse in={cashPayment!==0}><RowText ref={ref} className={labelText} left={'Barzahlung'} right={toCurrency(cashPayment)} /></Collapse>
         {children}
-        <Collapse in={hasInput}><RowText ref={ref} className={labelTextImportant} left={'Guthaben nachher'} right={toCurrency(newBalance)} /></Collapse>
+        <Collapse in={hasInput}><RowText ref={ref} className={labelTextImportant} left={isHistory?'Guthaben nachher':'Neu'} right={toCurrency(newBalance)} /></Collapse>
     </Container>
 }

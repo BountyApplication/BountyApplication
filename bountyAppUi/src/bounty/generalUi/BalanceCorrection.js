@@ -26,7 +26,7 @@ export default function BalanceCorrection({plus, minus, setPlus, setMinus}) {
     return(
         <Card>
             <Card.Header>
-                <Card.Title className='m-0'>Korrektion</Card.Title>
+                <Card.Title className='m-0'>Korrektur</Card.Title>
             </Card.Header>
             <Card.Body className='px-4'>
                 <Row><Input value={plusMode?plus:minus} setValue={plusMode?setPlus:setMinus} type="number" className="p-0 mb-3"/></Row>
