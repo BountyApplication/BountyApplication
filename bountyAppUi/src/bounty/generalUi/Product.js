@@ -33,13 +33,15 @@ export default function Product({productId, name, price, amount, onClick, tryRem
             var fontSize = parseInt(window.getComputedStyle(title).fontSize)-1;
             console.log(fontSize);
             title.style.fontSize = fontSize + 'px';
-            // if(fontSize <= 16) {
-            //     title.style.textOverflow = 'ellipsis';
-            //     break;
-            // }
+            if(fontSize <= 14) {
+                title.style.textOverflow = 'ellipsis';
+                title.className+=" text-truncate";
+                break;
+            }
             if(fontSize <= 1) break;
         }
-        title.style.marginBottom = 30-title.clientHeight+'px';
+        title.style.marginTop = Math.floor((30-title.clientHeight)/2)+'px';
+        title.style.marginBottom = Math.ceil((30-title.clientHeight)/2)+'px';
     }
 
     useEffect(() => {
@@ -50,8 +52,8 @@ export default function Product({productId, name, price, amount, onClick, tryRem
 
     return(
         <Card className={`p-0 ${disabled ? 'disabled text-secondary' : ''}`} style={{width: '120px'}} border={disabled?'secondary':"primary"}>
-            <Card.Body className="p-2 pb-1">
-                <Card.Title className="fw-bold p-1" id={productId}>{name}</Card.Title>
+            <Card.Body className="p-1">
+                <Card.Title className="fw-bold " id={productId}>{name}</Card.Title>
                 
                 <Card.Text className='mb-1 mt-0'>{`${price.toFixed(2)}€`}</Card.Text>
                 

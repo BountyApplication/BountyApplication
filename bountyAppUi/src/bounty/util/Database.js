@@ -41,7 +41,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
         const updateLoop = setInterval(() => {
             doRequest(topic, method, params, data, setData, defaultData, calculate);
         }, updateRate);
-        
+
         if(callback != null) callback(data==null ? (calculate!=null ? calculate(defaultData) : defaultData) : data);
 
         return () => {
@@ -64,9 +64,9 @@ export function useGetProducts(callback, onlyActive = true) {
 }
 
 export function useGetUserBalance(user) {
-    if(user==null || user===undefined || user.balance==null || user.blanace===undefined)
+    if(user==null || user===undefined) return defaultBalance;
+    if(user.balance==null || user.balance===undefined) return defaultBalance;
         // user = {userId: -1};
-        return defaultBalance;
     return user.balance;
 
 
@@ -78,8 +78,9 @@ export function useGetUserBalance(user) {
     // return account.balance;
 }
 
-export function useGetLastBookings(userId) {
-    return useGetData('history/'+userId, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), null, (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})), false);
+export function getLastBookings(userId, setBookings) {
+    return doRequest('history/'+userId, 'GET', {}, null, setBookings, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})).sort((booking1, booking2) => booking2.bookingId - booking1.bookingId));
+    // return useGetData('history/'+userId, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), null, (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})), true);
 }
 
 export function commitBooking(userId, booking) {

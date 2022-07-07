@@ -3,6 +3,7 @@ import UserSelect from '../util/UserSelect';
 import { changeUser, useGetUserBalance } from '../util/Database';
 import {Form, Button, Collapse} from 'react-bootstrap';
 import Input from '../util/Input';
+import { toCurrency } from '../util/Util';
 
 const changeBalance = false;
 
@@ -46,7 +47,7 @@ export default function ChangeUser(props) {
             window.alert("Error: No valid entries");
             return;
         }
-        if(window.confirm(`Change ${user.firstname} ${user.lastname} (${balance}€) to ${newUser.firstname} ${newUser.lastname} (${newBalance}€) ?`)) {
+        if(window.confirm(`Change ${user.firstname} ${user.lastname} (${toCurrency(balance)}) to ${newUser.firstname} ${newUser.lastname} (${toCurrency(newBalance)}) ?`)) {
             console.log(`Change ${user} to ${newUser}`);
             changeUser(user, newUser);
 
@@ -77,7 +78,7 @@ export default function ChangeUser(props) {
         <div className='rubric'>
             <div className='title'>{"Change User"}</div>
             <UserSelect runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true}/>
-            <Collapse in={newUser}>
+            <Collapse in={newUser!=null}>
                 <div>
                     {newUser && changeUserUi()}
                 </div>

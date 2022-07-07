@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { useGetProducts } from './Database';
 import { Form, Button, Collapse } from 'react-bootstrap';
+import { toCurrency } from './Util';
 
 const debug = true;
 
@@ -65,7 +66,7 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     function getProductString(name, price) {
         if(name==null || price==null) return null;
 
-        return `${name}(${+price.toFixed(2)}€)`;
+        return `${name} (${toCurrency(price)})`;
     }
     function getProductStringP(product) {
         if(product==null) return null;
@@ -111,9 +112,9 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
                     <Form.Label className="ps-1">{"Product:"} </Form.Label>
                     <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
                         {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
-                        {/* {products!=null && products.map(({productId, name, price, active}) => {
+                        {products!=null && products.map(({productId, name, price, active}) => {
                             return <option className={active!==1?'fw-light fst-italic':''} key={productId} value={productId}>{getProductString(name, price)}</option>
-                        })} */}
+                        })}
                     </Form.Select>
                 </Form.Group>
                 <Collapse className={`${!isVertical?'collapse-horizontal':''} me-2 mb-2`} in={useReset && (productSelected || !hideReset)}>
