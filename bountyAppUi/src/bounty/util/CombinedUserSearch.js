@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { useGetUsers } from './Database';
-import { Modal, Collapse, Form, Button, Table, Col } from 'react-bootstrap';
+import { Modal, Collapse, Form, Button, Table, Col, Card } from 'react-bootstrap';
 import Input from './Input';
 import { useKeyPress } from './Util';
 
@@ -12,6 +12,7 @@ UserSelect.prototype = {
     title: PropTypes.string,
     submitDescription: PropTypes.string,
     show: PropTypes.bool,
+    inModal: PropTypes.bool,
 
     // callbacks
     setShow: PropTypes.func,
@@ -23,6 +24,7 @@ UserSelect.prototype = {
     useReset: PropTypes.bool,
     useSubmit: PropTypes.bool,
 
+    hideUserList: PropTypes.bool,
     hideReset: PropTypes.bool,
     hideSubmit: PropTypes.bool,
 };
@@ -31,15 +33,17 @@ UserSelect.defaultProps = {
     title: "Suchen",
     submitDescription: "Bestätigen",
     show: false,
+    inModal: false,
 
     useReset: false,
     useSubmit: false,
 
+    hideUserList: false,
     hideReset: false,
     hideSubmit: false,
 };
 
-function UserSelect({show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideReset, hideSubmit, submitDescription}) {
+function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription}) {
     // vars
     const [input, setInput] = useState("");
     const users = useGetUsers();
@@ -90,7 +94,7 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
     }, [show]);
 
     function updateInput(newInput) {
-        if(input === '' && newInput !== '') reset();
+        if(input === '' && newInput !== '') reset(true);
         setInput(newInput);
     }
 
@@ -140,18 +144,19 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
             return;
         }
 
-        setShow(false);
+        if(setShow!=null) setShow(false);
 
         if(runCallback != null) runCallback(user);
     }
 
-    function reset() {
+    function reset(keepInput = false) {
+        if(!keepInput) setInput("");
         setUser(null);
         if(resetCallback != null) resetCallback();
     }
 
     function displayUsers() {
-        return <Form className='overflow-auto' style={{maxHeight: '30vh'}}>
+        return <Form className='overflow-auto mt-3' style={{maxHeight: '30vh'}}>
             <Table striped hover size="sm">
                 <thead>
                     <tr>
@@ -179,20 +184,36 @@ function UserSelect({show, title, setShow, runCallback, resetCallback, setResetC
 
     function displayUi() {
         return <div>
-            {user!=null && <div className='mb-3 ms-1'><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
+            {user!=null && <div className='ms-1'><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
         </div>
     }
     
+    if(!inModal) return (
+        <>
+            <Collapse in={true}>{searchUi()}</Collapse>
+            <Collapse in={user != null}>{displayUi()}</Collapse>
+            <Collapse in={user == null || (hasInput && filteredUsers.length>1) || !hideUserList}>{displayUsers()}</Collapse>
+            <div className='d-flex justify-content-end mt-2'>
+                <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
+                    <Button className='me-2' variant="secondary" type="reset" onClick={reset.bind(this, false)}>Zurücksetzten</Button>
+                </Collapse>
+                <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
+                    <Button className='me-2' variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
+                </Collapse>
+            </div>
+        </>
+    );
+    
     return(
         <Modal show={show}>
-            <Modal.Header closeButton onClick={setShow.bind(this, false)}>
+            <Modal.Header closeButton onClick={setShow!=null?setShow.bind(this, false):()=>{}}>
                 <Modal.Title className='fs-2'>Benutzer Auswahl</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
                 <Collapse in={true}>{searchUi()}</Collapse>
                 <Collapse in={user != null}>{displayUi()}</Collapse>
-                <Collapse in={filteredUsers.length>1}>{displayUsers()}</Collapse>
+                <Collapse in={user == null || (hasInput && filteredUsers.length>1) || !hideUserList}>{displayUsers()}</Collapse>
             </Modal.Body>
 
             <Modal.Footer>

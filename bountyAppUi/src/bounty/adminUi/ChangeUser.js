@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import UserSelect from '../util/UserSelect';
+import UserSelect from '../util/CombinedUserSearch';
 import { changeUser, useGetUserBalance } from '../util/Database';
-import {Form, Button, Collapse} from 'react-bootstrap';
+import {Form, Button, Collapse, Card } from 'react-bootstrap';
 import Input from '../util/Input';
 import { toCurrency } from '../util/Util';
+import { arraysEqual } from '../util/Util';
 
 const changeBalance = false;
 
@@ -15,6 +16,8 @@ export default function ChangeUser(props) {
     const [newBalance, setNewBalance] = useState(null);
 
     const [resetCallback, setResetCallback] = useState(null);
+
+    const hasInput = user !== newUser || balance !== newBalance;
 
     useEffect(() => {
         if(!user) return;
@@ -63,26 +66,32 @@ export default function ChangeUser(props) {
                     <Input title="Vorname" value={newUser.firstname} setValue={name => setNewUser({...newUser, firstname: name})} />
                     <Input title="Nachname" value={newUser.lastname} setValue={name => setNewUser({...newUser, lastname: name})} />
                     {changeBalance && <Input type="number" title="Kontostand" value={newBalance} setValue={setNewBalance} />}
-                    <Collapse in={(newUser!==user || balance!==newBalance)}>
-                        <div>
-                            <Button type="reset" variant="secondary" className='ms-2 mb-2' onClick={reset}>{"reset"}</Button>
-                            <Button type="submit" className='ms-2 mb-2' onClick={submit}>{"submit"}</Button>
-                        </div>
-                    </Collapse>
                 </Form>
             </div>
         );
     }
 
     return(
-        <div className='rubric'>
-            <div className='title'>{"Change User"}</div>
-            <UserSelect runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true}/>
-            <Collapse in={newUser!=null}>
-                <div>
-                    {newUser && changeUserUi()}
-                </div>
-            </Collapse>
-        </div>
+        <Card className='w-50 align-self-center'>
+            <Card.Header>
+                <Card.Title>Benutzer Bearbeiten</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                <UserSelect runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset hideUserList/>
+                <Collapse in={newUser!=null}>
+                    <div className='mt-4'>
+                        {newUser != null && changeUserUi()}
+                    </div>
+                </Collapse>
+                <Collapse in={hasInput}>
+                    <div >
+                        <div className='d-flex justify-content-end mt-3'>
+                        <Button type="reset" className='me-2' variant="secondary" onClick={reset}>{"reset"}</Button>
+                        <Button type="submit" className='me-2' onClick={submit}>{"submit"}</Button>
+                        </div>
+                    </div>
+                </Collapse>
+            </Card.Body>
+        </Card>
     );
 }

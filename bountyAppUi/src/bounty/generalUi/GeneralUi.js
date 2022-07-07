@@ -148,7 +148,7 @@ export default function GeneralUi({showAdminLink = false}) {
         <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <Button onClick={ toggleTheme}>{theme==='light-theme'?'Dark Mode':'Light Mode'}</Button>
-            <UserSelect show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit={true} useReset={true} hideSubmit={true} hideReset={true} hideDescription={true} />
+            <UserSelect inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
             <Collapse in={user != null && userBalance != null}>
                 <div>
                     <Row className="m-0 p-3"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>
@@ -173,7 +173,7 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrCodeSuccessCallback={onNewScanResult}/> */}
             {/* <p>{data}</p> */}
         </div>
-        <BookingInfo show={true} user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} reset={resetProducts} submit={submit} />
+        <BookingInfo show user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} reset={resetProducts} submit={submit} />
         </>
     );
 }

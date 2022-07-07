@@ -1,6 +1,7 @@
 import React from 'react';
 import ProductSelect from '../util/ProductSelect';
 import { removeProduct } from '../util/Database';
+import { Card } from 'react-bootstrap';
 
 export default function RemoveProduct() {
 
@@ -12,9 +13,13 @@ export default function RemoveProduct() {
     }
 
     return(
-        <div className='rubric'>
-            <div className='title'>{"Remove Product"}</div>
-            <ProductSelect runCallback={run} useReset={true} useSubmit={true} resetOnSubmit={true} hideReset={true} hideSubmit={true} submitDescription={"remove"} isVertical={true} />
-        </div>
+        <Card>
+            <Card.Header>
+                <Card.Title>Produkt Entfernen</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                <ProductSelect runCallback={run} useReset={true} useSubmit={true} resetOnSubmit={true} hideReset={true} hideSubmit={true} submitDescription={"remove"} isVertical={true} />
+            </Card.Body>
+        </Card>
     );
 }

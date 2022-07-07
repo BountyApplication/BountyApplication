@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
 import { changeProduct } from '../util/Database';
-import {Form, Button, Collapse} from 'react-bootstrap';
+import {Form, Button, Collapse, Card} from 'react-bootstrap';
 import Input from '../util/Input';
 import { toCurrency } from '../util/Util.js';
 
@@ -47,7 +47,11 @@ export default function ChangeProduct(props) {
 
     function changeProductUi() {
         return(
-            <div>
+            <Card>
+                <Card.Header>
+                    <Card.Title>Produkt Bearbeiten</Card.Title>
+                </Card.Header>
+                <Card.Body>
                 <Form>
                     <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
                     <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
@@ -63,19 +67,24 @@ export default function ChangeProduct(props) {
                         </div>
                     </Collapse>
                 </Form>
-            </div>
+                </Card.Body>
+            </Card>
         );
     }
 
     return(
-        <div className='rubric'>
-            <div className='title'>{"Change Product"}</div>
-            <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true} onlyActive={false} />
-            <Collapse in={updatedProduct!=null}>
-                <div>
-                    {updatedProduct && changeProductUi()} 
-                </div>
-            </Collapse>
-        </div>
+        <Card>
+            <Card.Header>
+                <Card.Title>Produkt Bearbeiten</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true} onlyActive={false} />
+                <Collapse in={updatedProduct!=null}>
+                    <div>
+                        {updatedProduct && changeProductUi()} 
+                    </div>
+                </Collapse>
+            </Card.Body>
+        </Card>
     );
 }

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import UserSelect from '../util/UserSelect';
+import UserSelect from '../util/CombinedUserSearch';
 import { removeUser } from '../util/Database';
 import Confirm from '../util/Confirm';
 import { Card } from 'react-bootstrap';
@@ -19,11 +19,14 @@ export default function RemoveUser(props) {
     }
 
     return(
-        <div className='row justify-content-around'>
-        <div className="w-25">
-            {showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] wirklich entfernen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
-            <Card><UserSelect title="Remove User" runCallback={setUser} useReset={true} useSubmit={true} resetOnSubmit={true} hideReset={true} hideSubmit={true} isVertical={true} submitDescription={"remove"} /></Card>}
-        </div>
-        </div>
+        <Card className='w-50'>
+            <Card.Header>
+                <Card.Title>Benutzer Entfernen</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                {showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] wirklich entfernen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
+                <UserSelect runCallback={setUser} useReset useSubmit resetOnSubmit hideReset hideSubmit isVertical hideUserList submitDescription={"Entfernen"} />}
+            </Card.Body>
+        </Card>
     );
 }

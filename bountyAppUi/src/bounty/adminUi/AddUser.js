@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Form, Button, Collapse} from 'react-bootstrap';
+import {Form, Button, Collapse, Card} from 'react-bootstrap';
 import { addUser } from '../util/Database';
 import Input from '../util/Input';
 import Warning from '../util/Warning';
@@ -39,20 +39,24 @@ export default function Add(props) {
         <>
         {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}{
         showConfirm ? <Confirm text={`Willst du den User [${firstname} ${lastname}] mit einem Kontostand von ${balance}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
-        <div className='rubric'>
-            <div className='title'>{"Add User"}</div>
-            <Form>
-                <Input title="Vorname" value={firstname} setValue={setFirstname}/>
-                <Input title="Nachname" value={lastname} setValue={setLastname}/>
-                <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
-                <Collapse in={(firstname!=="" || lastname!=="" || balance!=null)}>
-                    <Button className="me-2 mb-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
-                </Collapse>
-                <Collapse in={(firstname!=="" && lastname!=="" && balance!=null)}>
-                    <Button className="mb-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
-                </Collapse>
-            </Form>
-        </div>}
+        <Card>
+            <Card.Header>
+                <Card.Title>Benutzer Anlegen</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                <Form>
+                    <Input title="Vorname" value={firstname} setValue={setFirstname}/>
+                    <Input title="Nachname" value={lastname} setValue={setLastname}/>
+                    <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
+                    <Collapse in={(firstname!=="" || lastname!=="" || balance!=null)}>
+                        <Button className="me-2 mb-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
+                    </Collapse>
+                    <Collapse in={(firstname!=="" && lastname!=="" && balance!=null)}>
+                        <Button className="mb-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
+                    </Collapse>
+                </Form>
+            </Card.Body>
+        </Card>}
         </>
     );
 }

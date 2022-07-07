@@ -31,7 +31,6 @@ export default function Product({productId, name, price, amount, onClick, tryRem
         if(title == null) return;
         while(title.clientHeight > 30) {
             var fontSize = parseInt(window.getComputedStyle(title).fontSize)-1;
-            console.log(fontSize);
             title.style.fontSize = fontSize + 'px';
             if(fontSize <= 14) {
                 title.style.textOverflow = 'ellipsis';
