@@ -33,10 +33,10 @@ export default function AddProduct() {
     }
 
     return(
-        <>
+        <div className='d-flex justify-content-center'>
         {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}{
         showConfirm ? <Confirm text={`Willst du das Produkt [${productName}] für ${productPrice}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
-        <Card>
+        <Card className='w-25 mt-3'>
             <Card.Header>
                 <Card.Title>Produkt Hinzufügen</Card.Title>
             </Card.Header>
@@ -44,15 +44,17 @@ export default function AddProduct() {
                 <Form>
                     <Input title="Name" value={productName} setValue={setProductName} />
                     <Input type="number" title="Price" value={productPrice} setValue={setProductPrice} />
-                    <Collapse in={productName!=="" || productPrice!=null}>
-                        <Button type="reset" variant="secondary" className="mb-2" onClick={reset}>{"reset"}</Button>
-                    </Collapse>
-                    <Collapse in={productName!=="" && productPrice!=null}>
-                        <Button type="submit" className='ms-2 mb-2' onClick={submit}>{"submit"}</Button>
-                    </Collapse>
+                    <div className='d-flex justify-content-end'>
+                        <Collapse in={productName!=="" || productPrice!=null}>
+                            <Button type="reset" variant="secondary" className="ms-2" onClick={reset}>{"reset"}</Button>
+                        </Collapse>
+                        <Collapse in={productName!=="" && productPrice!=null}>
+                            <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                        </Collapse>
+                    </div>
                 </Form>
             </Card.Body>
         </Card>}
-        </>
+        </div>
     );
 }

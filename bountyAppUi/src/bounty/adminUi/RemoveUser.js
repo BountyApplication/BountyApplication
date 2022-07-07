@@ -19,7 +19,8 @@ export default function RemoveUser(props) {
     }
 
     return(
-        <Card className='w-50'>
+        <div className='d-flex justify-content-center'>
+        <Card className='w-25 mt-3'>
             <Card.Header>
                 <Card.Title>Benutzer Entfernen</Card.Title>
             </Card.Header>
@@ -28,5 +29,6 @@ export default function RemoveUser(props) {
                 <UserSelect runCallback={setUser} useReset useSubmit resetOnSubmit hideReset hideSubmit isVertical hideUserList submitDescription={"Entfernen"} />}
             </Card.Body>
         </Card>
+        </div>
     );
 }

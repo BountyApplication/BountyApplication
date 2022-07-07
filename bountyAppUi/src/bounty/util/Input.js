@@ -13,7 +13,7 @@ Input.propTypes = {
 };
 
 Input.defaultProps = {
-    className: "m-2",
+    className: "my-2",
     type: "text",
     title: "",
     placeholder: null,

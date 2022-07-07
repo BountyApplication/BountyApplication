@@ -36,10 +36,10 @@ export default function Add(props) {
     }
 
     return(
-        <>
+        <div className='d-flex justify-content-center'>
         {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}{
         showConfirm ? <Confirm text={`Willst du den User [${firstname} ${lastname}] mit einem Kontostand von ${balance}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
-        <Card>
+        <Card className='w-25 mt-3'>
             <Card.Header>
                 <Card.Title>Benutzer Anlegen</Card.Title>
             </Card.Header>
@@ -48,15 +48,17 @@ export default function Add(props) {
                     <Input title="Vorname" value={firstname} setValue={setFirstname}/>
                     <Input title="Nachname" value={lastname} setValue={setLastname}/>
                     <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
-                    <Collapse in={(firstname!=="" || lastname!=="" || balance!=null)}>
-                        <Button className="me-2 mb-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
-                    </Collapse>
-                    <Collapse in={(firstname!=="" && lastname!=="" && balance!=null)}>
-                        <Button className="mb-2" variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
-                    </Collapse>
+                    <div className='mt-3 d-flex justify-content-end'>
+                        <Collapse in={(firstname!=="" || lastname!=="" || balance!=null)}>
+                            <Button className="ms-2" variant='secondary' type='reset' onClick={reset}>{"reset"}</Button>
+                        </Collapse>
+                        <Collapse in={(firstname!=="" && lastname!=="" && balance!=null)}>
+                            <Button className='ms-2' variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
+                        </Collapse>
+                    </div>
                 </Form>
             </Card.Body>
         </Card>}
-        </>
+        </div>
     );
 }

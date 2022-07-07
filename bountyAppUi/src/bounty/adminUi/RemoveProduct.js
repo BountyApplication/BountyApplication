@@ -13,13 +13,15 @@ export default function RemoveProduct() {
     }
 
     return(
-        <Card>
+        <div className='d-flex justify-content-center'>
+        <Card className='w-25 mt-3'>
             <Card.Header>
                 <Card.Title>Produkt Entfernen</Card.Title>
             </Card.Header>
             <Card.Body>
-                <ProductSelect runCallback={run} useReset={true} useSubmit={true} resetOnSubmit={true} hideReset={true} hideSubmit={true} submitDescription={"remove"} isVertical={true} />
+                <ProductSelect runCallback={run} useReset useSubmit resetOnSubmit hideReset hideSubmit submitDescription={"remove"} isVertical />
             </Card.Body>
         </Card>
+        </div>
     );
 }

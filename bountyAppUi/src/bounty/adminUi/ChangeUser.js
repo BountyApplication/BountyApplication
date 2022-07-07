@@ -72,7 +72,8 @@ export default function ChangeUser(props) {
     }
 
     return(
-        <Card className='w-50 align-self-center'>
+        <div className='d-flex justify-content-center'>
+        <Card className='w-25 mt-3 align-self-center'>
             <Card.Header>
                 <Card.Title>Benutzer Bearbeiten</Card.Title>
             </Card.Header>
@@ -86,12 +87,13 @@ export default function ChangeUser(props) {
                 <Collapse in={hasInput}>
                     <div >
                         <div className='d-flex justify-content-end mt-3'>
-                        <Button type="reset" className='me-2' variant="secondary" onClick={reset}>{"reset"}</Button>
-                        <Button type="submit" className='me-2' onClick={submit}>{"submit"}</Button>
+                        <Button type="reset" className='ms-2' variant="secondary" onClick={reset}>{"reset"}</Button>
+                        <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
                         </div>
                     </div>
                 </Collapse>
             </Card.Body>
         </Card>
+        </div>
     );
 }

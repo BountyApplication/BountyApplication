@@ -47,38 +47,33 @@ export default function ChangeProduct(props) {
 
     function changeProductUi() {
         return(
-            <Card>
-                <Card.Header>
-                    <Card.Title>Produkt Bearbeiten</Card.Title>
-                </Card.Header>
-                <Card.Body>
-                <Form>
-                    <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
-                    <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
-                    <div className="form-check form-switch w-100 d-flex justify-content-left ps-0 mb-3">
-                        <label className="form-check-label fs-5 ms-3" htmlFor="flexSwitchCheckChecked">Aktiv:</label>
-                        <input className="form-check-input d-inline float-end ms-3" style={{height: '1.6rem', width: '3.2rem'}} type="checkbox" checked={updatedProduct.active===1} onChange={()=>{setUpdatedProduct({...updatedProduct, active: (updatedProduct.active?0:1)});}}></input>
-                    </div>
-                    
-                    <Collapse in={updatedProduct!==product}>
-                        <div>
-                            <Button variant="secondary" type="reset" className='mb-2' onClick={reset.bind(this)}>{"reset"}</Button>
-                            <Button type="submit" className='ms-2 mb-2' onClick={submit.bind(this)}>{"submit"}</Button>
+            <Form>
+                <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
+                <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
+                <div className="form-check form-switch w-100 d-flex justify-content-left ps-0 mb-3">
+                    <label className="form-check-label fs-5 ms-1" htmlFor="flexSwitchCheckChecked">Aktiv:</label>
+                    <input className="form-check-input d-inline float-end ms-2" style={{height: '1.6rem', width: '3.2rem'}} type="checkbox" checked={updatedProduct.active===1} onChange={()=>{setUpdatedProduct({...updatedProduct, active: (updatedProduct.active?0:1)});}}></input>
+                </div>
+                <Collapse in={updatedProduct!==product}>
+                    <div>
+                        <div className='d-flex justify-content-end'>
+                            <Button variant="secondary" type="reset" className='ms-2' onClick={reset.bind(this)}>{"reset"}</Button>
+                            <Button type="submit" className='ms-2' onClick={submit.bind(this)}>{"submit"}</Button>
                         </div>
-                    </Collapse>
-                </Form>
-                </Card.Body>
-            </Card>
+                    </div>
+                </Collapse>
+            </Form>
         );
     }
 
     return(
-        <Card>
+        <div className='d-flex justify-content-center'>
+        <Card className='w-25 mt-3'>
             <Card.Header>
                 <Card.Title>Produkt Bearbeiten</Card.Title>
             </Card.Header>
             <Card.Body>
-                <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset={true} hideReset={true} onlyActive={false} />
+                <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset onlyActive={false} />
                 <Collapse in={updatedProduct!=null}>
                     <div>
                         {updatedProduct && changeProductUi()} 
@@ -86,5 +81,6 @@ export default function ChangeProduct(props) {
                 </Collapse>
             </Card.Body>
         </Card>
+        </div>
     );
 }

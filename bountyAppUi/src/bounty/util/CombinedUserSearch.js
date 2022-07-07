@@ -184,7 +184,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     function displayUi() {
         return <div>
-            {user!=null && <div className='ms-1'><p className='fs-3 d-inline'>Benutzer: </p><p className='fs-3 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
+            {user!=null && <div className='ms-1'><p className='fs-4 d-inline'>Benutzer: </p><p className='fs-4 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
         </div>
     }
     
@@ -195,10 +195,10 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
             <Collapse in={user == null || (hasInput && filteredUsers.length>1) || !hideUserList}>{displayUsers()}</Collapse>
             <div className='d-flex justify-content-end mt-2'>
                 <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
-                    <Button className='me-2' variant="secondary" type="reset" onClick={reset.bind(this, false)}>Zurücksetzten</Button>
+                    <Button className='ms-2' variant="secondary" type="reset" onClick={reset.bind(this, false)}>Zurücksetzten</Button>
                 </Collapse>
                 <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
-                    <Button className='me-2' variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
+                    <Button className='ms-2' variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
                 </Collapse>
             </div>
         </>

@@ -106,24 +106,26 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     }
 
     return(
-        <div className="wrapper p-2">
-            <Form className={!isVertical?'row':''}>
-                <Form.Group className="col mb-2" controlId={"productSelect"}>
-                    <Form.Label className="ps-1">{"Product:"} </Form.Label>
-                    <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
-                        {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
-                        {products!=null && products.map(({productId, name, price, active}) => {
-                            return <option className={active!==1?'fw-light fst-italic':''} key={productId} value={productId}>{getProductString(name, price)}</option>
-                        })}
-                    </Form.Select>
-                </Form.Group>
-                <Collapse className={`${!isVertical?'collapse-horizontal':''} me-2 mb-2`} in={useReset && (productSelected || !hideReset)}>
-                    <Button className="button align-self-end" variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>
-                </Collapse>
-                <Collapse className={`${!isVertical?'collapse-horizontal':''} mb-2`} in={useSubmit && (productSelected || !hideSubmit)}>
-                    <Button className="button align-self-end" variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
-                </Collapse>
-            </Form>
-        </div>
+        <Form className={!isVertical?'d-flex justify-content-between':''}>
+            <Form.Group className="d-block mb-2" controlId={"productSelect"}>
+                {/* <Form.Label className="ps-1">{"Product:"} </Form.Label> */}
+                <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
+                    {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
+                    {products!=null && products.map(({productId, name, price, active}) => {
+                        return <option className={active!==1?'fw-light fst-italic':''} key={productId} value={productId}>{getProductString(name, price)}</option>
+                    })}
+                </Form.Select>
+            </Form.Group>
+            <div className={!isVertical?'algin-self-end':'d-flex justify-content-end'}>
+
+            <Collapse className={`${!isVertical?'collapse-horizontal':'align-self-end'} ms-2`} in={useReset && (productSelected || !hideReset)}>
+                <Button className="align-self-end text-nowrap" variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>
+            </Collapse>
+            <Collapse className={`${!isVertical?'collapse-horizontal':'align-self-end'} ms-2`} in={useSubmit && (productSelected || !hideSubmit)}>
+                <Button className="align-self-end text-nowrap" variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
+            </Collapse>
+            </div>
+            
+        </Form>
     );
 }
