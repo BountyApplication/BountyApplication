@@ -52,6 +52,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     // temp var for easier access
     const hasInput = input !== '';
     const filteredUsers = getFilteredUsers();
+    const [focus, setFocus] = useState(true);
 
     useKeyPress('Enter', () => {
         submit();
@@ -150,7 +151,13 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     }
 
     function reset(keepInput = false) {
-        if(!keepInput) setInput("");
+        if(!keepInput) {
+            setInput("");
+            setFocus(false);
+            setTimeout(()=>{
+                setFocus(true);
+            },1);
+        }
         setUser(null);
         if(resetCallback != null) resetCallback();
     }
@@ -178,7 +185,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     function searchUi() {
         return <div>
-            <Input value={input} setValue={updateInput} title={title} isFocused={show} />
+            <Input value={input} setValue={updateInput} title={title} isFocused={focus&&(!inModal||show)} />
         </div>
     }
 

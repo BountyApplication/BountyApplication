@@ -28,6 +28,7 @@ export default function Input({className, type, title, placeholder, value, setVa
     const inputElement = useRef(null);
 
     useEffect(() => {
+        console.log(isFocused);
         if(!isFocused) return;
         if(!inputElement.current) return;
 

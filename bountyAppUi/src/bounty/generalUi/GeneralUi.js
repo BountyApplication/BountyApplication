@@ -147,7 +147,7 @@ export default function GeneralUi({showAdminLink = false}) {
         <>
         <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <Button onClick={ toggleTheme}>{theme==='light-theme'?'Dark Mode':'Light Mode'}</Button>
+            <Button className='bg-transparent fixed-bottom border-0' onClick={ toggleTheme}>{theme==='light-theme'?<i class="bi bi-moon-fill text-dark"></i>:<i class="bi bi-sun-fill"></i>}</Button>
             <UserSelect inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
             <Collapse in={user != null && userBalance != null}>
                 <div>
