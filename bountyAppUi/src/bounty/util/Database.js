@@ -3,7 +3,7 @@ import {arraysEqual} from './Util';
 import { defaultUsers, defaultProducts, defaultBookings, defaultBalance } from './DefaultData';
 
 const updateRate = 6*1000;
-const debug = false
+const debug = true;
 
 function doRequest(topic, method, params, oldData, setData, defaultData, calculate = null) {
     fetch("http://127.0.0.1:5000/bounty/"+topic, {
@@ -32,7 +32,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
     
     useEffect(() => {
         doRequest(topic, method, params, data, setData, defaultData, calculate);
-    }, []);
+    }, [topic, method, defaultData]);
 
     useEffect(() => {
         if(!continues) return;
@@ -48,7 +48,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
             if(debug) console.log('stop loop');
             clearInterval(updateLoop);
         }
-    }, [data]);
+    }, [data, topic, method, defaultData, continues]);
 
     if(data == null || data === undefined) return calculate!=null ? calculate(defaultData) : defaultData;
 
@@ -64,18 +64,19 @@ export function useGetProducts(callback, onlyActive = true) {
 }
 
 export function useGetUserBalance(user) {
-    if(user==null || user===undefined) return defaultBalance;
-    if(user.balance==null || user.balance===undefined) return defaultBalance;
-        // user = {userId: -1};
-    return user.balance;
+// console.log('user');
+//     console.log(user);
+    if(user==null || user===undefined) 
+        user = {userId: -1};
+    // console.log(user);
+    // if(user.balance==null || user.balance===undefined) return defaultBalance;
+    // return user.balance;
 
-
+    
     //     console.log('get balance');
     //     console.log(user);
-    // let account = useGetData('accounts/'+user.userId, [{balance: defaultBalance}], null, false);
-    // console.log(account);
-    // if(user == null || user === undefined) return null;
-    // return account.balance;
+    let account = useGetData('accounts/'+user.userId, [{balance: defaultBalance}]);
+    return account.balance;
 }
 
 export function getLastBookings(userId, setBookings) {

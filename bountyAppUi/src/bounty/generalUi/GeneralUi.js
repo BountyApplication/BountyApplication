@@ -76,7 +76,8 @@ export default function GeneralUi({showAdminLink = false}) {
     }
 
     function calculateSum() {
-        return products.reduce((sum, {price, amount}) => sum+price*amount, 0);
+        console.log(products.reduce((sum, {price, amount}) => sum+price*amount, 0));
+        return Math.round(products.reduce((sum, {price, amount}) => sum+price*amount, 0)*100)/100;
     }
 
     function calculateTotal() {
@@ -147,7 +148,7 @@ export default function GeneralUi({showAdminLink = false}) {
         <>
         <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <Button className='bg-transparent fixed-bottom border-0' onClick={ toggleTheme}>{theme==='light-theme'?<i class="bi bi-moon-fill text-dark"></i>:<i class="bi bi-sun-fill"></i>}</Button>
+            <Button className='bg-transparent fixed-bottom border-0' style={{width: 'min-content'}} onClick={ toggleTheme}>{theme==='light-theme'?<i className="bi bi-moon-fill text-dark"></i>:<i className="bi bi-sun-fill"></i>}</Button>
             <UserSelect inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
             <Collapse in={user != null && userBalance != null}>
                 <div>
@@ -155,7 +156,7 @@ export default function GeneralUi({showAdminLink = false}) {
                     <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
                     <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
                     <Row className="m-0 p-3 justify-content-evenly">
-                    {user!=null&&<Col className="col-auto"><LastBookings userId={user.userId} /></Col>}</Row>
+                    {user!=null&&<Col className="col-9"><LastBookings userId={user.userId} /></Col>}</Row>
                 </div>
             </Collapse>
             {/* <BarcodeScannerComponent

@@ -1,4 +1,6 @@
-export const defaultUsers = [
+const useDefaultData = false;
+
+export const defaultUsers = useDefaultData?[
     { userId: 0, lastname: "Mauch", firstname: "Josua" },
     { userId: 1, lastname: "Tappe", firstname: "Isajah" },
     { userId: 2, lastname: "Braun", firstname: "Jonas" },
@@ -16,9 +18,9 @@ export const defaultUsers = [
     { userId: 14, lastname: "Mustermann", firstname: "Tim"},
     { userId: 15, lastname: "Mustermann", firstname: "Fridolin"},
     { userId: 16, lastname: "Maurer", firstname: "Jakob"},
-];
+]:[];
 
-export const defaultProducts = [
+export const defaultProducts = useDefaultData?[
     { productId: 2, active: 1, name: "Loli", price: .5 },
     { productId: 3, active: 1, name: "Kracher", price: .1 },
     { productId: 4, active: 1, name: "Slush", price: .2 },
@@ -53,13 +55,13 @@ export const defaultProducts = [
     { productId: 34, active: 1, name: "ESP", price: 5 },
     { productId: 35, active: 1, name: "Bonbon", price: .05 },
     { productId: 36, active: 1, name: "Schokoriegel", price: .7},
-];
+]:[];
 
-export const defaultBookings = [
+export const defaultBookings = useDefaultData?[
     {bookingId: 0, productSum: -5.3, products: [{ productId: '0', active: 1, name: 'Cola', price: 0.5, amount: 2 }, { productId: '1', active: 1, name: 'Bonbon', price: 0.05, amount: 10 }]}, 
     {bookingId: 1, productSum: -0.83, correction: +2.1, products: [{ productId: '3', active: 1, name: 'ESP', price: 5, amount: 10 }, { productId: '2', active: 1, name: 'Slush', price: 0.20, amount: 3 }]},
     {bookingId: 2, productSum: -1.4, products: [{ productId: '5', name:'Bibel', price: 15, amount: 1 }, { productId: '6', active: 1, name: 'T-shirt', price: 12, amount: 1 }, { productId: '0', active: 1, name: 'Cola', price: 0.5, amount: 2 }, { productId: '1', active: 1, name: 'Bonbon', price: 0.05, amount: 10 }]},
     {bookingId: 3, productSum: 5, products: [{ productId: '0', active: 1, name: 'Cola', price: 0.5, amount: 2 }, { productId: '1', mame: 'Bonbon', price: 0.05, amount: 10 }]},
-];
+]:[];
 
-export const defaultBalance = 20;
+export const defaultBalance = useDefaultData?20:null;
