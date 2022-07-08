@@ -3,9 +3,10 @@ import {arraysEqual} from './Util';
 import { defaultUsers, defaultProducts, defaultBookings, defaultBalance } from './DefaultData';
 
 const updateRate = 6*1000;
-const debug = true;
+const debug = false;
 
 function doRequest(topic, method, params, oldData, setData, defaultData, calculate = null) {
+    if(topic.slice(-2)==='-1') return;
     fetch("http://127.0.0.1:5000/bounty/"+topic, {
         method: method,
         headers: params,
@@ -15,8 +16,8 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
         if(method === 'PULL') return console.log(data);
         if(calculate!=null) data = calculate(data);
         if(arraysEqual(data, oldData)) return;
-        if(debug) console.log('new data: '); console.log(data);
-        if(debug) console.log(`old data: `); console.log(oldData);
+        console.log(topic+' new data: '); console.log(data);
+        console.log(topic+` old data: `); console.log(oldData);
         if(setData!=null) setData(data);
     })
     .catch((error) => {
@@ -32,12 +33,12 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
     
     useEffect(() => {
         doRequest(topic, method, params, data, setData, defaultData, calculate);
-    }, [topic, method, defaultData]);
+    }, [topic, method]);
 
     useEffect(() => {
         if(!continues) return;
 
-        if(debug) console.log('start loop');
+        if(debug) console.log('start loop '+topic);
         const updateLoop = setInterval(() => {
             doRequest(topic, method, params, data, setData, defaultData, calculate);
         }, updateRate);
@@ -45,10 +46,10 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
         if(callback != null) callback(data==null ? (calculate!=null ? calculate(defaultData) : defaultData) : data);
 
         return () => {
-            if(debug) console.log('stop loop');
+            if(debug) console.log('stop loop '+topic);
             clearInterval(updateLoop);
         }
-    }, [data, topic, method, defaultData, continues]);
+    }, [data, topic, method, continues]);
 
     if(data == null || data === undefined) return calculate!=null ? calculate(defaultData) : defaultData;
 
@@ -63,20 +64,10 @@ export function useGetProducts(callback, onlyActive = true) {
     return useGetData('products', defaultProducts, callback, (products) => products.filter(({active}) => !onlyActive || active===1));
 }
 
-export function useGetUserBalance(user) {
-// console.log('user');
-//     console.log(user);
+export function useGetUserBalance(user, callback) {
     if(user==null || user===undefined) 
         user = {userId: -1};
-    // console.log(user);
-    // if(user.balance==null || user.balance===undefined) return defaultBalance;
-    // return user.balance;
-
-    
-    //     console.log('get balance');
-    //     console.log(user);
-    let account = useGetData('accounts/'+user.userId, [{balance: defaultBalance}]);
-    return account.balance;
+    return useGetData('accounts/'+user.userId, [{balance: defaultBalance}], callback, ({balance}) => balance);
 }
 
 export function getLastBookings(userId, setBookings) {

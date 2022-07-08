@@ -76,7 +76,6 @@ export default function GeneralUi({showAdminLink = false}) {
     }
 
     function calculateSum() {
-        console.log(products.reduce((sum, {price, amount}) => sum+price*amount, 0));
         return Math.round(products.reduce((sum, {price, amount}) => sum+price*amount, 0)*100)/100;
     }
 

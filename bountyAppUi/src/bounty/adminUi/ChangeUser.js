@@ -4,16 +4,15 @@ import { changeUser, useGetUserBalance } from '../util/Database';
 import {Form, Button, Collapse, Card } from 'react-bootstrap';
 import Input from '../util/Input';
 import { toCurrency } from '../util/Util';
-import { arraysEqual } from '../util/Util';
 
 const changeBalance = false;
 
 export default function ChangeUser(props) {
     // vars
     const [user, setUser] = useState(null);
-    const balance = useGetUserBalance(user);
-    const [newUser, setNewUser] = useState(null);
     const [newBalance, setNewBalance] = useState(null);
+    const balance = useGetUserBalance(user, setNewBalance);
+    const [newUser, setNewUser] = useState(null);
 
     const [resetCallback, setResetCallback] = useState(null);
 
@@ -25,7 +24,6 @@ export default function ChangeUser(props) {
         console.log(`${user.firstname} ${user.lastname} (${balance}€)`);
 
         setNewUser(user);
-        setNewBalance(balance);
     }, [user]);
 
     function resetAll() {
