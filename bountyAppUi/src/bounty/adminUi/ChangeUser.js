@@ -63,7 +63,7 @@ export default function ChangeUser(props) {
         return(
             <div>
                 <Form>
-                    <Input title="Vorname" value={newUser.firstname} setValue={name => setNewUser({...newUser, firstname: name})} />
+                    <Input title="Vorname" value={newUser.firstname} setValue={name => setNewUser({...newUser, firstname: name})} isFocused />
                     <Input title="Nachname" value={newUser.lastname} setValue={name => setNewUser({...newUser, lastname: name})} />
                     {changeBalance && <Input type="number" title="Kontostand" value={newBalance} setValue={setNewBalance} />}
                 </Form>

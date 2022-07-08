@@ -42,7 +42,7 @@ export default function AddProduct() {
             </Card.Header>
             <Card.Body>
                 <Form>
-                    <Input title="Name" value={productName} setValue={setProductName} />
+                    <Input title="Name" value={productName} setValue={setProductName} isFocused />
                     <Input type="number" title="Price" value={productPrice} setValue={setProductPrice} />
                     <div className='d-flex justify-content-end'>
                         <Collapse in={productName!=="" || productPrice!=null}>

@@ -48,7 +48,7 @@ export default function ChangeProduct(props) {
     function changeProductUi() {
         return(
             <Form>
-                <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} />
+                <Input title="Name" value={updatedProduct.name} setValue={name => setUpdatedProduct({...updatedProduct, name: name})} isFocused />
                 <Input type="number" title="Preis" value={updatedProduct.price} setValue={price => setUpdatedProduct({...updatedProduct, price: price})} />
                 <div className="form-check form-switch w-100 d-flex justify-content-left ps-0 mb-3">
                     <label className="form-check-label fs-5 ms-1" htmlFor="flexSwitchCheckChecked">Aktiv:</label>

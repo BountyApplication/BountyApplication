@@ -45,7 +45,7 @@ export default function Add(props) {
             </Card.Header>
             <Card.Body>
                 <Form>
-                    <Input title="Vorname" value={firstname} setValue={setFirstname}/>
+                    <Input title="Vorname" value={firstname} setValue={setFirstname} isFocused />
                     <Input title="Nachname" value={lastname} setValue={setLastname}/>
                     <Input type="number" title="Kontostand" value={balance} setValue={setBalance}/>
                     <div className='mt-3 d-flex justify-content-end'>
