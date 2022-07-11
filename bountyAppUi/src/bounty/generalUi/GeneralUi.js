@@ -106,11 +106,11 @@ export default function GeneralUi({showAdminLink = false}) {
         if(debug) console.log(`Total: ${total}`);
 
         // check if user balance is sufficient
-        if(total > userBalance) {
-            console.log("Error: user balance not sufficient");
-            window.alert("Error: user balance not sufficient");
-            return;
-        }
+        // if(total > userBalance) {
+        //     console.log("Error: user balance not sufficient");
+        //     window.alert("Error: user balance not sufficient");
+        //     return;
+        // }
 
         // append correction and cash payment to product array
         let correctionTotal = correctionPlus - correctionMinus;

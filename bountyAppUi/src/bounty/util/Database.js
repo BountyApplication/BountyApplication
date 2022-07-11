@@ -22,6 +22,7 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     })
     .catch((error) => {
         console.error('Error:', error);
+        window.alert('Datenbank Error: '+error);
         if(calculate != null) defaultData = calculate(defaultData);
         if(arraysEqual(defaultData, oldData)) return;
         if(setData!=null) setData(defaultData);

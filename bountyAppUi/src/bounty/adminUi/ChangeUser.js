@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import UserSelect from '../util/CombinedUserSearch';
-import { changeUser, useGetUserBalance } from '../util/Database';
+import { changeUser, useGetUserBalance, removeUser } from '../util/Database';
 import {Form, Button, Collapse, Card } from 'react-bootstrap';
+import Confirm from '../util/Confirm';
 import Input from '../util/Input';
 import { toCurrency } from '../util/Util';
 
@@ -13,10 +14,11 @@ export default function ChangeUser(props) {
     const [newBalance, setNewBalance] = useState(null);
     const balance = useGetUserBalance(user, setNewBalance);
     const [newUser, setNewUser] = useState(null);
-
+    
     const [resetCallback, setResetCallback] = useState(null);
+    const [showConfirm, setShowConfirm] = useState(false);
 
-    const hasInput = user !== newUser || balance !== newBalance;
+    const hasInput = (user !== newUser && newUser != null) || (balance !== newBalance && newBalance != null);
 
     useEffect(() => {
         if(!user) return;
@@ -35,6 +37,17 @@ export default function ChangeUser(props) {
     function reset() {
         setNewUser(user);
         setNewBalance(balance);
+    }
+
+    function openRemove() {
+        if(user == null) return window.alert("Warning: No User selected");
+        setShowConfirm(true);
+    }
+
+    function remove() {
+        console.log(user);
+        removeUser(user);
+        resetAll();
     }
 
     function submit() {
@@ -75,6 +88,7 @@ export default function ChangeUser(props) {
             <Card.Header>
                 <Card.Title>Benutzer Bearbeiten</Card.Title>
             </Card.Header>
+            {showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] wirklich entfernen?`} run={remove} show={showConfirm} setShow={setShowConfirm} /> :
             <Card.Body>
                 <UserSelect runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset hideUserList/>
                 <Collapse in={newUser!=null}>
@@ -82,15 +96,20 @@ export default function ChangeUser(props) {
                         {newUser != null && changeUserUi()}
                     </div>
                 </Collapse>
-                <Collapse in={hasInput}>
-                    <div >
-                        <div className='d-flex justify-content-end mt-3'>
-                        <Button type="reset" className='ms-2' variant="secondary" onClick={reset}>{"reset"}</Button>
-                        <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                <div className='d-flex justify-content-end mt-3'>
+                    <Collapse in={user!=null}>
+                        <div>
+                            <Button className='bg-danger border-0 d-inline' onClick={openRemove}><i className="bi bi-trash3"></i></Button>
                         </div>
-                    </div>
-                </Collapse>
-            </Card.Body>
+                    </Collapse>
+                    <Collapse in={hasInput}>
+                        <div>
+                            <Button type="reset" className='ms-2' variant="secondary" onClick={reset}>{"reset"}</Button>
+                            <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                        </div>
+                    </Collapse>
+                </div>
+            </Card.Body>}
         </Card>
         </div>
     );
