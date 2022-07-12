@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import {arraysEqual} from './Util';
-import { defaultUsers, defaultProducts, defaultBookings, defaultBalance } from './DefaultData';
+import { defaultUsers, defaultProducts, defaultBookings, defaultBalance, defaultUser } from './DefaultData';
 
 const updateRate = 6*1000;
 const debug = false;
@@ -108,4 +108,8 @@ export function removeUser(user) {
 
 export function changeUser(user, newUser) {
     doRequest('accounts/'+user.userId, 'PUT', newUser);
+}
+
+export function getUserByCardId(cardId, setUser) {
+    doRequest('cards/'+cardId, 'GET', {}, null, setUser, defaultUser);
 }

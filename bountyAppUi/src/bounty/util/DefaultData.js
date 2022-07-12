@@ -65,3 +65,5 @@ export const defaultBookings = useDefaultData?[
 ]:[];
 
 export const defaultBalance = useDefaultData?20:null;
+
+export const defaultUser = useDefaultData?{id: 0, firstname: 'Max', lastname: 'Mustermann', balance: 15.53, active: true}:null;

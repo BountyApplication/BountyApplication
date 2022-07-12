@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { useGetUsers } from './Database';
-import { Modal, Collapse, Form, Button, Table, Col, Card } from 'react-bootstrap';
+import { useGetUsers, getUserByCardId } from './Database';
+import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
 import Input from './Input';
 import { useKeyPress } from './Util';
 
@@ -50,6 +50,7 @@ UserSelect.defaultProps = {
 function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive}) {
     // vars
     const [input, setInput] = useState("");
+    const [idInput, setIdInput] = useState(null);
     const users = useGetUsers(null, onlyActive);
     const [user, setUser] = useState(null);
 
@@ -91,6 +92,23 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         if(user == null) return;
         run();
     }, [user]);
+
+    useEffect(() => {
+        if(idInput%10 === 0) return;
+        if(Math.floor(idInput%100/10) === 0) return;
+        if(Math.floor(idInput/100) === 0) return;
+        getUserByCardId(idInput, (result) => {
+            console.log(result);
+            if(result.length < 1) {
+                window.alert('No valid Code');
+                setIdInput(0);
+                resetFocus();
+                return;
+            }
+            setUser(result[0]);
+        });
+
+    }, [idInput]);
 
     useEffect(() => {
         if(show) return;
@@ -154,13 +172,17 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         if(runCallback != null) runCallback(user);
     }
 
+    function resetFocus() {
+        setFocus(false);
+        setTimeout(()=>{
+            setFocus(true);
+        }, 1);
+    }
+
     function reset(keepInput = false) {
         if(!keepInput) {
             setInput("");
-            setFocus(false);
-            setTimeout(()=>{
-                setFocus(true);
-            },1);
+            focus();
         }
         setUser(null);
         if(resetCallback != null) resetCallback();
@@ -190,6 +212,13 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     function searchUi() {
         return <div>
             <Input value={input} setValue={updateInput} title={title} isFocused={focus&&(!inModal||show)} />
+            <p className='mb-1'>or</p>
+            <div className='mb-2'>
+                <p className='d-inline fs-4 me-2'>Code:</p>
+                <Input className='d-inline' type='id' value={Math.floor(idInput/100)} setValue={(n) => setIdInput(n%10*100+idInput%100)}/>
+                <Input className='d-inline' type='id' value={Math.floor(idInput%100/10)} setValue={(n) => setIdInput(n%10*10+Math.floor(idInput/100)*100+idInput%10)}/>
+                <Input className='d-inline' type='id' value={idInput%10} setValue={(n) => setIdInput(n%10+Math.floor(idInput/10)*10)}/>
+            </div>
         </div>
     }
 
