@@ -57,8 +57,8 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
     return data;
 }
 
-export function useGetUsers(callback) {
-    return useGetData('accounts', defaultUsers, callback);
+export function useGetUsers(callback, onlyActive = true) {
+    return useGetData('accounts', defaultUsers, callback, (products) => products.filter(({active}) => !onlyActive || active===1));
 }
 
 export function useGetProducts(callback, onlyActive = true) {
@@ -103,7 +103,7 @@ export function addUser(firstname, lastname, balance) {
 }
 
 export function removeUser(user) {
-    // do server
+    doRequest('accounts/'+user.userId, 'PUT', {...user, active: 0});
 }
 
 export function changeUser(user, newUser) {

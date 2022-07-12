@@ -27,6 +27,8 @@ UserSelect.prototype = {
     hideUserList: PropTypes.bool,
     hideReset: PropTypes.bool,
     hideSubmit: PropTypes.bool,
+
+    onlyActive: PropTypes.bool,
 };
 
 UserSelect.defaultProps = {
@@ -41,12 +43,14 @@ UserSelect.defaultProps = {
     hideUserList: false,
     hideReset: false,
     hideSubmit: false,
+
+    onlyActive: true,
 };
 
-function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription}) {
+function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive}) {
     // vars
     const [input, setInput] = useState("");
-    const users = useGetUsers();
+    const users = useGetUsers(null, onlyActive);
     const [user, setUser] = useState(null);
 
     // temp var for easier access
@@ -173,7 +177,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
                 </thead>
                 <tbody>
                     {getSortedUsers().map(user => 
-                        <tr key={user.userId} onClick={setUser.bind(this, user)}>
+                        <tr key={user.userId} onClick={setUser.bind(this, user)} className={user.active!==1?'fw-light fst-italic':''}>
                             <td>{user.firstname}</td>
                             <td>{user.lastname}</td>
                         </tr>

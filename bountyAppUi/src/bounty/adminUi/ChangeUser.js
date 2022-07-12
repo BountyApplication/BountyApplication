@@ -90,24 +90,30 @@ export default function ChangeUser(props) {
             </Card.Header>
             {showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] wirklich entfernen?`} run={remove} show={showConfirm} setShow={setShowConfirm} /> :
             <Card.Body>
-                <UserSelect runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset hideUserList/>
+                <UserSelect onlyActive={false} runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset hideUserList/>
                 <Collapse in={newUser!=null}>
                     <div className='mt-4'>
                         {newUser != null && changeUserUi()}
                     </div>
                 </Collapse>
-                <div className='d-flex justify-content-end mt-3'>
-                    <Collapse in={user!=null}>
-                        <div>
-                            <Button className='bg-danger border-0 d-inline' onClick={openRemove}><i className="bi bi-trash3"></i></Button>
-                        </div>
-                    </Collapse>
-                    <Collapse in={hasInput}>
-                        <div>
-                            <Button type="reset" className='ms-2' variant="secondary" onClick={reset}>{"reset"}</Button>
-                            <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
-                        </div>
-                    </Collapse>
+                <div className='d-flex'>
+                    {newUser != null && <div className="form-check form-switch  d-flex justify-content-left p-0">
+                        <label className="form-check-label fs-5 ms-1" htmlFor="flexSwitchCheckChecked">Aktiv:</label>
+                        <input className="form-check-input d-inline float-end ms-2" style={{height: '1.6rem', width: '3.2rem'}} type="checkbox" checked={newUser.active===1} onChange={()=>{setNewUser({...newUser, active: (newUser.active?0:1)});}}></input>
+                    </div>}
+                    <div className='w-100 d-flex justify-content-end'>
+                        <Collapse in={user!=null}>
+                            <div>
+                                <Button className='bg-danger border-0 d-inline' onClick={openRemove}><i className="bi bi-trash3"></i></Button>
+                            </div>
+                        </Collapse>
+                        <Collapse in={hasInput}>
+                            <div>
+                                <Button type="reset" className='ms-2' variant="secondary" onClick={reset}>{"reset"}</Button>
+                                <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                            </div>
+                        </Collapse>
+                    </div>
                 </div>
             </Card.Body>}
         </Card>
