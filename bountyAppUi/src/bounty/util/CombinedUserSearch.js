@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { useGetUsers, getUserByCardId } from './Database';
+import { useGetUsers, getUserByCardId, changeUser } from './Database';
 import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
 import Input from './Input';
 import { useKeyPress } from './Util';
@@ -55,7 +55,8 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     const [user, setUser] = useState(null);
 
     // temp var for easier access
-    const hasInput = input !== '';
+    const hasCode = !isNaN(parseInt(input));
+    const hasInput = input !== '' && !hasCode;
     const filteredUsers = getFilteredUsers();
     const [focus, setFocus] = useState(true);
 
@@ -79,7 +80,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     // set callback on beginning
     useEffect(() => {
-      if(setResetCallback) setResetCallback(()=>reset);
+      if(setResetCallback) setResetCallback(()=>reset.bind(this, false));
     }, [setResetCallback]);
 
     useEffect(() => {
@@ -90,22 +91,43 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     // runs if user selected
     useEffect(() => {
         if(user == null) return;
+        if(hasCode) {
+            setInput('');
+            if(users.some(({cardId}) => cardId === idInput)) {
+                window.alert("Code already given");
+                // setIdInput(null);
+                return;
+            }    
+            changeUser({...user, cardId: idInput});
+        } else setIdInput(user.cardId)
         run();
     }, [user]);
 
     useEffect(() => {
-        if(idInput%10 === 0) return;
-        if(Math.floor(idInput%100/10) === 0) return;
-        if(Math.floor(idInput/100) === 0) return;
+        if(input.length < 3 && user==null) return setIdInput(null);
+        let code = parseInt(input);
+        if(isNaN(code)) return;
+        if(input.length > 3) return setInput(input.substr(-3));
+        setIdInput(code);
+    }, [input]);
+
+    useEffect(() => {
+        if(idInput == null) return;
+        if(user != null) return;
+        // if(idInput%10 === 0) return;
+        // if(Math.floor(idInput%100/10) === 0) return;
+        // if(Math.floor(idInput/100) === 0) return;
+        console.log(idInput);
         getUserByCardId(idInput, (result) => {
-            console.log(result);
-            if(result.length < 1) {
-                window.alert('No valid Code');
-                setIdInput(0);
+            if(Array.isArray(result)) {
+                if(result.length === 0) console.log('Code not assigned'); //window.alert('Code unbekannt! Bitte wähle den dazugehörigen Benutzer aus');
+                if(result.length > 1) window.alert('more than one users with same code');
                 resetFocus();
                 return;
             }
-            setUser(result[0]);
+            setInput('');
+
+            setUser(result);
         });
 
     }, [idInput]);
@@ -182,7 +204,8 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     function reset(keepInput = false) {
         if(!keepInput) {
             setInput("");
-            focus();
+            setIdInput(null);
+            resetFocus();
         }
         setUser(null);
         if(resetCallback != null) resetCallback();
@@ -212,34 +235,47 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     function searchUi() {
         return <div>
             <Input value={input} setValue={updateInput} title={title} isFocused={focus&&(!inModal||show)} />
-            <p className='mb-1'>or</p>
+            {/* <p className='mb-1'>or</p>
             <div className='mb-2'>
                 <p className='d-inline fs-4 me-2'>Code:</p>
                 <Input className='d-inline' type='id' value={Math.floor(idInput/100)} setValue={(n) => setIdInput(n%10*100+idInput%100)}/>
                 <Input className='d-inline' type='id' value={Math.floor(idInput%100/10)} setValue={(n) => setIdInput(n%10*10+Math.floor(idInput/100)*100+idInput%10)}/>
                 <Input className='d-inline' type='id' value={idInput%10} setValue={(n) => setIdInput(n%10+Math.floor(idInput/10)*10)}/>
-            </div>
+            </div> */}
         </div>
     }
 
     function displayUi() {
         return <div>
-            {user!=null && <div className='ms-1'><p className='fs-4 d-inline'>Benutzer: </p><p className='fs-4 d-inline fw-bold'>{`${user.firstname} ${user.lastname}`}</p></div>}
+            {<div className='ms-1'><p className='fs-4 d-inline'>Benutzer: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
+            {<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{idInput==null?'nicht hinzugefügt':('000' + idInput).substr(-3)}</p></div>}
         </div>
+    }
+
+    function inputSection() {
+        return <>
+            <Collapse in={true}>{searchUi()}</Collapse>
+            <Collapse in={user != null || idInput != null}>{displayUi()}</Collapse>
+            <Collapse in={user == null || (hasInput && filteredUsers.length>1) || !hideUserList}>{displayUsers()}</Collapse>
+        </>
+    }
+
+    function buttons() {
+        return <>
+            <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
+                <Button className='mx-0 ms-2' variant="secondary" type="reset" onClick={reset.bind(this, false)}>Zurücksetzten</Button>
+            </Collapse>
+            <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
+                <Button className='mx-0 ms-2' variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
+            </Collapse>
+        </>
     }
     
     if(!inModal) return (
         <>
-            <Collapse in={true}>{searchUi()}</Collapse>
-            <Collapse in={user != null}>{displayUi()}</Collapse>
-            <Collapse in={user == null || (hasInput && filteredUsers.length>1) || !hideUserList}>{displayUsers()}</Collapse>
+            {inputSection()}
             <div className='d-flex justify-content-end mt-2'>
-                <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
-                    <Button className='ms-2' variant="secondary" type="reset" onClick={reset.bind(this, false)}>Zurücksetzten</Button>
-                </Collapse>
-                <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
-                    <Button className='ms-2' variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
-                </Collapse>
+                {buttons()}
             </div>
         </>
     );
@@ -251,18 +287,11 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
             </Modal.Header>
 
             <Modal.Body>
-                <Collapse in={true}>{searchUi()}</Collapse>
-                <Collapse in={user != null}>{displayUi()}</Collapse>
-                <Collapse in={user == null || (hasInput && filteredUsers.length>1) || !hideUserList}>{displayUsers()}</Collapse>
+                {inputSection()}
             </Modal.Body>
 
             <Modal.Footer>
-                <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
-                    <Button variant="secondary" type="reset" onClick={reset}>Zurücksetzten</Button>
-                </Collapse>
-                <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
-                    <Button variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
-                </Collapse>
+                {buttons()}
             </Modal.Footer>
         </Modal>
     );

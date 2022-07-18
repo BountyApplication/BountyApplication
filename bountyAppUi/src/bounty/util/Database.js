@@ -15,6 +15,7 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     .then(data => {
         if(method === 'PULL') return console.log(data);
         if(calculate!=null) data = calculate(data);
+
         if(arraysEqual(data, oldData)) return;
         console.log(topic+' new data: '); console.log(data);
         console.log(topic+` old data: `); console.log(oldData);
@@ -106,8 +107,8 @@ export function removeUser(user) {
     doRequest('accounts/'+user.userId, 'PUT', {...user, active: 0});
 }
 
-export function changeUser(user, newUser) {
-    doRequest('accounts/'+user.userId, 'PUT', newUser);
+export function changeUser(newUser) {
+    doRequest('accounts/'+newUser.userId, 'PUT', newUser);
 }
 
 export function getUserByCardId(cardId, setUser) {

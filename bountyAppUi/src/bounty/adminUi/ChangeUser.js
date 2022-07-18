@@ -63,7 +63,7 @@ export default function ChangeUser(props) {
         }
         if(window.confirm(`Change ${user.firstname} ${user.lastname} (${toCurrency(balance)}) to ${newUser.firstname} ${newUser.lastname} (${toCurrency(newBalance)}) ?`)) {
             console.log(`Change ${user} to ${newUser}`);
-            changeUser(user, newUser);
+            changeUser(newUser);
 
             if(resetCallback)
                 resetCallback();
