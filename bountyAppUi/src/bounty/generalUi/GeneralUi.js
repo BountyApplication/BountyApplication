@@ -45,7 +45,7 @@ export default function GeneralUi({showAdminLink = false}) {
     const isSufficient = total<=userBalance;
     const booking = {
         oldBalance: userBalance,
-        newBalance: userBalance-total,
+        newBalance: Math.round((userBalance-total)*100)/100,
         total: total,
         productSum: sum,
         correction: -correctionMinus+correctionPlus,
@@ -80,7 +80,7 @@ export default function GeneralUi({showAdminLink = false}) {
     }
 
     function calculateTotal() {
-        return calculateSum() - correctionPlus + correctionMinus - paymentIn + paymentOut;
+        return parseFloat((calculateSum() - correctionPlus + correctionMinus - paymentIn + paymentOut).toPrecision(7));
     }
 
     function resetUser() {
