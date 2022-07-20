@@ -91,24 +91,35 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     // runs if user selected
     useEffect(() => {
         if(user == null) return;
-        if(hasCode) {
-            setInput('');
+        if(idInput != null) {
+            if(user.cardId === idInput) return setIdInput(null);
             if(users.some(({cardId}) => cardId === idInput)) {
-                window.alert("Code already given");
-                // setIdInput(null);
+                window.alert("ERROR: Code already given");
+                setIdInput(null);
                 return;
-            }    
-            changeUser({...user, cardId: idInput});
-        } else setIdInput(user.cardId)
+            }
+            if(user.cardId != null) window.alert(`Warning: User already assigned to [${('000' + user.cardId).substr(-3)}]`);
+            var newUser = user;
+            user.cardId = idInput;
+            changeUser(newUser);
+            setIdInput(null);
+        }
+        //  else setIdInput(user.cardId)
         run();
     }, [user]);
 
     useEffect(() => {
-        if(input.length < 3 && user==null) return setIdInput(null);
+        // if(input.length < 3 && user==null) return setIdInput(null);
+        if(input.length < 1) return;
         let code = parseInt(input);
         if(isNaN(code)) return;
+        if(input.length < 3) return;
+        console.log(code);
         if(input.length > 3) return setInput(input.substr(-3));
         setIdInput(code);
+        if(user!=null) setUser(null);
+        setInput('');
+        resetFocus();
     }, [input]);
 
     useEffect(() => {
@@ -248,7 +259,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     function displayUi() {
         return <div>
             {<div className='ms-1'><p className='fs-4 d-inline'>Benutzer: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
-            {<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{idInput==null?'nicht hinzugefügt':('000' + idInput).substr(-3)}</p></div>}
+            {<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('000' + user.cardId).substr(-3):('000' + idInput).substr(-3)}</p></div>}
         </div>
     }
 
