@@ -92,7 +92,10 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     useEffect(() => {
         if(user == null) return;
         if(idInput != null) {
-            if(user.cardId === idInput) return setIdInput(null);
+            if(user.cardId === idInput) {
+                setIdInput(null);
+                return run();
+            }
             if(users.some(({cardId}) => cardId === idInput)) {
                 window.alert("ERROR: Code already given");
                 setIdInput(null);
@@ -110,7 +113,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     useEffect(() => {
         // if(input.length < 3 && user==null) return setIdInput(null);
-        if(input.length < 1) return;
+        if(input === '') return;
         let code = parseInt(input);
         if(isNaN(code)) return;
         if(input.length < 3) return;
@@ -128,8 +131,8 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         // if(idInput%10 === 0) return;
         // if(Math.floor(idInput%100/10) === 0) return;
         // if(Math.floor(idInput/100) === 0) return;
-        console.log(idInput);
         getUserByCardId(idInput, (result) => {
+            console.log(result);
             if(Array.isArray(result)) {
                 if(result.length === 0) console.log('Code not assigned'); //window.alert('Code unbekannt! Bitte wähle den dazugehörigen Benutzer aus');
                 if(result.length > 1) window.alert('more than one users with same code');
@@ -137,6 +140,10 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
                 return;
             }
             setInput('');
+            if(!result.active) {
+                setIdInput(null);
+                return window.alert('Dieser Benutzer ist deaktiviert');
+            }
 
             setUser(result);
         });
@@ -187,7 +194,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     // executed when selection complete
     function run() {
         if(debug) console.log(`${user.firstname} ${user.lastname}`);
-
+        
         // auto submit if no submit button
         if(!useSubmit) submit();
     }
@@ -214,8 +221,8 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     function reset(keepInput = false) {
         if(!keepInput) {
-            setInput("");
             setIdInput(null);
+            setInput("");
             resetFocus();
         }
         setUser(null);
