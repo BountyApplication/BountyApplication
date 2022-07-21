@@ -85,7 +85,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     useEffect(() => {
         document.addEventListener("keydown", checkedCodeReceived, false);
         
-        if(hasBarcode) setTimeout(()=>{setBarcode('')}, 50);
+        if(hasBarcode) setTimeout(()=>{setBarcode('')}, 500);
 
         return (() => {
             document.removeEventListener("keydown", checkedCodeReceived, false);

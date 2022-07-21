@@ -2,12 +2,12 @@ import {useState, useEffect} from 'react';
 import {arraysEqual} from './Util';
 import { defaultUsers, defaultProducts, defaultBookings, defaultBalance, defaultUser } from './DefaultData';
 
-const updateRate = 6*1000;
+const updateRate = 1*1000;
 const debug = false;
 
 function doRequest(topic, method, params, oldData, setData, defaultData, calculate = null) {
     if(topic.slice(-2)==='-1') return;
-    fetch("http://127.0.0.1:5000/bounty/"+topic, {
+    fetch("http://192.168.1.10:5000/bounty/"+topic, {
         method: method,
         headers: params,
     })

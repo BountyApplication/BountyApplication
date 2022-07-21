@@ -65,7 +65,7 @@ export default function BookingInfo({show, user, openUserSelectCallback, booking
             <Collapse in={hasInput} >
                 <Row className="w-100">
                     <Button className="col my-1" type="reset" variant="secondary" onClick={reset}>Zurücksetzten</Button>
-                    <Button className="col ms-2 my-1" type="submit" variant={newBalance<0?'secondary':'primary'} onClick={submit} >Buchen</Button>
+                    <Button className="col ms-2 my-1" type="submit" variant={newBalance<0?'secondary':'primary'} onClick={submit} disabled={newBalance<0} >Buchen</Button>
                 </Row>
             </Collapse>
             </BookingDisplay>
