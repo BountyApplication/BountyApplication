@@ -132,7 +132,6 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         // if(Math.floor(idInput%100/10) === 0) return;
         // if(Math.floor(idInput/100) === 0) return;
         getUserByCardId(idInput, (result) => {
-            console.log(result);
             if(Array.isArray(result)) {
                 if(result.length === 0) console.log('Code not assigned'); //window.alert('Code unbekannt! Bitte wähle den dazugehörigen Benutzer aus');
                 if(result.length > 1) window.alert('more than one users with same code');
@@ -193,7 +192,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     // executed when selection complete
     function run() {
-        if(debug) console.log(`${user.firstname} ${user.lastname}`);
+        if(debug) console.log(`${user.firstname} ${user.lastname} [${user.cardId}]`);
         
         // auto submit if no submit button
         if(!useSubmit) submit();
