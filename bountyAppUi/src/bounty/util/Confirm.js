@@ -28,7 +28,7 @@ export default function Confirm({title, text, run, hasBreak, show, setShow}) {
             {hasBreak && <Button onClick={() => setShow(false)} variant="outline-danger" className="ms-3">
                 Abbrechen
             </Button>}
-            <Button onClick={() => {setShow(false); if(run) run();}} variant="outline-success" className="ms-3">
+            <Button onClick={() => {setShow(false); if(run) run();}} variant="outline-success" className="ms-3" autoFocus>
                 Bestätige
             </Button>
           </div>

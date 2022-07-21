@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { getUsers } from './Database';
-import { Container, Row, Col, Collapse, Form, Button } from 'react-bootstrap';
+import { useGetUsers } from './Database';
+import { Container, Col, Collapse, Form, Button } from 'react-bootstrap';
 
 const debug = true;
 
@@ -47,7 +47,7 @@ UserSelect.defaultProps = {
 
 function UserSelect({title, runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, hideDescription, isVertical, submitDescription}) {
     // vars
-    const [users, setUsers] = useState(getUsers());
+    const users = useGetUsers();
     const [userFirstname, setUserFirstname] = useState("");
     const [userLastname, setUserLastname] = useState("");
 
@@ -74,7 +74,7 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
 
     // filters for first user with matching name (no dupplicates)
     function getUniqueUsers(isFirstname) {
-        return filteredUsers.filter(({id, firstname, lastname}) => findUser(isFirstname, isFirstname?firstname:lastname).id===id);
+        return filteredUsers.filter(({userId, firstname, lastname}) => findUser(isFirstname, isFirstname?firstname:lastname).userId===userId);
     }
 
     // sortes user selection alphabetically
@@ -146,9 +146,9 @@ function UserSelect({title, runCallback, resetCallback, setResetCallback, useRes
                 {!hideDescription && <Form.Label className="row ps-3">{isFirstname?"Vorname":"Nachname"}</Form.Label>}
                 <Form.Select className="row m-0 me-1" value={userName} onChange={event => updateName(isFirstname, event.target.value)}>
                     <option value="">{userName!==""?"Auswahl löschen":`${isFirstname?"Vorname":"Nachname"} auswählen`}</option>
-                    {getSortedUsers(isFirstname).map(({id, firstname, lastname}) => {
+                    {getSortedUsers(isFirstname).map(({userId, firstname, lastname}) => {
                         let name=isFirstname?firstname:lastname;
-                        return <option key={id} value={name}>{name}</option>
+                        return <option key={userId} value={name}>{name}</option>
                     })}
                 </Form.Select>
             </Form.Group></Col>

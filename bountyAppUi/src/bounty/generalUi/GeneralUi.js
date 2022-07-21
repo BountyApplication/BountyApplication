@@ -1,52 +1,69 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Link} from "react-router-dom";
 import ProductDisplay from './ProductDisplay';
-import UserSelect from '../util/UserSelect';
+import UserSelect from '../util/CombinedUserSearch';
 import BalanceInfos from './BalanceInfos';
 import BalanceCorrection from './BalanceCorrection';
 import CashPayment from './ChashPayment';
 import LastBookings from './LastBookings';
-import { getProducts, getUserBalance, commitBooking } from '../util/Database';
+import { useGetProducts, useGetUserBalance, commitBooking } from '../util/Database';
 // import BarcodeScannerComponent from "react-qr-barcode-scanner";
-import Html5QrcodePlugin from '../util/scanner';
-import { Col, Row, Container, Collapse, Button } from 'react-bootstrap';
+// import Html5QrcodePlugin from '../util/scanner';
+import { Col, Row, Collapse, Button } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
+import { ThemeContext } from "../../themes/ThemeProvider.js";
 
 const debug = true;
 
 export default function GeneralUi({showAdminLink = false}) {
     // vars   
     const [user, setUser] = useState();
-    const [userBalance, setUserBalance] = useState();
+    const userBalance = useGetUserBalance(user);
 
     const [correctionPlus, setCorrectionPlus] = useState(null);
     const [correctionMinus, setCorrectionMinus] = useState(null);
     const [paymentIn, setPaymentIn] = useState(null);
     const [paymentOut, setPaymentOut] = useState(null);
 
-    const [products, setProducts] = useState(getProducts());
+    const [products, setProducts] = useState([]);
     
     const [resetUserCallback, setResetUserCallback] = useState();
+    
+    const [openUserSelect, setOpenUserSelect] = useState(true);
 
     const [data, setData] = useState('No result');
+
     const [width, setWidth] = useState(0);
+
+    const { theme, toggleTheme } = useContext(ThemeContext);
+
+    useGetProducts((products) => setProducts(products.map(product => ({...product, amount: 0}))));
 
     // temp vars for easier access
     const sum = calculateSum();
     const total = calculateTotal();
     const isSufficient = total<=userBalance;
-    const hasInput = (total!==0 || correctionPlus || paymentIn);
     const booking = {
         oldBalance: userBalance,
-        newBalance: userBalance-total,
+        newBalance: Math.round((userBalance-total)*100)/100,
+        total: total,
         productSum: sum,
         correction: -correctionMinus+correctionPlus,
         cashPayment: -paymentOut+paymentIn,
         products: products.filter(({amount}) => amount !== 0),
     };
 
-    // executes in beginning
     useEffect(() => {
+        if(user == null) return;
+        setOpenUserSelect(false);        
+        if(debug) console.log(`Balance: ${userBalance}`);
+    }, [user]);
+
+     // executes in beginning
+     useEffect(() => {
+        document.title = "Bounty Bezahlungssystem";
+
+
         window.addEventListener('resize', updateWindowDimensions)
 
         return () => {
@@ -57,27 +74,24 @@ export default function GeneralUi({showAdminLink = false}) {
     function updateWindowDimensions() {
         setWidth(window.innerWidth)
     }
-    
-    // get user balance when user gets selected
-    useEffect(() => {
-        if(!user) return;
-        
-        let balance = getUserBalance(user.id);
-        if(debug) console.log(`Balance: ${balance}`);
-        setUserBalance(balance);
-    }, [user]);
-    
+
     function calculateSum() {
-        return products.reduce((sum, {price, amount}) => sum+price*amount, 0);
+        return Math.round(products.reduce((sum, {price, amount}) => sum+price*amount, 0)*100)/100;
     }
 
     function calculateTotal() {
-        return calculateSum() - correctionPlus + correctionMinus - paymentIn + paymentOut;
+        return parseFloat((calculateSum() - correctionPlus + correctionMinus - paymentIn + paymentOut).toPrecision(7));
     }
 
     function resetUser() {
         setUser(null);
-        setUserBalance(null);
+        setOpenUserSelect(true);
+        resetProducts();
+    }
+
+    function runResetUser() {
+        if(resetUserCallback)
+            resetUserCallback();
     }
 
     function resetProducts() { 
@@ -92,34 +106,34 @@ export default function GeneralUi({showAdminLink = false}) {
         if(debug) console.log(`Total: ${total}`);
 
         // check if user balance is sufficient
-        if(total > userBalance) {
-            console.log("Error: user balance not sufficient");
-            window.alert("Error: user balance not sufficient");
-            return;
-        }
+        // if(total > userBalance) {
+        //     console.log("Error: user balance not sufficient");
+        //     window.alert("Error: user balance not sufficient");
+        //     return;
+        // }
 
         // append correction and cash payment to product array
         let correctionTotal = correctionPlus - correctionMinus;
         let cashPaymentTotal = paymentIn - paymentOut;
         
         // let booking = [
-        //     {id: 0, name: "correction", amount: correctionTotal},
-        //     {id: 1, name: "cashpayment", amount: cashPaymentTotal},
+        //     {productId: 0, name: "correction", amount: correctionTotal},
+        //     {productId: 1, name: "cashpayment", amount: cashPaymentTotal},
         // ].concat(products);
-        booking.products.concat([
-            {id: 0, name: "correction", amount: correctionTotal},
-            {id: 1, name: "cashpayment", amount: cashPaymentTotal},
-        ]);
+
+        // booking.products.concat([
+        //     {productId: 0, name: "correction", amount: correctionTotal},
+        //     {productId: 1, name: "cashpayment", amount: cashPaymentTotal},
+        // ]);
 
         // filter out unbought products
         // booking = booking.filter(({amount}) => amount!==0);
 
         if(debug) console.log(booking);
 
-        commitBooking(user.id, booking);
+        commitBooking(user.userId, booking);
 
-        if(resetUserCallback)
-            resetUserCallback();
+        runResetUser();
 
         resetProducts();
     }
@@ -133,21 +147,16 @@ export default function GeneralUi({showAdminLink = false}) {
         <>
         <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
-            <UserSelect setResetCallback={setResetUserCallback} resetCallback={resetUser} runCallback={setUser} useReset={true} hideReset={true} hideDescription={true} />
+            <Button className='bg-transparent fixed-bottom border-0' style={{width: 'min-content'}} onClick={ toggleTheme}>{theme==='light-theme'?<i className="bi bi-moon-fill text-dark"></i>:<i className="bi bi-sun-fill"></i>}</Button>
+            <UserSelect inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
             <Collapse in={user != null && userBalance != null}>
                 <div>
                     <Row className="m-0 p-3"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>
                     <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
                     <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
-                    <Row className="m-0 p-3 justify-content-evenly"><Col className='col-auto'><BalanceInfos balance={userBalance} sum={total} /></Col>
-                    <Col className="col-auto"><LastBookings /></Col></Row>
+                    <Row className="m-0 p-3 justify-content-evenly">
+                    {user!=null&&<Col className="col-9"><LastBookings userId={user.userId} /></Col>}</Row>
                 </div>
-            </Collapse>
-            <Collapse in={hasInput}>
-                <Button type="reset" variant="secondary" className="mb-4" onClick={resetProducts}>{"reset"}</Button>
-            </Collapse>
-            <Collapse in={hasInput && isSufficient && user != null}>
-                <Button type="submit"  className="ms-2 mb-4" onClick={submit} >{"Buchen"}</Button>
             </Collapse>
             {/* <BarcodeScannerComponent
                 width={500}
@@ -162,9 +171,9 @@ export default function GeneralUi({showAdminLink = false}) {
                 qrbox={250}
                 disableFlip={false}
                 qrCodeSuccessCallback={onNewScanResult}/> */}
-               {/* <p>{data}</p> */}
+            {/* <p>{data}</p> */}
         </div>
-        <BookingInfo show={user != null} user={user} booking={booking} />
+        <BookingInfo show user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} reset={resetProducts} submit={submit} />
         </>
     );
 }

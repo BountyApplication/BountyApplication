@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Card, ListGroup } from 'react-bootstrap';
+import { ListGroup } from 'react-bootstrap';
 
 BalanceInfos.propTypes = {
     balance: PropTypes.number,

@@ -1,19 +1,30 @@
 import { useState, useEffect } from "react";
 
+export function arraysEqual(a1,a2) {
+    /* WARNING: arrays must not contain {objects} or behavior may be undefined */
+    return JSON.stringify(a1)===JSON.stringify(a2);
+}
+
 export function toCurrency(number) {
     if(isNaN(number)) return;
     if(number == null) return;
     return `${number.toFixed(2)}€`;
 }
 
-export function useKeyPress(targetKey) {
+export function useKeyPress(targetKey, callback) {
     const [keyPressed, setKeyPressed] = useState(false);
+
+    useEffect(() => {
+      if(!keyPressed) return;
+      if(callback == null) return;
+      callback();
+    }, [keyPressed]);
+
 
     function getHandler(isPressed) {
         return ({key}) => {
             if(key !== targetKey) return;
             setKeyPressed(isPressed);
-            console.log("test");
         }
     }
 
@@ -28,8 +39,7 @@ export function useKeyPress(targetKey) {
         window.removeEventListener("keydown", downHandler);
         window.removeEventListener("keyup", upHandler);
       }
-    }, [keyPressed]);
-    
+    }, []);
+        
     return keyPressed;
-    
 }

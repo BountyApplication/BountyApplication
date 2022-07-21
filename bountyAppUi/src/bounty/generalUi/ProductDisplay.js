@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Product from './Product';
 import PropTypes from "prop-types";
-import { Card, CardGroup, Row, Col } from 'react-bootstrap';
-import CardHeader from 'react-bootstrap/esm/CardHeader';
+import { Card, Row } from 'react-bootstrap';
 import { useKeyPress } from '../util/Util';
 
 ProductDisplay.propTypes = {
     products: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.number,
+        productId: PropTypes.number,
         name: PropTypes.string,
         price: PropTypes.number,
         amount: PropTypes.number
@@ -30,21 +29,19 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
     const [increment, setIncrement] = useState(1);
 
     const shift = useKeyPress('Shift');
-    console.log(shift);
-
+    // const back = useKeyPress('Back')
+    
     // temp vars
     const tryRemove = shift || !isSufficient;
-    console.log(tryRemove);
-    console.log(isSufficient);
 
     // helper function
-    function handleProductClick(id, remove = tryRemove) {
-        const product = products.find(product => product.id === id);
+    function handleProductClick(productId, remove = tryRemove) {
+        const product = products.find(product => product.productId === productId);
         if(!product) return;
         if(remove && product.amount === 0) return;
         const newAmount = Math.max(product.amount + (remove ? -1 : 1)*increment, 0);
         const updatedProduct = { ...product, amount: newAmount};
-        const updatedProducts = products.map(product => product.id===id ? updatedProduct : product)
+        const updatedProducts = products.map(product => product.productId===productId ? updatedProduct : product)
         setProducts(updatedProducts);
         if(increment !== 1) setIncrement(1);
     }
@@ -55,13 +52,16 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
         return (() => {
             document.removeEventListener("keydown", checkKey, false);
         });
-    }, [increment])
-    
+    }, [])
+
+    useKeyPress('Enter', () => setIncrement(1));
+        
     function checkKey({key}) {
+        if(document.activeElement.className==="form-control") return;
+        if(key === 'Delete' || key === "Escape" || key === "Backspace") return setIncrement(1);
         const num = parseFloat(key);
         if(isNaN(num)) return;
-        if(increment === num || (num === 0 && increment === 10)) return;
-        console.log(num);
+        // if(increment === num || (num === 0 && increment === 10)) return;
         if(num === 0) return setIncrement(10);
         setIncrement(Number(num));
     }
@@ -71,9 +71,9 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
             <Card.Header><Card.Title className='mb-0'>{"Einkaufen"}</Card.Title></Card.Header>
             <Card.Body>
                 <Row className="gap-2">
-                    {products.map(({id, name, price, amount}) => 
-                    <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={id} id={id} name={name} price={price} amount={amount} onClick={handleProductClick}/>
-                )}
+                    {products.map(({productId, name, price, amount}) => 
+                        <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={productId} productId={productId} name={name} price={price} amount={amount} onClick={handleProductClick}/>
+                    )}
                 </Row>
             </Card.Body>
         </Card>
