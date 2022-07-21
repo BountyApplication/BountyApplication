@@ -1,94 +1,116 @@
+import {useState, useEffect} from 'react';
+import {arraysEqual} from './Util';
+import { defaultUsers, defaultProducts, defaultBookings, defaultBalance, defaultUser } from './DefaultData';
 
-export function getUsers() {
-    // do server
-    return [
-        { id: 0, lastname: "Mauch", firstname: "Josua" },
-        { id: 1, lastname: "Tappe", firstname: "Isajah" },
-        { id: 2, lastname: "Braun", firstname: "Jonas" },
-        { id: 3, lastname: "Strasser", firstname: "Marit" },
-        { id: 4, lastname: "Pauli", firstname: "Lotta" },
-        { id: 5, lastname: "Volmer", firstname: "Hannah" },
-        { id: 6, lastname: "Schwarz", firstname: "Tim" },
-        { id: 7, lastname: "Schreiber", firstname: "Jan" },
-        { id: 8, lastname: "Günther", firstname: "William" },
-        { id: 9, lastname: "Lee", firstname: "Cindy" },
-        { id: 10, lastname: "Hopp", firstname: "Janice" },
-        { id: 11, lastname: "Kuhn", firstname: "Maja" },
-        { id: 12, lastname: "Wäscher", firstname: "Nele" },
-        { id: 13, lastname: "Bürle", firstname: "Rahle" },
-        { id: 14, lastname: "Mustermann", firstname: "Tim"},
-        { id: 15, lastname: "Mustermann", firstname: "Fridolin"},
-        { id: 16, lastname: "Maurer", firstname: "Jakob"},
-    ];
+const updateRate = 1*1000;
+const debug = false;
+
+function doRequest(topic, method, params, oldData, setData, defaultData, calculate = null) {
+    if(topic.slice(-2)==='-1') return;
+    fetch("http://192.168.1.10:5000/bounty/"+topic, {
+        method: method,
+        headers: params,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(method === 'PULL') return console.log(data);
+        if(calculate!=null) data = calculate(data);
+
+        if(arraysEqual(data, oldData)) return;
+        console.log(topic+' new data: '); console.log(data);
+        console.log(topic+` old data: `); console.log(oldData);
+        if(setData!=null) setData(data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        window.alert('Datenbank Error: '+error);
+        if(calculate != null) defaultData = calculate(defaultData);
+        if(arraysEqual(defaultData, oldData)) return;
+        if(setData!=null) setData(defaultData);
+    })
 }
 
-export function getProducts() {
-    // do sever
-    let products = [
-        { id: 2, name: "Loli", price: .5 },
-        { id: 3, name: "Kracher", price: .1 },
-        { id: 4, name: "Slush", price: .2 },
-        { id: 5, name: "M&M", price: .3 },
-        { id: 6, name: "Schlangen", price: .1 },
-        { id: 7, name: "Snickers", price: .6 },
-        { id: 8, name: "T-shirt", price: 15 },
-        { id: 9, name: "Cappy", price: 8 },
-        { id: 10, name: "CD", price: 10 },
-        { id: 11, name: "Bibel", price: 20 },
-        { id: 12, name: "Sprudel", price: 0.8 },
-        { id: 13, name: "Apfelschorle", price: 1 },
-        { id: 14, name: "Cola", price: 1.5 },
-        { id: 15, name: "Reis", price: 2 },
-        { id: 16, name: "ESP", price: 5 },
-        { id: 17, name: "Bonbon", price: .05 },
-        { id: 18, name: "Schokoriegel", price: .7},
-    ];
+function useGetData(topic, defaultData, callback = null, calculate=null, continues = true, method = 'GET', params = {}) {
+    const [data, setData] = useState(null);
+    
+    useEffect(() => {
+        doRequest(topic, method, params, data, setData, defaultData, calculate);
+    }, [topic, method]);
 
-    // add amount property
-    products.forEach(product => product.amount = 0);
+    useEffect(() => {
+        if(!continues) return;
 
-    return products;
+        if(debug) console.log('start loop '+topic);
+        const updateLoop = setInterval(() => {
+            doRequest(topic, method, params, data, setData, defaultData, calculate);
+        }, updateRate);
+
+        if(callback != null) callback(data==null ? (calculate!=null ? calculate(defaultData) : defaultData) : data);
+
+        return () => {
+            if(debug) console.log('stop loop '+topic);
+            clearInterval(updateLoop);
+        }
+    }, [data, topic, method, continues]);
+
+    if(data == null || data === undefined) return calculate!=null ? calculate(defaultData) : defaultData;
+
+    return data;
 }
 
-export function getUserBalance(id) {
-    return 20;
+export function useGetUsers(callback, onlyActive = true) {
+    return useGetData('accounts', defaultUsers, callback, (products) => products.filter(({active}) => !onlyActive || active===1));
 }
 
-export function getLastBookings() {
-    //do server 
-    const bookings = [
-        {id: 0, amount: -5.3}, 
-        {id: 1, amount: -0.83, correction: +2.1},
-        {id: 2, amount: -1.4},
-        {id: 3, amount: 5},
-    ];
-    return bookings;
+export function useGetProducts(callback, onlyActive = true) {
+    return useGetData('products', defaultProducts, callback, (products) => products.filter(({active}) => !onlyActive || active===1));
 }
 
-export function commitBooking(id, booking) {
-    // do server
+export function useGetUserBalance(user, callback) {
+    if(user==null || user===undefined) 
+        user = {userId: -1};
+    return useGetData('accounts/'+user.userId, [{balance: defaultBalance}], callback, ({balance}) => balance);
+}
+
+export function getLastBookings(userId, setBookings) {
+    return doRequest('history/'+userId, 'GET', {}, null, setBookings, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})).sort((booking1, booking2) => booking2.bookingId - booking1.bookingId));
+    // return useGetData('history/'+userId, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), null, (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})), true);
+}
+
+export function commitBooking(userId, booking) {
+    // console.log({...booking, products: JSON.stringify(booking.products)});
+    doRequest('accounts/'+userId, 'POST', {...booking, products: JSON.stringify(booking.products)}, null, (result) => {
+        if(result.balance!==booking.newBalance) {
+            window.alert(`Error: false user balance! expected: ${booking.newBalance} actual: ${result.balance}`);
+            console.log(`Error: false user balance! expected: ${booking.newBalance} actual: ${result.balance}`);
+        }
+    });
 }
 
 export function addProduct(productName, productPrice) {
-    // do server
+    doRequest('products', 'POST', {name: productName, price: productPrice});
 }
 
 export function removeProduct(product) {
-    // do server
+    doRequest('products', 'PUT', {...product, active: 0});
 }
 
 export function changeProduct(product, newProduct) {
-    // do server
+    doRequest('products', 'PUT', newProduct);
 }
 
 export function addUser(firstname, lastname, balance) {
-    // do server
+    doRequest('accounts', 'POST', {firstname: firstname, lastname: lastname, balance: balance});
 }
 
 export function removeUser(user) {
-    // do server
+    doRequest('accounts/'+user.userId, 'PUT', {...user, active: 0});
 }
 
-export function changeUser(user, newUser) {
-    // do server
+export function changeUser(newUser) {
+    doRequest('accounts/'+newUser.userId, 'PUT', newUser);
+}
+
+export function getUserByCardId(cardId, setUser) {
+    doRequest('cards/'+cardId, 'GET', {}, null, setUser, defaultUser);
 }

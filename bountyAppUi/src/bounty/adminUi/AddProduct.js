@@ -1,13 +1,16 @@
 import React, {useState} from 'react';
-import NumberInput from '../util/NumberInput';
 import { addProduct } from '../util/Database';
+import { Form, Button, Collapse, Card } from 'react-bootstrap';
+import Input from '../util/Input';
+import Warning from '../util/Warning';
+import Confirm from '../util/Confirm';
 
-const debug = true;
-
-export default function AddProduct(props) {
+export default function AddProduct() {
     //vars
     const [productName, setProductName] = useState("");
     const [productPrice, setProductPrice] = useState(null);
+    const [showWarning, setShowWarning] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     function reset() {
         setProductName("");
@@ -17,22 +20,41 @@ export default function AddProduct(props) {
     function submit() {
         if(productName === "" || productPrice === null) {
             console.log("Error no valid entries");
-            window.alert("Error: no valid entries");
+            setShowWarning(true);
             return;
         }
-        if(window.confirm("Add Product "+productName+" ("+productPrice+"€) ?")) {
-            addProduct(productName, productPrice);
+        setShowConfirm(true);
+    }
+    
+    function run() {
+        addProduct(productName, productPrice);
 
-            reset();
-        }
+        reset();
     }
 
     return(
-        <div className='rubric'>
-            <div className='title'>{"Add Product"}</div>
-            <div className='wrapper'>{"Name: "} <input value={productName} onChange={event => setProductName(event.target.value)} /></div>
-            <div className='wrapper'>{"Price: "} <NumberInput value={productPrice} setValue={setProductPrice} /></div>
-            {(productName!=="" || productPrice!=null) && <button className='wrapper' onClick={reset}>{"reset"}</button>}                {(productName!==""&&productPrice!=null)&&<button className='wrapper' onClick={submit.bind(this)}>{"submit"}</button>}
+        <div className='d-flex justify-content-center'>
+        {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}{
+        showConfirm ? <Confirm text={`Willst du das Produkt [${productName}] für ${productPrice}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
+        <Card className='w-25 mt-3'>
+            <Card.Header>
+                <Card.Title>Produkt Hinzufügen</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                <Form>
+                    <Input title="Name" value={productName} setValue={setProductName} isFocused />
+                    <Input type="number" title="Price" value={productPrice} setValue={setProductPrice} />
+                    <div className='d-flex justify-content-end'>
+                        <Collapse in={productName!=="" || productPrice!=null}>
+                            <Button type="reset" variant="secondary" className="ms-2" onClick={reset}>{"reset"}</Button>
+                        </Collapse>
+                        <Collapse in={productName!=="" && productPrice!=null}>
+                            <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                        </Collapse>
+                    </div>
+                </Form>
+            </Card.Body>
+        </Card>}
         </div>
     );
 }

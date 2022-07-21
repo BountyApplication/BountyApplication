@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { getProducts } from './Database';
+import { useGetProducts } from './Database';
+import { Form, Button, Collapse } from 'react-bootstrap';
+import { toCurrency } from './Util';
 
 const debug = true;
 
@@ -16,6 +18,10 @@ ProductSelect.propTypes = {
     useSubmit: PropTypes.bool,
     hideSubmit: PropTypes.bool,
     resetOnSubmit: PropTypes.bool,
+    isVertical: PropTypes.bool,
+    onlyActive: PropTypes.bool,
+
+    submitDescription: PropTypes.string,
 };
 
 ProductSelect.defaultProps = {
@@ -26,11 +32,16 @@ ProductSelect.defaultProps = {
     hideSubmit: false,
 
     resetOnSubmit: false,
+    isVertical: false,
+
+    onlyActive: true,
+
+    submitDescription: "submit",
 };
 
-export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit}) {
+export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, onlyActive, submitDescription}) {
     // vars
-    const [products, setProducts] = useState(getProducts);
+    const products = useGetProducts(null, onlyActive);
     const [selectedProductId, setSelectedProductId] = useState(-1);
 
     // temp vars vor easier access
@@ -49,13 +60,13 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     function getSelectedProduct() {
         if(!productSelected) return null;
 
-        return products.find(product => product.id===selectedProductId);
+        return products.find(product => product.productId===selectedProductId);
     }
     
     function getProductString(name, price) {
         if(name==null || price==null) return null;
 
-        return `${name}(${+price.toFixed(2)}€)`;
+        return `${name} (${toCurrency(price)})`;
     }
     function getProductStringP(product) {
         if(product==null) return null;
@@ -63,11 +74,11 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
         return getProductString(product.name, product.price);
     }
 
-    function updateProduct(id) {
+    function updateProduct(productId) {
         // resets if product selection deleted
-        if(id===-1) return reset();
+        if(productId===-1) return reset();
            
-        return setSelectedProductId(id);
+        return setSelectedProductId(productId);
     }
 
     function run() {
@@ -95,17 +106,26 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     }
 
     return(
-        <div className="wrapper">
-            <div className='wrapper'>{"Product: "}
-                <select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
-                    {<option value={-1}>{""}</option>}
-                    {products.map(({id, name, price}) => {
-                        return <option key={id} value={id}>{getProductString(name, price)}</option>
+        <Form className={!isVertical?'d-flex justify-content-between':''}>
+            <Form.Group className="d-block mb-2" controlId={"productSelect"}>
+                {/* <Form.Label className="ps-1">{"Product:"} </Form.Label> */}
+                <Form.Select value={selectedProductId} onChange={(event) => {updateProduct(parseInt(event.target.value));}}>
+                    {<option value={-1}>{productSelected?"Auswahl löschen":"Produkt auswählen"}</option>}
+                    {products!=null && products.map(({productId, name, price, active}) => {
+                        return <option className={active!==1?'fw-light fst-italic':''} key={productId} value={productId}>{getProductString(name, price)}</option>
                     })}
-                </select>
+                </Form.Select>
+            </Form.Group>
+            <div className={!isVertical?'algin-self-end':'d-flex justify-content-end'}>
+
+            <Collapse className={`${!isVertical?'collapse-horizontal':'align-self-end'} ms-2`} in={useReset && (productSelected || !hideReset)}>
+                <Button className="align-self-end text-nowrap" variant="secondary" type="reset" onClick={reset}>{"reset"}</Button>
+            </Collapse>
+            <Collapse className={`${!isVertical?'collapse-horizontal':'align-self-end'} ms-2`} in={useSubmit && (productSelected || !hideSubmit)}>
+                <Button className="align-self-end text-nowrap" variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>
+            </Collapse>
             </div>
-            {useReset  && (!hideReset  || productSelected) &&   <button className='wrapper' onClick={reset}>{"reset"}</button>}
-            {useSubmit && (!hideSubmit || productSelected) &&   <button className='wrapper' onClick={submit}>{"submit"}</button>}
-        </div>
+            
+        </Form>
     );
 }
