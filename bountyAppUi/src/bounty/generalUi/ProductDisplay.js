@@ -53,7 +53,9 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
             document.removeEventListener("keydown", checkKey, false);
         });
     }, [])
-    
+
+    useKeyPress('Enter', () => setIncrement(1));
+        
     function checkKey({key}) {
         if(document.activeElement.className==="form-control") return;
         if(key === 'Delete' || key === "Escape" || key === "Backspace") return setIncrement(1);

@@ -7,6 +7,7 @@ import { useKeyPress } from './Util';
 
 const debug = true;
 const autoSelection = true;
+const barcodeTimeout = 1000;
 
 UserSelect.prototype = {
     title: PropTypes.string,
@@ -53,14 +54,17 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     const [idInput, setIdInput] = useState(null);
     const users = useGetUsers(null, onlyActive);
     const [user, setUser] = useState(null);
+    const [barcode, setBarcode] = useState('');
 
     // temp var for easier access
     const hasCode = !isNaN(parseInt(input));
     const hasInput = input !== '' && !hasCode;
+    const hasBarcode = (barcode.length === 8 && barcode.substring(0, 5) === 'KC22ß');
     const filteredUsers = getFilteredUsers();
     const [focus, setFocus] = useState(true);
 
     useKeyPress('Enter', () => {
+        if(hasBarcode) return;
         submit();
     });
 
@@ -77,7 +81,32 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     useKeyPress('s', () => {
         if(setShow!=null) setShow(true);
     })
+    
+    useEffect(() => {
+        document.addEventListener("keydown", checkedCodeReceived, false);
+        
+        if(hasBarcode) setTimeout(()=>{setBarcode('')}, 50);
 
+        return (() => {
+            document.removeEventListener("keydown", checkedCodeReceived, false);
+        });
+
+    }, [barcode])
+    
+    function checkedCodeReceived(event) {
+        switch(event.key) {
+            // setTimeout(()=>setBarcode(''), barcodeTimeout); 
+            case 'K': if(barcode!=='') return; break;
+            case 'C': if(barcode!=='K') return; break;
+            case '2': if(barcode.substring(0,2) !== 'KC') return; break;
+            case 'ß': if(barcode!=='KC22') return; break;
+            case 'Enter': if(barcode.substring(0,5) !== 'KC22ß' || barcode.length < 8) return; console.log("Barcode: "); console.log(barcode); setIdInput(parseInt(barcode.substring(5, 8))); break;
+            default: if(barcode.substring(0, 5) !== 'KC22ß' || isNaN(parseInt(event.key))) return; break;
+        }
+        event.preventDefault();
+        if(event.key !== 'Enter') setBarcode(barcode+event.key);
+    }
+    
     // set callback on beginning
     useEffect(() => {
       if(setResetCallback) setResetCallback(()=>reset.bind(this, false));
@@ -94,7 +123,8 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         if(idInput != null) {
             if(user.cardId === idInput) {
                 setIdInput(null);
-                return run();
+                run();
+                return;
             }
             if(users.some(({cardId}) => cardId === idInput)) {
                 window.alert("ERROR: Code already given");
@@ -127,7 +157,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     useEffect(() => {
         if(idInput == null) return;
-        if(user != null) return;
+        if(user != null && !hasBarcode) return;
         // if(idInput%10 === 0) return;
         // if(Math.floor(idInput%100/10) === 0) return;
         // if(Math.floor(idInput/100) === 0) return;
@@ -135,8 +165,8 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
             if(Array.isArray(result)) {
                 if(result.length === 0) console.log('Code not assigned'); //window.alert('Code unbekannt! Bitte wähle den dazugehörigen Benutzer aus');
                 if(result.length > 1) window.alert('more than one users with same code');
-                resetFocus();
-                return;
+                if(!show && inModal) return reset();
+                return resetFocus();
             }
             setInput('');
             if(!result.active) {
@@ -195,7 +225,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         if(debug) console.log(`${user.firstname} ${user.lastname} [${user.cardId}]`);
         
         // auto submit if no submit button
-        if(!useSubmit) submit();
+        if(!useSubmit || barcode) submit();
     }
 
     function submit() {
