@@ -163,7 +163,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         // if(Math.floor(idInput/100) === 0) return;
         getUserByCardId(idInput, (result) => {
             if(Array.isArray(result)) {
-                if(result.length === 0) console.log('Code not assigned'); //window.alert('Code unbekannt! Bitte wähle den dazugehörigen Benutzer aus');
+                if(result.length === 0) console.log('Code not assigned'); //window.alert('Code unbekannt! Bitte wähle den dazugehörigen Kunde aus');
                 if(result.length > 1) window.alert('more than one users with same code');
                 if(!show && inModal) return reset();
                 return resetFocus();
@@ -171,7 +171,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
             setInput('');
             if(!result.active) {
                 setIdInput(null);
-                return window.alert('Dieser Benutzer ist deaktiviert');
+                return window.alert('Dieser Kunde ist deaktiviert');
             }
 
             setUser(result);
@@ -231,8 +231,9 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     function submit() {
         // checks if result valid
         if(user == null) {
-            console.log(`Error: No User selected!`);
-            window.alert(`Error: No User selected!`);
+            // console.log(`Error: No User selected!`);
+            // window.alert(`Error: No User selected!`);
+            setUser(filteredUsers[0]);
             return;
         }
 
@@ -294,7 +295,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     function displayUi() {
         return <div>
-            {<div className='ms-1'><p className='fs-4 d-inline'>Benutzer: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
+            {<div className='ms-1'><p className='fs-4 d-inline'>Kunde: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
             {<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('000' + user.cardId).substr(-3):('000' + idInput).substr(-3)}</p></div>}
         </div>
     }
@@ -330,7 +331,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     return(
         <Modal show={show}>
             <Modal.Header closeButton onClick={setShow!=null?setShow.bind(this, false):()=>{}}>
-                <Modal.Title className='fs-2'>Benutzer Auswahl</Modal.Title>
+                <Modal.Title className='fs-2'>Kunden Auswahl</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
