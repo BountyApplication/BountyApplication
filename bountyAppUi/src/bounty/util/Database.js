@@ -12,7 +12,7 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
         if(setData!=null) setData(defaultData);
         return;
     }
-    fetch("http://192.168.178.90:5000/bounty/"+topic, {
+    fetch("http://127.0.0.1:5000/bounty/"+topic, {
         method: method,
         headers: params,
     })
