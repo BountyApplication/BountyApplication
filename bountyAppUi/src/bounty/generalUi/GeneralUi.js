@@ -12,6 +12,8 @@ import { useGetProducts, useGetUserBalance, commitBooking } from '../util/Databa
 import { Col, Row, Collapse, Button } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
+import Confirm from '../util/Confirm';
+import { useKeyPress } from '../util/Util';
 
 const debug = true;
 
@@ -20,6 +22,7 @@ export default function GeneralUi({showAdminLink = false}) {
     const [user, setUser] = useState();
     const userBalance = useGetUserBalance(user);
 
+    const [showCorrection, setShowCorrection] = useState(false);
     const [correctionPlus, setCorrectionPlus] = useState(null);
     const [correctionMinus, setCorrectionMinus] = useState(null);
     const [paymentIn, setPaymentIn] = useState(null);
@@ -45,13 +48,23 @@ export default function GeneralUi({showAdminLink = false}) {
     const isSufficient = total<=userBalance;
     const booking = {
         oldBalance: userBalance,
-        newBalance: Math.round((userBalance-total)*100)/100,
+        newBalance: userBalance!=undefined?Math.round((userBalance-total)*100)/100:undefined,
         total: total,
         productSum: sum,
         correction: -correctionMinus+correctionPlus,
         cashPayment: -paymentOut+paymentIn,
         products: products.filter(({amount}) => amount !== 0),
     };
+
+    const [showConfirm, setShowConfirm] = useState(false);
+    
+    useKeyPress("Enter", () => {
+        if(user==null) return;
+        if(!(booking.newBalance!==booking.oldBalance || booking.correction!==0 || booking.cashPayment!==0)) return;
+        if(!showConfirm) return setShowConfirm(true);
+        submit();
+        setShowConfirm(false);
+    });
 
     useEffect(() => {
         if(user == null) return;
@@ -145,17 +158,21 @@ export default function GeneralUi({showAdminLink = false}) {
 
     return(
         <>
-        <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
+        <Confirm show={showConfirm} setShow={setShowConfirm} run={submit} title="Buchung fortsetzen" text="Möchtest du mit der Buchung vorfahren?" hasBreak={true} /> 
+        {!showConfirm && <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <Button className='bg-transparent fixed-bottom border-0' style={{width: 'min-content'}} onClick={ toggleTheme}>{theme==='light-theme'?<i className="bi bi-moon-fill text-dark"></i>:<i className="bi bi-sun-fill"></i>}</Button>
             <UserSelect inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
             <Collapse in={user != null && userBalance != null}>
                 <div>
-                    <Row className="m-0 p-3"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>
-                    <Row className="m-0"><Col><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
-                    <Col><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
-                    <Row className="m-0 p-3 justify-content-evenly">
-                    {user!=null&&<Col className="col-9"><LastBookings userId={user.userId} /></Col>}</Row>
+                    <Row className="m-0 p-3 pb-4"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>
+                    <Collapse in={showCorrection}>
+                        <Row className="m-1 mt-0 mb-0"><Col className='mb-0'><BalanceCorrection plus={correctionPlus} setPlus={setCorrectionPlus} minus={correctionMinus} setMinus={setCorrectionMinus} /></Col>
+                        <Col className="mb-0"><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
+                    </Collapse>
+                    <Row className="m-0 p-3 pt-0 justify-content-evenly">
+                    <Col className=""><Button className='' onClick={()=>setShowCorrection(!showCorrection)}>{showCorrection?'hide':'more'}</Button></Col>
+                    {user!=null&&<Col className="col-11"><LastBookings userId={user.userId} /></Col>}</Row>
                 </div>
             </Collapse>
             {/* <BarcodeScannerComponent
@@ -172,8 +189,8 @@ export default function GeneralUi({showAdminLink = false}) {
                 disableFlip={false}
                 qrCodeSuccessCallback={onNewScanResult}/> */}
             {/* <p>{data}</p> */}
-        </div>
-        <BookingInfo show user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} reset={resetProducts} submit={submit} />
+        </div>}
+        {!showConfirm && <BookingInfo show user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} allProducts={products} setProducts={setProducts} reset={resetProducts} submit={submit} />}
         </>
     );
 }

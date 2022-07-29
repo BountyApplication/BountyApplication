@@ -24,6 +24,7 @@ Input.defaultProps = {
 
 export default function Input({className, type, title, placeholder, value, setValue, isFocused}) {
     const [focused, setFocused] = useState(false);
+    const [minus, setMinus] = useState(false);
 
     const inputElement = useRef(null);
 
@@ -38,17 +39,18 @@ export default function Input({className, type, title, placeholder, value, setVa
 
     function renderInput() {
         return(
-            <FormControl className={type==='id'?'p-0 ps-2 fw-bold fs-4 mx-1':''} style={type==='id'?{width: '2.1rem', display: 'inline-block'}:{}} autoComplete='off' autoFocus={isFocused} ref={inputElement} type={type==="number" ? "number":"text"} 
-                value={ type!=="number" && type!=="id" ? value : value == null ? " " : focused || type==="id"?value.toString():value.toFixed(2) }
+            <FormControl className={type==='id'?'p-0 ps-2 fw-bold fs-4 mx-1':''} style={type==='id'?{width: '2.1rem', display: 'inline-block'}:{}} autoComplete='off' autoFocus={isFocused} ref={inputElement} type={type==="number" ? "text":"text"} 
+                value={ type!=="number" && type!=="id" ? value : value == null ? minus?'-' : '' : focused || type==="id"?(minus?'-':'')+value.toString():value.toFixed(2) }
                 onChange={event => {
                     if(type!=="number" && type!=="id") return setValue(event.target.value);
-                    
+                    if(event.target.value === '-') setMinus(true);
+                    else if(minus) setMinus(false);
                     let newValue = parseFloat(event.target.value);
-                    setValue(isNaN(newValue)?null:Math.max(Math.floor(newValue*100+0.01)/100,0));
+                    setValue(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100);
                 }}
                 onKeyPress={event => {
                     if(type!=="number" && type!=="id") return;
-                    if(!/[0-9|,|.]/.test(event.key)) event.preventDefault();
+                    if(!/[-|0-9|,|.]/.test(event.key)) event.preventDefault();  
                 }}
                 onBlur={()=>{setFocused(false);}}
                 onFocus={()=>{setFocused(true);}}
