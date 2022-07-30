@@ -1,8 +1,9 @@
 import { Offcanvas, Collapse, Button, Row, OverlayTrigger, Tooltip } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import BookingDisplay from '../util/BookingDisplay';
-import React from 'react';
-
+import React, {useState} from 'react';
+import {useKeyPress} from '../util/Util';
+import Confirm from "../util/Confirm";
 BookingInfo.propTypes = {
     show: PropTypes.bool.isRequired,
     user: PropTypes.object,
@@ -42,15 +43,15 @@ function UserButton({user, openUserSelectCallback}) {
         placement={'auto'}
         overlay={
             <Tooltip>
-                { user == null ? 'Benutzer auswählen [s]' : 'Benutzer ändern [s]' }
+                { user == null ? 'Kunde auswählen [s]' : 'Kunde ändern [s]' }
             </Tooltip>
         }
     >
-        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Benutzer' : `${user.firstname} ${user.lastname}` }</Button>
+        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Kunde' : `${user.firstname} ${user.lastname} (${('000' + user.cardId).substr(-3)})` }</Button>
     </OverlayTrigger>
 }
 
-export default function BookingInfo({show, user, openUserSelectCallback, booking, reset, submit}) {
+export default function BookingInfo({show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, submit}) {
     const {oldBalance, newBalance, correction, cashPayment} = booking;
     const hasInput = user != null && (newBalance!==oldBalance || correction!==0 || cashPayment!==0)
 
@@ -61,10 +62,10 @@ export default function BookingInfo({show, user, openUserSelectCallback, booking
             <UserButton user={user} openUserSelectCallback={openUserSelectCallback} />
         </Offcanvas.Header>
         <Offcanvas.Body>
-            <BookingDisplay booking={booking}>
+            <BookingDisplay booking={booking} allProducts={allProducts} setProducts={setProducts}>
             <Collapse in={hasInput} >
                 <Row className="w-100">
-                    <Button className="col my-1" type="reset" variant="secondary" onClick={reset}>Zurücksetzten</Button>
+                    <Button className="col my-1" type="reset" variant="secondary" onClick={reset}>Zurücksetzen</Button>
                     <Button className="col ms-2 my-1" type="submit" variant={newBalance<0?'secondary':'primary'} onClick={submit} disabled={newBalance<0} >Buchen</Button>
                 </Row>
             </Collapse>
