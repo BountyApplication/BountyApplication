@@ -57,7 +57,8 @@ export default function Product({productId, name, price, amount, onClick, tryRem
                 <Card.Text className='mb-1 mt-0'>{`${price.toFixed(2)}€`}</Card.Text>
                 
                 <Button className="me-1" variant={disabled?'outline-danger':"outline-secondary"} onClick={onClick.bind(null, productId, true)}>{amount}</Button>
-                <Button className="" style={{width: '3.5rem'}} variant={disabled?'outline-secondary': "outline-primary"} onClick={onClick.bind(null, productId, undefined)} disabled={disabled}>
+                <Button className="" onFocus={()=>{if(document.activeElement.toString() === '[object HTMLButtonElement]') document.activeElement.blur();}} style={{width: '3.5rem'}} variant={disabled?'outline-secondary': "outline-primary"} onClick={onClick.bind(null, productId, undefined)} disabled={disabled}>
+                    
                     {increment===1 ? (tryRemove?"del.":"add") : ((tryRemove?'-':'+')+increment)}
                 </Button>
             </Card.Body>

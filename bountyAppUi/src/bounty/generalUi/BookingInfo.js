@@ -43,11 +43,11 @@ function UserButton({user, openUserSelectCallback}) {
         placement={'auto'}
         overlay={
             <Tooltip>
-                { user == null ? 'Kunde auswählen [s]' : 'Kunde ändern [s]' }
+                { user == null ? 'Kunde auswählen [a]' : 'Kunde ändern [a]' }
             </Tooltip>
         }
     >
-        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Kunde' : `${user.firstname} ${user.lastname} (${('000' + user.cardId).substr(-3)})` }</Button>
+        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Kunde' : `${user.firstname} ${user.lastname} (${('0000' + user.cardId).substr(-4)})` }</Button>
     </OverlayTrigger>
 }
 
