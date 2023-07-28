@@ -62,7 +62,6 @@ export default function GeneralUi({showAdminLink = false}) {
         if(user==null) return;
         if(!(booking.newBalance!==booking.oldBalance || booking.correction!==0 || booking.cashPayment!==0)) return;
         if(!showConfirm) return setShowConfirm(true);
-        submit();
         setShowConfirm(false);
     });
 
@@ -162,7 +161,7 @@ export default function GeneralUi({showAdminLink = false}) {
         {!showConfirm && <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <Button className='bg-transparent fixed-bottom border-0' style={{width: 'min-content'}} onClick={ toggleTheme}>{theme==='light-theme'?<i className="bi bi-moon-fill text-dark"></i>:<i className="bi bi-sun-fill"></i>}</Button>
-            <UserSelect inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
+            <UserSelect products={products} setProducts={setProducts} inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
             <Collapse in={user != null && userBalance != null}>
                 <div>
                     <Row className="m-0 p-3 pb-4"><ProductDisplay availableBalance={booking.newBalance} isSufficient={isSufficient} products={products} setProducts={setProducts} /></Row>

@@ -48,7 +48,7 @@ UserSelect.defaultProps = {
     onlyActive: true,
 };
 
-function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive}) {
+function UserSelect({products, setProducts, inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive}) {
     // vars
     const [input, setInput] = useState("");
     const [idInput, setIdInput] = useState(null);
@@ -59,7 +59,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     // temp var for easier access
     const hasCode = !isNaN(parseInt(input));
     const hasInput = input !== '' && !hasCode;
-    const hasBarcode = (barcode.length === 8 && barcode.substring(0, 5) === 'KC22ß');
+    const hasBarcode = (barcode.length === 4 && !isNaN(parseInt(barcode)));
     const filteredUsers = getFilteredUsers();
     const [focus, setFocus] = useState(true);
 
@@ -78,14 +78,15 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
         if(setShow!=null) setShow(false);
     });
 
-    useKeyPress('s', () => {
+    useKeyPress('a', () => {
         if(setShow!=null) setShow(true);
     })
     
     useEffect(() => {
         document.addEventListener("keydown", checkedCodeReceived, false);
         
-        if(hasBarcode) setTimeout(()=>{setBarcode('')}, 500);
+        // if(hasBarcode) setTimeout(()=>{setBarcode('')}, 500);
+        setTimeout(()=>{setBarcode('')}, 500);
 
         return (() => {
             document.removeEventListener("keydown", checkedCodeReceived, false);
@@ -94,17 +95,31 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     }, [barcode])
     
     function checkedCodeReceived(event) {
+        console.log(barcode);
         switch(event.key) {
             // setTimeout(()=>setBarcode(''), barcodeTimeout); 
-            case 'K': if(barcode!=='') return; break;
-            case 'C': if(barcode!=='K') return; break;
-            case '2': if(barcode.substring(0,2) !== 'KC') return; break;
-            case 'ß': if(barcode!=='KC22') return; break;
-            case 'Enter': if(barcode.substring(0,5) !== 'KC22ß' || barcode.length < 8) return; console.log("Barcode: "); console.log(barcode); setIdInput(parseInt(barcode.substring(5, 8))); break;
-            default: if(barcode.substring(0, 5) !== 'KC22ß' || isNaN(parseInt(event.key))) return; break;
+            // case 'K': if(barcode!=='') return; break;
+            // case 'C': if(barcode!=='K') return; break;
+            // case '2': if(barcode.substring(0,2) !== 'KC') return; break;
+            // case 'ß': if(barcode!=='KC22') return; break;
+            // case 'Enter': if(barcode.substring(0,5) !== 'KC22ß' || barcode.length < 8) return; console.log(" Barcode: "); console.log(barcode); setIdInput(parseInt(barcode.substring(5, 8))); break;
+            case 'Enter': if(barcode.length < 4) return;
+                if(barcode.length > 4) {
+                    if(barcode.includes('ein slush eis bitte') && user != null) {
+                        console.log("Gratis Slush!!");
+                        const freeSlushProduct = products.find(product => product.name === "Gratis Slush");
+                        if(!freeSlushProduct) return;
+                        const updatedProduct = { ...freeSlushProduct, amount: freeSlushProduct.amount + 1};
+                        const updatedProducts = products.map(product => product.productId === freeSlushProduct.productId ? updatedProduct : product)
+                        setProducts(updatedProducts);
+                    }
+                    setBarcode('');
+                    return;
+                }
+                console.log("Barcode: "); console.log(barcode); setIdInput(parseInt(barcode)); break;
+            default: setBarcode(barcode+event.key); break;
         }
         event.preventDefault();
-        if(event.key !== 'Enter') setBarcode(barcode+event.key);
     }
     
     // set callback on beginning
@@ -131,7 +146,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
                 setIdInput(null);
                 return;
             }
-            if(user.cardId != null) window.alert(`Warning: User already assigned to [${('000' + user.cardId).substr(-3)}]`);
+            if(user.cardId != null) window.alert(`Warning: User already assigned to [${('0000' + user.cardId).substr(-4)}]`);
             var newUser = user;
             user.cardId = idInput;
             changeUser(newUser);
@@ -157,7 +172,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
 
     useEffect(() => {
         if(idInput == null) return;
-        if(user != null && !hasBarcode) return;
+        if(user != null && !show) return;
         // if(idInput%10 === 0) return;
         // if(Math.floor(idInput%100/10) === 0) return;
         // if(Math.floor(idInput/100) === 0) return;
@@ -296,7 +311,7 @@ function UserSelect({inModal, show, title, setShow, runCallback, resetCallback, 
     function displayUi() {
         return <div>
             {<div className='ms-1'><p className='fs-4 d-inline'>Kunde: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
-            {<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('000' + user.cardId).substr(-3):('000' + idInput).substr(-3)}</p></div>}
+            {<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('0000' + user.cardId).substr(-4):('0000' + idInput).substr(-4)}</p></div>}
         </div>
     }
 

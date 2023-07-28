@@ -50,7 +50,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
             doRequest(topic, method, params, data, setData, defaultData, calculate);
         }, updateRate);
 
-        if(callback != null) callback(data==null ? (calculate!=null ? calculate(defaultData) : defaultData) : data);
+        if(callback != null && (data != null || (defaultData != null && defaultData.length > 0))) callback(data==null ? (calculate!=null ? calculate(defaultData) : defaultData) : data);
 
         return () => {
             if(debug) console.log('stop loop '+topic);
@@ -64,7 +64,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
 }
 
 export function useGetUsers(callback, onlyActive = true) {
-    return useGetData('accounts', defaultUsers, callback, (products) => products.filter(({active}) => !onlyActive || active===1));
+    return useGetData('accounts', defaultUsers, callback, (users) => users.filter(({active}) => !onlyActive || active===1));
 }
 
 export function useGetProducts(callback, onlyActive = true) {
