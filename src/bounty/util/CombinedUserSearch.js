@@ -7,7 +7,8 @@ import { useKeyPress } from './Util';
 
 const debug = true;
 const autoSelection = true;
-const barcodeTimeout = 1000;
+const useBarcode = process.env.REACT_APP_ENABLE_BARCODE === "true";
+// const barcodeTimeout = 1000;
 
 UserSelect.prototype = {
     title: PropTypes.string,
@@ -59,7 +60,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     // temp var for easier access
     const hasCode = !isNaN(parseInt(input));
     const hasInput = input !== '' && !hasCode;
-    const hasBarcode = (barcode.length === 4 && !isNaN(parseInt(barcode)));
+    const hasBarcode = useBarcode && (barcode.length === 4 && !isNaN(parseInt(barcode)));
     const filteredUsers = getFilteredUsers();
     const [focus, setFocus] = useState(true);
 
@@ -83,6 +84,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     })
     
     useEffect(() => {
+        if(!useBarcode) return;
         document.addEventListener("keydown", checkedCodeReceived, false);
         
         // if(hasBarcode) setTimeout(()=>{setBarcode('')}, 500);
@@ -135,7 +137,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     // runs if user selected
     useEffect(() => {
         if(user == null) return;
-        if(idInput != null) {
+        if(useBarcode && idInput != null) {
             if(user.cardId === idInput) {
                 setIdInput(null);
                 run();
@@ -156,7 +158,9 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         run();
     }, [user]);
 
+    // Code Input
     useEffect(() => {
+        if(!useBarcode) return;
         // if(input.length < 3 && user==null) return setIdInput(null);
         if(input === '') return;
         let code = parseInt(input);
@@ -308,10 +312,12 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         </div>
     }
 
+    
     function displayUi() {
+        console.log(useBarcode);
         return <div>
             {<div className='ms-1'><p className='fs-4 d-inline'>Kunde: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
-            {<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('0000' + user.cardId).substr(-4):('0000' + idInput).substr(-4)}</p></div>}
+            {useBarcode&&<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('0000' + user.cardId).substr(-4):('0000' + idInput).substr(-4)}</p></div>}
         </div>
     }
 

@@ -47,7 +47,7 @@ function UserButton({user, openUserSelectCallback}) {
             </Tooltip>
         }
     >
-        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Kunde' : `${user.firstname} ${user.lastname} (${('0000' + user.cardId).substr(-4)})` }</Button>
+        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Kunde' : `${user.firstname} ${user.lastname} ${process.env.REACT_APP_ENABLE_BARCODE==="true"?`(${('0000' + user.cardId).substr(-4)})`:''}` }</Button>
     </OverlayTrigger>
 }
 

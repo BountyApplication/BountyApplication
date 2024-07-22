@@ -70,10 +70,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 
-# Set up pi for production
+# install on pi
 
-
-- apk add nodejs npm
+- install nodejs npm
+https://pimylifeup.com/raspberry-pi-nodejs/
 
 
 - git clone https://github.com/BountyApplication/BountyApplication.git
@@ -82,13 +82,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 - npm install
 - npm start
 
-For Production server use:
+# setup production server:
 
-npm run build   !!!!
-(serve -s build)
+- npm run build
+to test: serve -s build
 
-cd 
-sudo nano /usr/lib/systemd/system/bountyapplication.service
+- cd 
+- sudo nano /usr/lib/systemd/system/bountyapplication.service
 
 copy this into the file 
 
@@ -105,4 +105,13 @@ copy this into the file
     [Install]
     WantedBy=multi-user.target
 
-sudo systemctl enable bountyapplication.service
+- sudo systemctl enable bountyapplication.service
+
+
+## update code 
+
+- git pull
+
+- npm run build
+
+- sudo reboot
