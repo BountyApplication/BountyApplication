@@ -119,7 +119,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
                 console.log("Barcode: "); console.log(barcode); setIdInput(parseInt(barcode)); break;
             default: setBarcode(barcode+event.key); break;
         }
-        event.preventDefault();
+        // event.preventDefault();
     }
     
     // set callback on beginning

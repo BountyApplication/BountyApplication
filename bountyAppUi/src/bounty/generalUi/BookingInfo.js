@@ -58,7 +58,7 @@ export default function BookingInfo({show, user, openUserSelectCallback, booking
     return(
     <Offcanvas className="" style={{width: '370px'}} show={show} placement={'end'} backdrop={false} scroll={true}>
         <Offcanvas.Header className="pb-0">
-            <Offcanvas.Title className="fs-3 fw-bold">Buchung</Offcanvas.Title>
+            <Offcanvas.Title className="fs-3 fw-bold me-2">Buchung</Offcanvas.Title>
             <UserButton user={user} openUserSelectCallback={openUserSelectCallback} />
         </Offcanvas.Header>
         <Offcanvas.Body>

@@ -104,13 +104,13 @@ export default function ChangeUser(props) {
                     <div className='w-100 d-flex justify-content-end'>
                         <Collapse in={user!=null}>
                             <div>
-                                <Button className='bg-danger border-0 d-inline' onClick={openRemove}><i className="bi bi-trash3"></i></Button>
+                                <Button className='bg-danger border-0 d-inline ms-2' onClick={openRemove}><i className="bi bi-trash3"></i></Button>
                             </div>
                         </Collapse>
                         <Collapse in={hasInput}>
                             <div>
-                                <Button type="reset" className='ms-2' variant="secondary" onClick={reset}>{"reset"}</Button>
-                                <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
+                                <Button type="reset" className='ms-2 mb-2' variant="secondary" onClick={reset}>{"reset"}</Button>
+                                <Button type="submit" className='ms-2 mb-2' onClick={submit}>{"submit"}</Button>
                             </div>
                         </Collapse>
                     </div>

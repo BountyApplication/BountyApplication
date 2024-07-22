@@ -12,12 +12,13 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
         if(setData!=null) setData(defaultData);
         return;
     }
-    fetch("http://127.0.0.1:5000/bounty/"+topic, {
+    fetch(`http://${process.env.REACT_APP_DB_IP}:${process.env.REACT_APP_DB_PORT}/bounty/${topic}`, {
         method: method,
         headers: params,
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data); 
         if(method === 'PULL') return console.log(data);
         if(calculate!=null) data = calculate(data);
 
@@ -64,7 +65,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
 }
 
 export function useGetUsers(callback, onlyActive = true) {
-    return useGetData('accounts', defaultUsers, callback, (users) => users.filter(({active}) => !onlyActive || active===1));
+    return useGetData('accounts', defaultUsers, callback, (users) => Array.isArray(users) ? users.filter(({active}) => !onlyActive || active===1): [users]);
 }
 
 export function useGetProducts(callback, onlyActive = true) {
@@ -72,7 +73,7 @@ export function useGetProducts(callback, onlyActive = true) {
 }
 
 export function useGetUserBalance(user, callback) {
-    if(user==null || user===undefined) 
+    if(user==null || user===undefined)
         user = {userId: -1};
     return useGetData('accounts/'+user.userId, [{balance: defaultBalance}], callback, ({balance}) => balance);
 }

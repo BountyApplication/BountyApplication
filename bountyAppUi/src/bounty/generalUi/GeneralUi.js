@@ -170,7 +170,7 @@ export default function GeneralUi({showAdminLink = false}) {
                         <Col className="mb-0"><CashPayment outVal={paymentOut} setOut={setPaymentOut} inVal={paymentIn} setIn={setPaymentIn} /><br className='wrapper'/></Col></Row>
                     </Collapse>
                     <Row className="m-0 p-3 pt-0 justify-content-evenly">
-                    <Col className=""><Button className='' onClick={()=>setShowCorrection(!showCorrection)}>{showCorrection?'hide':'more'}</Button></Col>
+                    <Col className="mb-2"><Button className='' onClick={()=>setShowCorrection(!showCorrection)}>{showCorrection?'weniger':'mehr'}</Button></Col>
                     {user!=null&&<Col className="col-11"><LastBookings userId={user.userId} /></Col>}</Row>
                 </div>
             </Collapse>
