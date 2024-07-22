@@ -68,3 +68,41 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+# Set up pi for production
+
+
+- apk add nodejs npm
+
+
+- git clone https://github.com/BountyApplication/BountyApplication.git
+
+- cd BountyApplication/
+- npm install
+- npm start
+
+For Production server use:
+
+npm run build   !!!!
+(serve -s build)
+
+cd 
+sudo nano /usr/lib/systemd/system/bountyapplication.service
+
+copy this into the file 
+
+    [Unit]
+    Description=Bounty Frontend Application
+    After=network.target
+
+    [Service]
+    User=bounty
+    ExecStart=serve -s build
+    WorkingDirectory=/home/bounty/BountyApplication
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+
+sudo systemctl enable bountyapplication.service
