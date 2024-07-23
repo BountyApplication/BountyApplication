@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import ProductSelect from '../util/ProductSelect';
 import { changeProduct, removeProduct } from '../util/Database';
-import {Form, Button, Collapse, Card, Row} from 'react-bootstrap';
+import {Form, Button, Collapse, Card} from 'react-bootstrap';
 import Confirm from '../util/Confirm';
 import Input from '../util/Input';
 import { arraysEqual, toCurrency } from '../util/Util.js';

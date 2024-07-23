@@ -50,12 +50,12 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     // set callback on beginning
     useEffect(() => {
         if(setResetCallback) setResetCallback(prev => reset);
-    }, []);
+    }, [setResetCallback]);
 
     // runns when product selected
     useEffect(() => {
         if(productSelected) run();
-    }, [selectedProductId]);
+    }, [productSelected]);
 
     function getSelectedProduct() {
         if(!productSelected) return null;

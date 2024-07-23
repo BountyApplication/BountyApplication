@@ -2,8 +2,6 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Link} from "react-router-dom";
 import ProductDisplay from './ProductDisplay';
 import UserSelect from '../util/CombinedUserSearch';
-import BalanceInfos from './BalanceInfos';
-import BalanceCorrection from './BalanceCorrection';
 import CashPayment from './ChashPayment';
 import LastBookings from './LastBookings';
 import { useGetProducts, useGetUserBalance, commitBooking } from '../util/Database';
@@ -14,6 +12,7 @@ import BookingInfo from './BookingInfo';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
 import Confirm from '../util/Confirm';
 import { useKeyPress } from '../util/Util';
+import BalanceCorrection from './BalanceCorrection.js';
 
 const debug = true;
 
@@ -34,7 +33,7 @@ export default function GeneralUi({showAdminLink = false}) {
     
     const [openUserSelect, setOpenUserSelect] = useState(true);
 
-    const [data, setData] = useState('No result');
+    // const [data, setData] = useState('No result');
 
     const [width, setWidth] = useState(0);
 
@@ -48,7 +47,7 @@ export default function GeneralUi({showAdminLink = false}) {
     const isSufficient = total<=userBalance;
     const booking = {
         oldBalance: userBalance,
-        newBalance: userBalance!=undefined?Math.round((userBalance-total)*100)/100:undefined,
+        newBalance: userBalance!==undefined?Math.round((userBalance-total)*100)/100:undefined,
         total: total,
         productSum: sum,
         correction: -correctionMinus+correctionPlus,
@@ -69,7 +68,7 @@ export default function GeneralUi({showAdminLink = false}) {
         if(user == null) return;
         setOpenUserSelect(false);        
         if(debug) console.log(`Balance: ${userBalance}`);
-    }, [user]);
+    }, [user, userBalance]);
 
      // executes in beginning
      useEffect(() => {
@@ -125,8 +124,8 @@ export default function GeneralUi({showAdminLink = false}) {
         // }
 
         // append correction and cash payment to product array
-        let correctionTotal = correctionPlus - correctionMinus;
-        let cashPaymentTotal = paymentIn - paymentOut;
+        // let correctionTotal = correctionPlus - correctionMinus;
+        // let cashPaymentTotal = paymentIn - paymentOut;
         
         // let booking = [
         //     {productId: 0, name: "correction", amount: correctionTotal},
@@ -150,10 +149,10 @@ export default function GeneralUi({showAdminLink = false}) {
         resetProducts();
     }
 
-    function onNewScanResult(decodedText, decodedResult) {
+    /*function onNewScanResult(decodedText, decodedResult) {
         console.log(decodedResult+" "+decodedText);
         setData(decodedText);
-    }
+    }*/
 
     return(
         <>

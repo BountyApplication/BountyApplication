@@ -6,18 +6,18 @@ import {useEffect, useState} from 'react';
 
 export default function LastBookings({userId}) {
     const [user, setUser] = useState(null);
-    if(user != userId) setUser(userId);
+    if(user !== userId) setUser(userId);
     const [bookings, setBookings] = useState(null);
     useEffect(() => {
         if(user==null) return;
-        getLastBookings(userId, setBookings)
+        getLastBookings(user, setBookings)
     }, [user]);
     const [activeBooking, setActiveBooking] = useState(null);
     
     if(bookings==null) return <></>;
 
     var count = bookings.length;
-    
+     
     return(
         <Card>
             <Card.Header>

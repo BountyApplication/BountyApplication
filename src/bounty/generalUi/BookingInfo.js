@@ -1,9 +1,8 @@
 import { Offcanvas, Collapse, Button, Row, OverlayTrigger, Tooltip } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import BookingDisplay from '../util/BookingDisplay';
-import React, {useState} from 'react';
-import {useKeyPress} from '../util/Util';
-import Confirm from "../util/Confirm";
+import React from 'react';
+
 BookingInfo.propTypes = {
     show: PropTypes.bool.isRequired,
     user: PropTypes.object,

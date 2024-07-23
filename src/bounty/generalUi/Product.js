@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Card, Button} from 'react-bootstrap';
-import {useEffect,useState} from 'react';
-import { Ellipsis } from 'react-bootstrap/esm/PageItem';
+import {useEffect} from 'react';
 
 Product.propTypes = {
     productId: PropTypes.number.isRequired,

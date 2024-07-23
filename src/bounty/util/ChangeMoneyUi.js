@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React from 'react';
 import { Card } from 'react-bootstrap';
 import { useGetUsers } from './Database';
 import RowText from './RowText';

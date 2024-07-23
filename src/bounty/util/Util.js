@@ -18,7 +18,7 @@ export function useKeyPress(targetKey, callback) {
       if(!keyPressed) return;
       if(callback == null) return;
       callback();
-    }, [keyPressed]);
+    }, [keyPressed, callback]);
 
 
     function getHandler(isPressed) {
@@ -39,7 +39,7 @@ export function useKeyPress(targetKey, callback) {
         window.removeEventListener("keydown", downHandler);
         window.removeEventListener("keyup", upHandler);
       }
-    }, []);
+    }, [downHandler, upHandler]);
         
     return keyPressed;
 }

@@ -1,7 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import App from './App';
 import BountyApp from './bounty/BountyApp';
 import { ThemeProvider } from './themes/ThemeProvider.js';
 import React from "react";

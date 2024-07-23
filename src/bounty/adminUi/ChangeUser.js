@@ -26,7 +26,7 @@ export default function ChangeUser(props) {
         console.log(`${user.firstname} ${user.lastname} (${balance}€)`);
 
         setNewUser(user);
-    }, [user]);
+    }, [user, balance]);
 
     function resetAll() {
         setUser(null);

@@ -156,7 +156,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         }
         //  else setIdInput(user.cardId)
         run();
-    }, [user]);
+    }, [user, idInput, users]);
 
     // Code Input
     useEffect(() => {
@@ -172,7 +172,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         if(user!=null) setUser(null);
         setInput('');
         resetFocus();
-    }, [input]);
+    }, [input, user]);
 
     useEffect(() => {
         if(idInput == null) return;
@@ -196,7 +196,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
             setUser(result);
         });
 
-    }, [idInput]);
+    }, [idInput, inModal, show, user]);
 
     useEffect(() => {
         if(show) return;
@@ -314,7 +314,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
 
     
     function displayUi() {
-        console.log(useBarcode);
         return <div>
             {<div className='ms-1'><p className='fs-4 d-inline'>Kunde: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
             {useBarcode&&<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('0000' + user.cardId).substr(-4):('0000' + idInput).substr(-4)}</p></div>}
