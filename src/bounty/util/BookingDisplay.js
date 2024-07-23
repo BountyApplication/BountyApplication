@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Table, Collapse, Container, Button} from 'react-bootstrap';
 import RowText from './RowText';
 import {toCurrency} from './Util';
+import Confirm from './Confirm';
+import { commitBooking } from './Database';
 
 export function ProductList({className, products, allProducts, setProducts, isHistory}) {
+
     // var count = 1;
     return(
         <Table striped hover size="sm" className={className}>
@@ -31,13 +34,25 @@ export function ProductList({className, products, allProducts, setProducts, isHi
     )
 }
 
-export default function BookingDisplay({children, booking: {oldBalance, newBalance, productSum, correction, cashPayment, products}, allProducts, setProducts, isHistory = false}) {
+export default function BookingDisplay({children, booking: {oldBalance, newBalance, total, productSum, correction, cashPayment, products}, allProducts, setProducts, isHistory = false, userId = null}) {
     const labelText = "fs-4 px-0";
     const labelTextImportant = "fs-4 fw-bold px-0";
     const hasInput = (newBalance!==oldBalance || correction!==0 || cashPayment!==0)
     const ref = React.createRef();
-    return <Container className="d-flex h-100 align-items-center flex-column">
-        <Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={isHistory?'Guthaben vorher':'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>
+
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    function run() {
+        if(!userId) return;
+        let reversedProducts = products.map(product => ({...product, amount: -product.amount}))
+        let reversedBooking = {oldBalance: newBalance, newBalance: oldBalance, total: -total, productSum: -productSum, correction: -correction, cashPayment: -cashPayment, products: reversedProducts};
+        commitBooking(userId, reversedBooking);
+    }
+
+    return(
+    <Container className="d-flex h-100 align-items-center flex-column">
+        {showConfirm ? <Confirm text={`Willst du wirklich die Buchung in der Höhe ${productSum} ${correction!==0||cashPayment!==0?' - '+correction+cashPayment+' ':''}€ rückgängig machen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
+        <><Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={isHistory?'Guthaben vorher':'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>
         <Collapse in={products!=null&&products.length!==0}><div className='overflow-auto w-100'><ProductList className="mt-3" products={products.filter(({amount}) => amount!==0)} allProducts={allProducts} setProducts={setProducts} isHistory={isHistory} /></div></Collapse>
         <div className="mb-auto w-100" />
         <Collapse in={productSum!==0}><RowText ref={ref} className={labelTextImportant} left={'Summe'} right={toCurrency(productSum)} /></Collapse>
@@ -45,5 +60,6 @@ export default function BookingDisplay({children, booking: {oldBalance, newBalan
         <Collapse in={cashPayment!==0}><RowText ref={ref} className={labelText} left={'Barzahlung'} right={toCurrency(cashPayment)} /></Collapse>
         {children}
         <Collapse in={hasInput}><RowText ref={ref} className={labelTextImportant} left={isHistory?'Guthaben nachher':'Neu'} right={toCurrency(newBalance)} /></Collapse>
-    </Container>
+        {isHistory&&userId&&<Button variant="danger" className='ms-3 px-2 pb-1 pt-0' onClick={() => setShowConfirm(true)}>Buchung Rückgängig machen</Button>}</>}
+    </Container>);
 }

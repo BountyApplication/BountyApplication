@@ -1,4 +1,4 @@
-import { getLastBookings } from "../util/Database";
+import { getLastBookings, useGetLastBookings } from "../util/Database";
 import { Card, ListGroup, Col } from "react-bootstrap";
 import BookingDisplay from "../util/BookingDisplay";
 import { toCurrency } from '../util/Util';
@@ -7,11 +7,12 @@ import {useEffect, useState} from 'react';
 export default function LastBookings({userId}) {
     const [user, setUser] = useState(null);
     if(user !== userId) setUser(userId);
-    const [bookings, setBookings] = useState(null);
-    useEffect(() => {
+    // const [bookings, setBookings] = useState(null);
+    const bookings = useGetLastBookings(userId);
+    /*useEffect(() => {
         if(user==null) return;
         getLastBookings(user, setBookings)
-    }, [user]);
+    }, [user]);*/
     const [activeBooking, setActiveBooking] = useState(null);
     
     if(bookings==null) return <></>;
@@ -35,7 +36,7 @@ export default function LastBookings({userId}) {
                     </ListGroup>
                 </Col>
                 {activeBooking!=null && <Col lg>
-                    <BookingDisplay booking={bookings.find(({bookingId}) => bookingId === activeBooking)} isHistory={true}/>
+                    <BookingDisplay booking={bookings.find(({bookingId}) => bookingId === activeBooking)} isHistory={true} userId={userId} />
                 </Col>}
             </Card.Body>
         </Card>

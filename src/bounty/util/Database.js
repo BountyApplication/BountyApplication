@@ -78,6 +78,10 @@ export function useGetUserBalance(user, callback) {
     return useGetData('accounts/'+user.userId, [{balance: defaultBalance}], callback, ({balance}) => balance);
 }
 
+export function useGetLastBookings(userId, setBookings) {
+    return useGetData('history/'+userId, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), setBookings, (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})).sort((booking1, booking2) => booking2.bookingId - booking1.bookingId));
+}
+
 export function getLastBookings(userId, setBookings) {
     return doRequest('history/'+userId, 'GET', {}, null, setBookings, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})).sort((booking1, booking2) => booking2.bookingId - booking1.bookingId));
     // return useGetData('history/'+userId, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), null, (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})), true);
