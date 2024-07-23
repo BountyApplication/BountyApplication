@@ -59,7 +59,7 @@ export default function ChangeProduct(props) {
         }
         
         console.log(updatedProduct);
-        changeProduct(product, updatedProduct);
+        changeProduct(updatedProduct);
 
         if(resetCallback) resetCallback();
     }

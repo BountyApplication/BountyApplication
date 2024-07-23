@@ -8,6 +8,7 @@ import ChangeUser from './ChangeUser';
 import RemoveProduct from './RemoveProduct';
 import RemoveUser from './RemoveUser';
 import { useLocation } from 'react-router-dom';
+import ArrangeProduct from './ArrangeProduct';
 
 export default function AdminUi(props) {
 
@@ -28,6 +29,7 @@ export default function AdminUi(props) {
                     <Nav.Item><Nav.Link href="#addProduct">add Product</Nav.Link></Nav.Item>
                     <Nav.Item><Nav.Link href="#removeProduct">remove Product</Nav.Link></Nav.Item>
                     <Nav.Item><Nav.Link href="#changeProduct">change Product</Nav.Link></Nav.Item>
+                    <Nav.Item><Nav.Link href="#arrangeProduct">arrange Product</Nav.Link></Nav.Item>
                     <Nav.Item><Button variant="outline-primary"><Link color="warning" to="/">back</Link></Button></Nav.Item>
                 </Nav>
             </Navbar.Collapse>
@@ -39,6 +41,7 @@ export default function AdminUi(props) {
         {params.has("#addProduct") && <AddProduct />}
         {params.has("#removeProduct") && <RemoveProduct />}
         {params.has("#changeProduct") && <ChangeProduct />}      
+        {params.has("#arrangeProduct") && <ArrangeProduct />}      
       </div>  
     );
 }

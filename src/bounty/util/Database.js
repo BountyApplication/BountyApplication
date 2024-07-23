@@ -68,7 +68,7 @@ export function useGetUsers(callback, onlyActive = true) {
 }
 
 export function useGetProducts(callback, onlyActive = true) {
-    return useGetData('products', defaultProducts, callback, (products) => products.filter(({active}) => !onlyActive || active===1));
+    return useGetData('products', defaultProducts, callback, (products) => products.filter(({active}) => !onlyActive || active===1).sort((product1, product2) => (product1.place < product2.place ? -1 : product1.place > product2.place ? 1: 0)));
 }
 
 export function useGetUserBalance(user, callback) {
@@ -108,7 +108,7 @@ export function removeProduct(product) {
     doRequest('products', 'PUT', {...product, active: 0});
 }
 
-export function changeProduct(product, newProduct) {
+export function changeProduct(newProduct) {
     doRequest('products', 'PUT', newProduct);
 }
 

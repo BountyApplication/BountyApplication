@@ -157,7 +157,7 @@ export default function GeneralUi({showAdminLink = false}) {
 
     return(
         <>
-        <Confirm show={showConfirm} setShow={setShowConfirm} run={submit} title="Buchung fortsetzen" text="Möchtest du mit der Buchung vorfahren?" hasBreak={true} /> 
+        <Confirm show={showConfirm} setShow={setShowConfirm} run={submit} title="Buchung bestätigen" text="Möchtest du die Buchung durchführen?" hasBreak={true} /> 
         {!showConfirm && <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <Button className='bg-transparent fixed-bottom border-0' style={{width: 'min-content'}} onClick={ toggleTheme}>{theme==='light-theme'?<i className="bi bi-moon-fill text-dark"></i>:<i className="bi bi-sun-fill"></i>}</Button>
