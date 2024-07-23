@@ -10,6 +10,7 @@ export default function Add(props) {
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [balance, setBalance] = useState();
+
     const [showWarning, setShowWarning] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -37,13 +38,13 @@ export default function Add(props) {
 
     return(
         <div className='d-flex justify-content-center'>
-        {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}
-        {showConfirm ? <Confirm text={`Willst du den User [${firstname} ${lastname}] mit einem Kontostand von ${balance}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
         <Card className='w-auto mt-3' style={{minWidth: 38+'%'}}>
             <Card.Header>
                 <Card.Title>Benutzer Anlegen</Card.Title>
             </Card.Header>
             <Card.Body>
+                {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> :
+                 showConfirm ? <Confirm text={`Willst du den User [${firstname} ${lastname}] mit einem Kontostand von ${balance}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
                 <Form>
                     <Input title="Vorname" value={firstname} setValue={setFirstname} isFocused />
                     <Input title="Nachname" value={lastname} setValue={setLastname}/>
@@ -56,9 +57,9 @@ export default function Add(props) {
                             <Button className='ms-2' variant='primary' type='submit' onClick={submit}>{"submit"}</Button>
                         </Collapse>
                     </div>
-                </Form>
+                </Form>}
             </Card.Body>
-        </Card>}
+        </Card>
         </div>
     );
 }

@@ -5,7 +5,7 @@ import Confirm from '../util/Confirm';
 import { Card } from 'react-bootstrap';
 
 export default function RemoveUser(props) {
-    const [user, setUser] = useState(false);
+    const [user, setUser] = useState(null);
     const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function RemoveUser(props) {
                 <Card.Title>Benutzer Entfernen</Card.Title>
             </Card.Header>
             <Card.Body>
-                {showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] wirklich entfernen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
+                {showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] wirklich entfernen?`} run={run} show={showConfirm} setShow={setShowConfirm} danger /> :
                 <UserSelect runCallback={setUser} useReset useSubmit resetOnSubmit hideReset hideSubmit isVertical hideUserList submitDescription={"Entfernen"} />}
             </Card.Body>
         </Card>

@@ -75,7 +75,7 @@ export default function ChangeProduct(props) {
                         <input className="form-check-input d-inline float-end ms-2" style={{height: '1.6rem', width: '3.2rem'}} type="checkbox" checked={updatedProduct.active===1} onChange={()=>{setUpdatedProduct({...updatedProduct, active: (updatedProduct.active?0:1)});}}></input>
                     </div>
                     <div className='w-100 d-flex justify-content-end'>
-                        <Collapse in={product!=null}>
+                        <Collapse in={product!=null&&product.active}>
                             <div>
                                 <Button className='bg-danger border-0 d-inline ms-2' onClick={openRemove}><i className="bi bi-trash3"></i></Button>
                             </div>
@@ -98,16 +98,16 @@ export default function ChangeProduct(props) {
             <Card.Header>
                 <Card.Title>Produkt Bearbeiten</Card.Title>
             </Card.Header>
-            {showConfirmRemove ? <Confirm text={`Willst du das Product ${product.name} für ${toCurrency(product.price)} wirklich entfernen?`} run={remove} show={showConfirmRemove} setShow={setShowConfirmRemove} /> :
-            showConfirmChange ? <Confirm text={`Willst du das Product ${product.name} (${toCurrency(product.price)}) wirklich zu ${updatedProduct.name} (${toCurrency(updatedProduct.price)}) ändern?`} run={change} show={showConfirmChange} setShow={setShowConfirmChange} /> :
             <Card.Body>
-                <ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset onlyActive={false} />
+                {showConfirmRemove ? <Confirm text={`Willst du das Product ${product.name} für ${toCurrency(product.price)} wirklich entfernen?`} run={remove} show={showConfirmRemove} setShow={setShowConfirmRemove} danger /> :
+                 showConfirmChange ? <Confirm text={`Willst du das Product ${product.name} (${toCurrency(product.price)}) wirklich zu ${updatedProduct.name} (${toCurrency(updatedProduct.price)}) ändern?`} run={change} show={showConfirmChange} setShow={setShowConfirmChange} /> :
+              <><ProductSelect runCallback={setProduct} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset onlyActive={false} />
                 <Collapse in={updatedProduct!=null}>
                     <div>
                         {updatedProduct && changeProductUi()} 
                     </div>
-                </Collapse>
-            </Card.Body>}
+                </Collapse></>}
+            </Card.Body>
         </Card>
         </div>
     );

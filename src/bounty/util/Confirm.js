@@ -17,10 +17,10 @@ Confirm.defaultProps = {
     show: false,
 };
 
-export default function Confirm({title, text, run, hasBreak, show, setShow}) {  
+export default function Confirm({title, text, run, hasBreak, show, setShow, danger}) {  
     return (
       <>
-        <Alert show={show} variant="success">
+        <Alert show={show} variant={danger?"danger":"success"}>
           <Alert.Heading>{title}</Alert.Heading>
           {text}
           <hr />

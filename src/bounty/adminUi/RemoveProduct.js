@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductSelect from '../util/ProductSelect';
 import { removeProduct } from '../util/Database';
 import { Card } from 'react-bootstrap';
+import Confirm from '../util/Confirm';
 
 export default function RemoveProduct() {
+    const [product, setProduct] = useState(null);
+    const [showConfirm, setShowConfirm] = useState(false);
 
-    function run(product) {
-        if(window.confirm("Remove Product "+product.name+" ("+product.price+"€) ?")) {
-            console.log(`Remove Product: ${product.name} (${product.price}€)`);
-            removeProduct(product);
-        }
+    useEffect(() => {
+        if(!product) return;
+        setShowConfirm(true);
+    }, [product]);
+
+    function run() {
+        // if(window.confirm("Remove Product "+product.name+" ("+product.price+"€) ?")) {
+        console.log(`Remove Product: ${product.name} (${product.price}€)`);
+        removeProduct(product);
     }
 
     return(
@@ -19,7 +26,8 @@ export default function RemoveProduct() {
                 <Card.Title>Produkt Entfernen</Card.Title>
             </Card.Header>
             <Card.Body>
-                <ProductSelect runCallback={run} useReset useSubmit resetOnSubmit hideReset hideSubmit submitDescription={"remove"} isVertical />
+                {showConfirm ? <Confirm text={`Willst du das Produkt [${product.name}] wirklich entfernen?`} run={run} show={showConfirm} setShow={setShowConfirm} danger /> :
+                <ProductSelect runCallback={setProduct} useReset useSubmit resetOnSubmit hideReset hideSubmit submitDescription={"remove"} isVertical />}
             </Card.Body>
         </Card>
         </div>

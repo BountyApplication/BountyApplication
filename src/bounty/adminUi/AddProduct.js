@@ -34,13 +34,13 @@ export default function AddProduct() {
 
     return(
         <div className='d-flex justify-content-center'>
-        {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}
-        {showConfirm ? <Confirm text={`Willst du das Produkt [${productName}] für ${productPrice}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
         <Card className='w-auto mt-3' style={{minWidth: 38+'%'}}>
             <Card.Header>
                 <Card.Title>Produkt Hinzufügen</Card.Title>
             </Card.Header>
             <Card.Body>
+                {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> :
+                 showConfirm ? <Confirm text={`Willst du das Produkt [${productName}] für ${productPrice}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
                 <Form>
                     <Input title="Name" value={productName} setValue={setProductName} isFocused />
                     <Input type="number" title="Price" value={productPrice} setValue={setProductPrice} />
@@ -52,9 +52,9 @@ export default function AddProduct() {
                             <Button type="submit" className='ms-2' onClick={submit}>{"submit"}</Button>
                         </Collapse>
                     </div>
-                </Form>
+                </Form>}
             </Card.Body>
-        </Card>}
+        </Card>
         </div>
     );
 }

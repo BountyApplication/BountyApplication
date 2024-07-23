@@ -5,6 +5,7 @@ import {Form, Button, Collapse, Card } from 'react-bootstrap';
 import Confirm from '../util/Confirm';
 import Input from '../util/Input';
 import { toCurrency } from '../util/Util';
+import Warning from '../util/Warning';
 
 const changeBalance = false;
 
@@ -16,6 +17,8 @@ export default function ChangeUser(props) {
     const [newUser, setNewUser] = useState(null);
     
     const [resetCallback, setResetCallback] = useState(null);
+
+    const [showWarning, setShowWarning] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
     const hasInput = (user !== newUser && newUser != null) || (balance !== newBalance && newBalance != null);
@@ -53,21 +56,26 @@ export default function ChangeUser(props) {
     function submit() {
         if(user===newUser && balance===newBalance) {
             console.log("nothing changed");
-            window.alert("Nothing changed");
+            // window.alert("Nothing changed");
+            setShowWarning(true);
             return;
         }
         if(newUser.firstname==="" || newUser.lastname==="" || newBalance==null) {
             console.log("Error no valid entries");
-            window.alert("Error: No valid entries");
+            // window.alert("Error: No valid entries");
+            setShowWarning(true);
             return;
         }
-        if(window.confirm(`Change ${user.firstname} ${user.lastname} (${toCurrency(balance)}) to ${newUser.firstname} ${newUser.lastname} (${toCurrency(newBalance)}) ?`)) {
-            console.log(`Change ${user} to ${newUser}`);
-            changeUser(newUser);
+        setShowConfirm(true);   
+    }
 
-            if(resetCallback)
-                resetCallback();
-        }
+    function run() {
+        // if(window.confirm(`Change ${user.firstname} ${user.lastname} (${toCurrency(balance)}) to ${newUser.firstname} ${newUser.lastname} (${toCurrency(newBalance)}) ?`)) {
+        console.log(`Change ${user} to ${newUser}`);
+        changeUser(newUser);
+
+        if(resetCallback)
+            resetCallback();
     }
 
     function changeUserUi() {
@@ -88,8 +96,9 @@ export default function ChangeUser(props) {
             <Card.Header>
                 <Card.Title>Benutzer Bearbeiten</Card.Title>
             </Card.Header>
-            {showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] wirklich entfernen?`} run={remove} show={showConfirm} setShow={setShowConfirm} /> :
             <Card.Body>
+                {showWarning ? <Warning text={user===newUser && balance===newBalance?"Nothing has changed":"No valid entries"} show={showWarning} setShow={setShowWarning} /> :
+                 showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] mit ${user.balance}€ zu [${user.firstname} ${user.lastname}] mit ${user.balance}€ ändern?`} run={run} show={showConfirm} setShow={setShowConfirm} /> : <>
                 <UserSelect onlyActive={false} runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset hideUserList/>
                 <Collapse in={newUser!=null}>
                     <div className='mt-4'>
@@ -114,8 +123,8 @@ export default function ChangeUser(props) {
                             </div>
                         </Collapse>
                     </div>
-                </div>
-            </Card.Body>}
+                </div></>}
+            </Card.Body>
         </Card>
         </div>
     );

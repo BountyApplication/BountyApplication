@@ -53,7 +53,7 @@ export default function BookingDisplay({children, booking: {oldBalance, newBalan
 
     return(
     <Container className="d-flex h-100 align-items-center flex-column">
-        {showConfirm ? <Confirm text={`Willst du wirklich die Buchung in der Höhe ${productSum} ${correction!==0||cashPayment!==0?' - '+correction+cashPayment+' ':''}€ rückgängig machen?`} run={() => getUserBalance(userId, run)} show={showConfirm} setShow={setShowConfirm} /> :
+        {showConfirm ? <Confirm text={`Willst du wirklich die Buchung in der Höhe ${productSum} ${correction!==0||cashPayment!==0?' - '+correction+cashPayment+' ':''}€ rückgängig machen?`} run={() => getUserBalance(userId, run)} show={showConfirm} setShow={setShowConfirm} danger /> :
         <><Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={isHistory?'Guthaben vorher':'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>
         <Collapse in={products!=null&&products.length!==0}><div className='overflow-auto w-100'><ProductList className="mt-3" products={products.filter(({amount}) => amount!==0)} allProducts={allProducts} setProducts={setProducts} isHistory={isHistory} /></div></Collapse>
         <div className="mb-auto w-100" />
