@@ -71,8 +71,8 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
             <Card.Header><Card.Title className='mb-0'>{"Einkaufen"}</Card.Title></Card.Header>
             <Card.Body>
                 <Row className="gap-2">
-                    {products.map(({productId, name, price, amount}) => 
-                        <Product availableBalance={availableBalance} tryRemove={tryRemove} increment={increment} key={productId} productId={productId} name={name} price={price} amount={amount} onClick={handleProductClick}/>
+                    {products.map(({productId, name, price, amount, active}) => 
+                        <Product availableBalance={active?availableBalance:-1} tryRemove={tryRemove} increment={increment} key={productId} productId={productId} name={name} price={price} amount={amount} onClick={handleProductClick}/>
                     )}
                 </Row>
             </Card.Body>

@@ -15,6 +15,7 @@ import { useKeyPress } from '../util/Util';
 import BalanceCorrection from './BalanceCorrection.js';
 
 const debug = true;
+const displayDisabledProducts = true;
 
 export default function GeneralUi({showAdminLink = false}) {
     // vars   
@@ -39,7 +40,7 @@ export default function GeneralUi({showAdminLink = false}) {
 
     const { theme, toggleTheme } = useContext(ThemeContext);
 
-    useGetProducts((products) => setProducts(products.map(product => ({...product, amount: 0}))));
+    useGetProducts((products) => setProducts(products.map(product => ({...product, amount: 0}))), !displayDisabledProducts);
 
     // temp vars for easier access
     const sum = calculateSum();

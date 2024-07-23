@@ -42,6 +42,7 @@ export default function Input({className, type, title, placeholder, value, setVa
                 value={ type!=="number" && type!=="id" ? value : value == null ? '' : focused || type==="id"?value.toString():value.toFixed(2) }
                 onChange={event => {
                     if(type!=="number" && type!=="id") return setValue(event.target.value);
+                    if(value === 0 && event.target.value === '0.0') return setValue(event.target.value);
                     let newValue = parseFloat(event.target.value);
                     setValue(isNaN(newValue)?null:Math.floor(newValue*100+0.01)/100);
                 }}
