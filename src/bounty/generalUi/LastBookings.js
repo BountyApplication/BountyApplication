@@ -18,7 +18,9 @@ export default function LastBookings({userId}) {
     if(bookings==null) return <></>;
 
     var count = bookings.length;
-     
+
+    let booking = bookings.find(({bookingId}) => bookingId === activeBooking);
+
     return(
         <Card>
             <Card.Header>
@@ -35,8 +37,8 @@ export default function LastBookings({userId}) {
                         )}
                     </ListGroup>
                 </Col>
-                {activeBooking!=null && <Col lg>
-                    <BookingDisplay booking={bookings.find(({bookingId}) => bookingId === activeBooking)} isHistory={true} userId={userId} />
+                {activeBooking!==null && booking && <Col lg>
+                    <BookingDisplay booking={booking} isHistory={true} userId={userId} />
                 </Col>}
             </Card.Body>
         </Card>

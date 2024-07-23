@@ -39,7 +39,7 @@ export default function Add(props) {
         <div className='d-flex justify-content-center'>
         {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}
         {showConfirm ? <Confirm text={`Willst du den User [${firstname} ${lastname}] mit einem Kontostand von ${balance}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
-        <Card className='w-25 mt-3'>
+        <Card className='w-auto mt-3' style={{minWidth: 38+'%'}}>
             <Card.Header>
                 <Card.Title>Benutzer Anlegen</Card.Title>
             </Card.Header>

@@ -20,7 +20,7 @@ export default function RemoveUser(props) {
 
     return(
         <div className='d-flex justify-content-center'>
-        <Card className='w-25 mt-3'>
+        <Card className='w-auto mt-3' style={{minWidth: 38+'%'}}>
             <Card.Header>
                 <Card.Title>Benutzer Entfernen</Card.Title>
             </Card.Header>

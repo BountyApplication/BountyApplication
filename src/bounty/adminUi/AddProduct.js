@@ -36,7 +36,7 @@ export default function AddProduct() {
         <div className='d-flex justify-content-center'>
         {showWarning ? <Warning text="No valid entries" show={showWarning} setShow={setShowWarning} /> : null}
         {showConfirm ? <Confirm text={`Willst du das Produkt [${productName}] für ${productPrice}€ hinzufügen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
-        <Card className='w-25 mt-3'>
+        <Card className='w-auto mt-3' style={{minWidth: 38+'%'}}>
             <Card.Header>
                 <Card.Title>Produkt Hinzufügen</Card.Title>
             </Card.Header>

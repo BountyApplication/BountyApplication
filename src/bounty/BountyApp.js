@@ -11,6 +11,7 @@ import { ThemeContext } from "../themes/ThemeProvider.js";
 import React, { useContext } from "react";
 import "./util/GeneralUi.css"
 import ChangeMoneyUi from "./util/ChangeMoneyUi";
+import AccountOverviewUi from "./util/AccountOverviewUi.js";
 
 export default function BountyApp() {
   const { theme } = useContext(ThemeContext);
@@ -38,6 +39,7 @@ export default function BountyApp() {
           <Route path="/" element={<React.StrictMode><GeneralUi /></React.StrictMode>} />
           <Route path="/admin" element={<AdminUi />} />
           <Route path="/wechselgeld" element={<ChangeMoneyUi />} />
+          <Route path="/konten" element={<AccountOverviewUi />} />
           <Route path="/tictactoe" element={<TicTacToe />} />
         </Routes>
         </ThemeSelector>

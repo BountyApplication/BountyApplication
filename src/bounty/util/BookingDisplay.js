@@ -3,7 +3,7 @@ import {Table, Collapse, Container, Button} from 'react-bootstrap';
 import RowText from './RowText';
 import {toCurrency} from './Util';
 import Confirm from './Confirm';
-import { commitBooking } from './Database';
+import { commitBooking, getUserBalance } from './Database';
 
 export function ProductList({className, products, allProducts, setProducts, isHistory}) {
 
@@ -42,16 +42,18 @@ export default function BookingDisplay({children, booking: {oldBalance, newBalan
 
     const [showConfirm, setShowConfirm] = useState(false);
 
-    function run() {
+    function run({balance}) {
         if(!userId) return;
-        let reversedProducts = products.map(product => ({...product, amount: -product.amount}))
-        let reversedBooking = {oldBalance: newBalance, newBalance: oldBalance, total: -total, productSum: -productSum, correction: -correction, cashPayment: -cashPayment, products: reversedProducts};
+    
+        let reversedProducts = products.map(product => ({...product, amount: -product.amount}));
+        let updatedBalance = Math.round((balance+oldBalance-newBalance)*100)/100;
+        let reversedBooking = {oldBalance: balance, newBalance: updatedBalance, total: -total, productSum: -productSum, correction: -correction, cashPayment: -cashPayment, products: reversedProducts};
         commitBooking(userId, reversedBooking);
     }
 
     return(
     <Container className="d-flex h-100 align-items-center flex-column">
-        {showConfirm ? <Confirm text={`Willst du wirklich die Buchung in der Höhe ${productSum} ${correction!==0||cashPayment!==0?' - '+correction+cashPayment+' ':''}€ rückgängig machen?`} run={run} show={showConfirm} setShow={setShowConfirm} /> :
+        {showConfirm ? <Confirm text={`Willst du wirklich die Buchung in der Höhe ${productSum} ${correction!==0||cashPayment!==0?' - '+correction+cashPayment+' ':''}€ rückgängig machen?`} run={() => getUserBalance(userId, run)} show={showConfirm} setShow={setShowConfirm} /> :
         <><Collapse in={oldBalance!=null}><RowText ref={ref} className={labelTextImportant} left={isHistory?'Guthaben vorher':'Guthaben'} right={toCurrency(oldBalance)} /></Collapse>
         <Collapse in={products!=null&&products.length!==0}><div className='overflow-auto w-100'><ProductList className="mt-3" products={products.filter(({amount}) => amount!==0)} allProducts={allProducts} setProducts={setProducts} isHistory={isHistory} /></div></Collapse>
         <div className="mb-auto w-100" />

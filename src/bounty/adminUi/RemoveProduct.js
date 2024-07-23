@@ -14,7 +14,7 @@ export default function RemoveProduct() {
 
     return(
         <div className='d-flex justify-content-center'>
-        <Card className='w-25 mt-3'>
+        <Card className='w-auto mt-3' style={{minWidth: 38+'%'}}>
             <Card.Header>
                 <Card.Title>Produkt Entfernen</Card.Title>
             </Card.Header>

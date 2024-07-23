@@ -18,7 +18,6 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data); 
         if(method === 'PULL') return console.log(data);
         if(calculate!=null) data = calculate(data);
 
@@ -76,6 +75,10 @@ export function useGetUserBalance(user, callback) {
     if(user==null || user===undefined)
         user = {userId: -1};
     return useGetData('accounts/'+user.userId, [{balance: defaultBalance}], callback, ({balance}) => balance);
+}
+
+export function getUserBalance(userId, callback) {
+    return doRequest('accounts/'+userId, 'GET', {}, null, callback, null);
 }
 
 export function useGetLastBookings(userId, setBookings) {

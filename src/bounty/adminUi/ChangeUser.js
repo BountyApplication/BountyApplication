@@ -84,7 +84,7 @@ export default function ChangeUser(props) {
 
     return(
         <div className='d-flex justify-content-center'>
-        <Card className='w-25 mt-3 align-self-center'>
+        <Card className='w-auto mt-3' style={{minWidth: 38+'%'}}>
             <Card.Header>
                 <Card.Title>Benutzer Bearbeiten</Card.Title>
             </Card.Header>
