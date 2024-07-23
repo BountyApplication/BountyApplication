@@ -12,6 +12,7 @@ export default function ChangeProduct(props) {
     const [updatedProduct, setUpdatedProduct] = useState(null);
 
     const [resetCallback, setResetCallback] = useState();
+    
     const [showConfirmRemove, setShowConfirmRemove] = useState(false);
     const [showConfirmChange, setShowConfirmChange] = useState(false);
 

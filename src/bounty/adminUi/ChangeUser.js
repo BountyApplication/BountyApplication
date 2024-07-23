@@ -20,6 +20,7 @@ export default function ChangeUser(props) {
 
     const [showWarning, setShowWarning] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [showConfirmRemove, setShowConfirmRemove] = useState(false);
 
     const hasInput = (user !== newUser && newUser != null) || (balance !== newBalance && newBalance != null);
 
@@ -43,8 +44,9 @@ export default function ChangeUser(props) {
     }
 
     function openRemove() {
-        if(user == null) return window.alert("Warning: No User selected");
-        setShowConfirm(true);
+        // if(user == null) return window.alert("Warning: No User selected");
+        if(user === null) return setShowWarning(true);
+        setShowConfirmRemove(true);
     }
 
     function remove() {
@@ -53,7 +55,7 @@ export default function ChangeUser(props) {
         resetAll();
     }
 
-    function submit() {
+    function openChange() {
         if(user===newUser && balance===newBalance) {
             console.log("nothing changed");
             // window.alert("Nothing changed");
@@ -66,16 +68,14 @@ export default function ChangeUser(props) {
             setShowWarning(true);
             return;
         }
-        setShowConfirm(true);   
+        setShowConfirm(true);  
     }
 
-    function run() {
-        // if(window.confirm(`Change ${user.firstname} ${user.lastname} (${toCurrency(balance)}) to ${newUser.firstname} ${newUser.lastname} (${toCurrency(newBalance)}) ?`)) {
+    function submit() {
         console.log(`Change ${user} to ${newUser}`);
         changeUser(newUser);
 
-        if(resetCallback)
-            resetCallback();
+        if(resetCallback) resetCallback();
     }
 
     function changeUserUi() {
@@ -98,7 +98,8 @@ export default function ChangeUser(props) {
             </Card.Header>
             <Card.Body>
                 {showWarning ? <Warning text={user===newUser && balance===newBalance?"Nothing has changed":"No valid entries"} show={showWarning} setShow={setShowWarning} /> :
-                 showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] mit ${user.balance}€ zu [${user.firstname} ${user.lastname}] mit ${user.balance}€ ändern?`} run={run} show={showConfirm} setShow={setShowConfirm} /> : <>
+                 showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] mit ${user.balance}€ zu [${user.firstname} ${user.lastname}] mit ${user.balance}€ ändern?`} run={submit} show={showConfirm} setShow={setShowConfirm} /> :
+                 showConfirmRemove ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] mit ${user.balance}€ wirklich entfernen?`} run={remove} show={showConfirmRemove} setShow={setShowConfirmRemove} danger /> :<>
                 <UserSelect onlyActive={false} runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset hideUserList/>
                 <Collapse in={newUser!=null}>
                     <div className='mt-4'>
@@ -119,7 +120,7 @@ export default function ChangeUser(props) {
                         <Collapse in={hasInput}>
                             <div>
                                 <Button type="reset" className='ms-2 mb-2' variant="secondary" onClick={reset}>{"reset"}</Button>
-                                <Button type="submit" className='ms-2 mb-2' onClick={submit}>{"submit"}</Button>
+                                <Button type="submit" className='ms-2 mb-2' onClick={openChange}>{"submit"}</Button>
                             </div>
                         </Collapse>
                     </div>
