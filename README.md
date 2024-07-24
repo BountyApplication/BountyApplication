@@ -30,7 +30,8 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+### Eject
+`npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
@@ -71,24 +72,25 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 
-## Installing BountyApplication on a Pasrpberry Pi
+## Installing BountyApplication on a Raspberry Pi
 To Install BountyApplication on a Raspberry Pi use a fresh installation of a Linux Distirbution and run the Folloing Commands
 
 Install NodeJS with 
-`install nodejs npm`
+`install nodejs npm`. more information under
 https://pimylifeup.com/raspberry-pi-nodejs/
 
+clone the rpository from Github
+`git clone https://github.com/BountyApplication/BountyApplication.git`
 
-- git clone https://github.com/BountyApplication/BountyApplication.git
-
-- cd BountyApplication/
-- npm install
-- npm start
+navigate to to the project folder
+`cd BountyApplication/`
+`npm install`
+`npm start`
 
 ## setup production server:
 
-- npm run build
-to test: serve -s build
+`npm run build`
+to test: `serve -s build`
 
 - cd 
 - sudo nano /usr/lib/systemd/system/bountyapplication.service
