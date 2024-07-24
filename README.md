@@ -20,9 +20,9 @@ You may also see any lint errors in the console.
 Launch the test runner in the interactive watch mode with `npm test`.\
 For more information see the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests).
 
-### `npm run build`
+### Bulid the App for Production 
 
-Builds the app for production to the `build` folder.\
+To build the app for production run `npm run build` this builds the application to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the hashes.\
