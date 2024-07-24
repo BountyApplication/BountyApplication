@@ -1,23 +1,24 @@
-# Getting Started with Create React App
+# BountyApplication 
+BountyApplication can be used as a very simple internal Self Hosted POS System that runs on a Rapsberry Pi 
+You ca add products with a Price, add Users with in internal Pocketmoney Balance and use that Balance to pay for products.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+We use it as a Candyshop register so that Kids can buy Candy cashless on Summercamp.
+
+The Software also requires the BountyBackend to run. 
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory, you can run the following scripts
+First Navigate to the Project folder with i.e. `cd BountyApplication/`.
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
+### Development mode
+To run the app in the development mode use `npm start`.
+This shout start the App and make it avaiable unter [http://localhost:3000](http://localhost:3000) in your browser. The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Test runner
+Launch the test runner in the interactive watch mode with `npm test`.\
+For more information see the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests).
 
 ### `npm run build`
 
@@ -70,9 +71,11 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 
-# install on pi
+## Installing BountyApplication on a Pasrpberry Pi
+To Install BountyApplication on a Raspberry Pi use a fresh installation of a Linux Distirbution and run the Folloing Commands
 
-- install nodejs npm
+Install NodeJS with 
+`install nodejs npm`
 https://pimylifeup.com/raspberry-pi-nodejs/
 
 
@@ -82,7 +85,7 @@ https://pimylifeup.com/raspberry-pi-nodejs/
 - npm install
 - npm start
 
-# setup production server:
+## setup production server:
 
 - npm run build
 to test: serve -s build
