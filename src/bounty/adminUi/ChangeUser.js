@@ -97,7 +97,7 @@ export default function ChangeUser(props) {
             </Card.Header>
             <Card.Body>
                 {showWarning ? <Warning text={user===newUser && balance===newBalance?"Nothing has changed":"No valid entries"} show={showWarning} setShow={setShowWarning} /> :
-                 showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] mit ${user.balance}€ zu [${user.firstname} ${user.lastname}] mit ${user.balance}€ ändern?`} run={submit} show={showConfirm} setShow={setShowConfirm} /> :
+                 showConfirm ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] mit ${user.balance}€ zu [${newUser.firstname} ${newUser.lastname}] mit ${newUser.balance}€ ändern?`} run={submit} show={showConfirm} setShow={setShowConfirm} /> :
                  showConfirmRemove ? <Confirm text={`Willst du den User [${user.firstname} ${user.lastname}] mit ${user.balance}€ wirklich entfernen?`} run={remove} show={showConfirmRemove} setShow={setShowConfirmRemove} danger /> :<>
                 <UserSelect onlyActive={false} runCallback={setUser} resetCallback={resetAll} setResetCallback={setResetCallback} useReset hideReset hideUserList/>
                 <Collapse in={newUser!=null}>
