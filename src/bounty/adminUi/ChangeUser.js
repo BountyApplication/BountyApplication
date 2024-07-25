@@ -4,10 +4,9 @@ import { changeUser, useGetUserBalance, removeUser } from '../util/Database';
 import {Form, Button, Collapse, Card } from 'react-bootstrap';
 import Confirm from '../util/Confirm';
 import Input from '../util/Input';
-import { toCurrency } from '../util/Util';
 import Warning from '../util/Warning';
 
-const changeBalance = false;
+const changeBalance = process.env.REACT_APP_CHANGE_BALANCE;
 
 export default function ChangeUser(props) {
     // vars
