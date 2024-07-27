@@ -6,7 +6,7 @@ import Confirm from '../util/Confirm';
 import Input from '../util/Input';
 import Warning from '../util/Warning';
 
-const changeBalance = process.env.REACT_APP_CHANGE_BALANCE;
+const changeBalance = process.env.REACT_APP_CHANGE_BALANCE === 'true';
 
 export default function ChangeUser(props) {
     // vars
@@ -77,7 +77,6 @@ export default function ChangeUser(props) {
 
         if(resetCallback) resetCallback();
     }
-
     function changeUserUi() {
         return(
             <div>
