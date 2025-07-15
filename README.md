@@ -9,15 +9,24 @@ The Software also requires the BountyBackend to run.
 ## Available Scripts
 
 In the project directory, you can run the following scripts
-First Navigate to the Project folder with i.e. `cd BountyApplication/`.
-
+First Navigate to the Project folder with i.e. 
+```
+cd BountyApplication/
+```
 ### Development mode
-To run the app in the development mode use `npm start`.
+To run the app in the development mode use 
+```
+npm start
+```
 This shout start the App and make it avaiable unter [http://localhost:3000](http://localhost:3000) in your browser. The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
 ### Test runner
-Launch the test runner in the interactive watch mode with `npm test`.\
+Launch the test runner in the interactive watch mode with 
+
+```
+npm test
+```
 For more information see the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests).
 
 ### Bulid the App for Production 
@@ -31,7 +40,9 @@ Your app is ready to be deployed!
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ### Eject
-`npm run eject`
+```
+npm run eject
+```
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
@@ -76,26 +87,50 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 To Install BountyApplication on a Raspberry Pi use a fresh installation of a Linux Distirbution and run the Folloing Commands
 
 Install NodeJS with 
-`install nodejs npm`. more information under
+```
+install nodejs npm
+```
+more information under:
 https://pimylifeup.com/raspberry-pi-nodejs/
 
 clone the rpository from Github
-`git clone https://github.com/BountyApplication/BountyApplication.git`
+```
+git clone https://github.com/BountyApplication/BountyApplication.git
+```
 
 navigate to to the project folder
-`cd BountyApplication/`
-`npm install`
-`npm start`
+```
+cd BountyApplication/
+```
+
+```
+npm install
+```
+
+```
+npm start
+```
 
 ## setup production server:
+To setup:
+```
+npm run build
+```
+To test: 
+```
+serve -s build
+```
 
-`npm run build`
-to test: `serve -s build`
+Modify the Bounty Application Service:
+```
+cd
+```
 
-- cd 
-- sudo nano /usr/lib/systemd/system/bountyapplication.service
+```
+sudo nano /usr/lib/systemd/system/bountyapplication.service
+```
 
-copy this into the file 
+copy this text into the file:
 
     [Unit]
     Description=Bounty Frontend Application
@@ -110,16 +145,23 @@ copy this into the file
     [Install]
     WantedBy=multi-user.target
 
-- sudo systemctl enable bountyapplication.service
-
+Enable the Bounty Application Service:
+```
+sudo systemctl enable bountyapplication.service
+```
 
 ## update code 
+```
+git pull
+```
 
-- git pull
+```
+npm run build
+```
 
-- npm run build
-
-- sudo reboot
+```
+sudo reboot
+```
 
 ## To add a netwok connection
 Find out the Wifi Device Name 
