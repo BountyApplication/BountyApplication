@@ -120,3 +120,19 @@ copy this into the file
 - npm run build
 
 - sudo reboot
+
+## To add a netwok connection
+Find out the Wifi Device Name 
+```
+nmcli device
+```
+
+Add a new connection to the Raspberry Pi 
+```
+sudo nmcli device <DeviceName> connect <network-ssid> password <network-password>
+```
+
+Change the Prority of the connection set it higher that 0
+```
+sudo nmcli connection modify <ConnectionName> connection.autoconnect yes connection.autoconnect-priority 100
+```
