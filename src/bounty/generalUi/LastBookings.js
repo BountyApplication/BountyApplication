@@ -1,8 +1,8 @@
-import { getLastBookings, useGetLastBookings } from "../util/Database";
+import { useGetLastBookings } from "../util/Database";
 import { Card, ListGroup, Col } from "react-bootstrap";
 import BookingDisplay from "../util/BookingDisplay";
 import { toCurrency } from '../util/Util';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 
 export default function LastBookings({userId}) {
     const [user, setUser] = useState(null);

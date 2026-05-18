@@ -50,11 +50,13 @@ export default function ProductSelect({runCallback, resetCallback, setResetCallb
     // set callback on beginning
     useEffect(() => {
         if(setResetCallback) setResetCallback(prev => reset);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- reset bewusst einmalig registrieren; als Dep wuerde es pro Render neu gesetzt
     }, [setResetCallback]);
 
     // runns when product selected
     useEffect(() => {
         if(productSelected) run();
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- soll nur bei Auswahl-Wechsel feuern; run ist pro Render neu
     }, [productSelected]);
 
     function getSelectedProduct() {

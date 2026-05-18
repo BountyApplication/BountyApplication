@@ -10,7 +10,7 @@ const autoSelection = true;
 const useBarcode = process.env.REACT_APP_ENABLE_BARCODE === "true";
 // const barcodeTimeout = 1000;
 
-UserSelect.prototype = {
+UserSelect.propTypes = {
     title: PropTypes.string,
     submitDescription: PropTypes.string,
     show: PropTypes.bool,
@@ -127,6 +127,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     // set callback on beginning
     useEffect(() => {
       if(setResetCallback) setResetCallback(()=>reset.bind(this, false));
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- reset bewusst einmalig registrieren; als Dep wuerde es pro Render neu gesetzt
     }, [setResetCallback]);
 
     useEffect(() => {
@@ -156,6 +157,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         }
         //  else setIdInput(user.cardId)
         run();
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- soll auf user/idInput/users reagieren; run ist pro Render neu
     }, [user, idInput, users]);
 
     // Code Input
@@ -196,12 +198,14 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
             setUser(result);
         });
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- reset bewusst nicht als Dep; soll nur auf idInput/inModal/show/user reagieren
     }, [idInput, inModal, show, user]);
 
     useEffect(() => {
         if(show) return;
         if(input === '') return;
         setInput('');
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- soll nur beim Schliessen (show-Wechsel) leeren, nicht bei jeder input-Aenderung
     }, [show]);
 
     function updateInput(newInput) {

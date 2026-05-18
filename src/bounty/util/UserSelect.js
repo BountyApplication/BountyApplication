@@ -10,7 +10,7 @@ const NameType = {
     FIRSTNAME: true,
 };
 
-UserSelect.prototype = {
+UserSelect.propTypes = {
     title: PropTypes.string,
     submitDescription: PropTypes.string,
 

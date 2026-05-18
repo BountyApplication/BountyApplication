@@ -5,8 +5,6 @@ import UserSelect from '../util/CombinedUserSearch';
 import CashPayment from './ChashPayment';
 import LastBookings from './LastBookings';
 import { useGetProducts, useGetUserBalance, commitBooking } from '../util/Database';
-// import BarcodeScannerComponent from "react-qr-barcode-scanner";
-// import Html5QrcodePlugin from '../util/scanner';
 import { Col, Row, Collapse, Button } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
@@ -35,8 +33,6 @@ export default function GeneralUi({showAdminLink = false}) {
     const [openUserSelect, setOpenUserSelect] = useState(true);
 
     // const [data, setData] = useState('No result');
-
-    const [width, setWidth] = useState(0);
 
     const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -74,18 +70,7 @@ export default function GeneralUi({showAdminLink = false}) {
      // executes in beginning
      useEffect(() => {
         document.title = "Bounty Bezahlungssystem";
-
-
-        window.addEventListener('resize', updateWindowDimensions)
-
-        return () => {
-            window.removeEventListener('resize', updateWindowDimensions)
-        }
     }, []);
-
-    function updateWindowDimensions() {
-        setWidth(window.innerWidth)
-    }
 
     function calculateSum() {
         return Math.round(products.reduce((sum, {price, amount}) => sum+price*amount, 0)*100)/100;

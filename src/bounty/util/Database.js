@@ -40,6 +40,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
     
     useEffect(() => {
         doRequest(topic, method, params, data, setData, defaultData, calculate);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- Initial-Fetch, soll nur bei topic/method laufen; laufende Updates macht der Polling-Effekt
     }, [topic, method]);
 
     useEffect(() => {
@@ -56,9 +57,10 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
             if(debug) console.log('stop loop '+topic);
             clearInterval(updateLoop);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- callback/params/calculate sind pro Render neu; als Dep wuerde das Intervall staendig neu aufgebaut
     }, [data, topic, method, continues]);
 
-    if(data == null || data === undefined) return calculate!=null ? calculate(defaultData) : defaultData;
+    if(data == null) return calculate!=null ? calculate(defaultData) : defaultData;
 
     return data;
 }
@@ -72,7 +74,7 @@ export function useGetProducts(callback, onlyActive = true) {
 }
 
 export function useGetUserBalance(user, callback) {
-    if(user==null || user===undefined)
+    if(user==null)
         user = {userId: -1};
     return useGetData('accounts/'+user.userId, [{balance: defaultBalance}], callback, ({balance}) => balance);
 }
