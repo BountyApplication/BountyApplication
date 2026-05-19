@@ -62,6 +62,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     const [focus, setFocus] = useState(true);
 
     useKeyPress('Enter', () => {
+        if(inModal && !show) return;
         if(hasBarcode) return;
         submit();
     });

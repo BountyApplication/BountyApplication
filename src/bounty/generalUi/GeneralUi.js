@@ -8,9 +8,9 @@ import { useGetProducts, useGetUserBalance, commitBooking } from '../util/Databa
 import { Col, Row, Collapse, Button } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
-import Confirm from '../util/Confirm';
 import { useKeyPress } from '../util/Util';
 import BalanceCorrection from './BalanceCorrection.js';
+import BookingSummaryModal from './BookingSummaryModal.js';
 
 const displayDisabledProducts = true;
 
@@ -47,13 +47,13 @@ export default function GeneralUi({showAdminLink = false}) {
         products: products.filter(({amount}) => amount !== 0),
     };
 
-    const [showConfirm, setShowConfirm] = useState(false);
-    
+    const [showBookingModal, setShowBookingModal] = useState(false);
+
     useKeyPress("Enter", () => {
+        if(showBookingModal) return;
         if(user==null) return;
         if(!(booking.newBalance!==booking.oldBalance || booking.correction!==0 || booking.cashPayment!==0)) return;
-        if(!showConfirm) return setShowConfirm(true);
-        setShowConfirm(false);
+        setShowBookingModal(true);
     });
 
     useEffect(() => {
@@ -92,18 +92,25 @@ export default function GeneralUi({showAdminLink = false}) {
         setPaymentOut(null);
     }
 
-    function submit() {
+    function openBookingModal() {
+        setShowBookingModal(true);
+    }
+
+    function confirmBooking() {
         commitBooking(user.userId, booking);
-
+        setShowBookingModal(false);
         runResetUser();
-
         resetProducts();
+    }
+
+    function cancelBooking() {
+        setShowBookingModal(false);
     }
 
     return(
         <>
-        <Confirm show={showConfirm} setShow={setShowConfirm} run={submit} title="Buchung bestätigen" text="Möchtest du die Buchung durchführen?" hasBreak={true} /> 
-        {!showConfirm && <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
+        <BookingSummaryModal show={showBookingModal} onConfirm={confirmBooking} onCancel={cancelBooking} oldBalance={booking.oldBalance} spent={booking.total} newBalance={booking.newBalance} />
+        <div className="main" style={user != null ? {width: `${window.innerWidth-370}px`} : {}}>
             {showAdminLink && <Link to="/admin">{"Admin"}</Link>}
             <Button className='bg-transparent fixed-bottom border-0' style={{width: 'min-content'}} onClick={ toggleTheme}>{theme==='light-theme'?<i className="bi bi-moon-fill text-dark"></i>:<i className="bi bi-sun-fill"></i>}</Button>
             <UserSelect products={products} setProducts={setProducts} inModal show={openUserSelect} setResetCallback={setResetUserCallback} setShow={setOpenUserSelect} resetCallback={resetUser} runCallback={setUser} useSubmit useReset hideSubmit hideReset hideDescription />
@@ -119,8 +126,8 @@ export default function GeneralUi({showAdminLink = false}) {
                     {user!=null&&<Col className="col-11"><LastBookings userId={user.userId} /></Col>}</Row>
                 </div>
             </Collapse>
-        </div>}
-        {!showConfirm && <BookingInfo show user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} allProducts={products} setProducts={setProducts} reset={resetProducts} submit={submit} />}
+        </div>
+        <BookingInfo show user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} allProducts={products} setProducts={setProducts} reset={resetProducts} submit={openBookingModal} />
         </>
     );
 }
