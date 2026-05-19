@@ -6,7 +6,6 @@ import Warning from '../util/Warning';
 import Confirm from '../util/Confirm';
 
 export default function AddProduct() {
-    //vars
     const [productName, setProductName] = useState("");
     const [productPrice, setProductPrice] = useState(null);
     const [showWarning, setShowWarning] = useState(false);

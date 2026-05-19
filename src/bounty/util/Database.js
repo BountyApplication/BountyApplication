@@ -89,11 +89,9 @@ export function useGetLastBookings(userId, setBookings) {
 
 export function getLastBookings(userId, setBookings) {
     return doRequest('history/'+userId, 'GET', {}, null, setBookings, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})).sort((booking1, booking2) => booking2.bookingId - booking1.bookingId));
-    // return useGetData('history/'+userId, defaultBookings.map((booking) => ({...booking, products: JSON.stringify(booking.products)})), null, (booking) => booking.map((booking) => ({...booking, products: JSON.parse(booking.products)})), true);
 }
 
 export function commitBooking(userId, booking) {
-    // console.log({...booking, products: JSON.stringify(booking.products)});
     doRequest('accounts/'+userId, 'POST', {...booking, products: JSON.stringify(booking.products)}, null, (result) => {
         if(result.balance!==booking.newBalance) {
             window.alert(`Error: false user balance! expected: ${booking.newBalance} actual: ${result.balance}`);

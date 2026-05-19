@@ -7,7 +7,6 @@ import { commitBooking, getUserBalance } from './Database';
 
 export function ProductList({className, products, allProducts, setProducts, isHistory}) {
 
-    // var count = 1;
     return(
         <Table striped hover size="sm" className={className}>
             <thead className='d-sticky'>

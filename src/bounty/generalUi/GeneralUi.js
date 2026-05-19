@@ -12,11 +12,9 @@ import Confirm from '../util/Confirm';
 import { useKeyPress } from '../util/Util';
 import BalanceCorrection from './BalanceCorrection.js';
 
-const debug = true;
 const displayDisabledProducts = true;
 
 export default function GeneralUi({showAdminLink = false}) {
-    // vars   
     const [user, setUser] = useState();
     const userBalance = useGetUserBalance(user);
 
@@ -32,13 +30,10 @@ export default function GeneralUi({showAdminLink = false}) {
     
     const [openUserSelect, setOpenUserSelect] = useState(true);
 
-    // const [data, setData] = useState('No result');
-
     const { theme, toggleTheme } = useContext(ThemeContext);
 
     useGetProducts((products) => setProducts(products.map(product => ({...product, amount: 0}))), !displayDisabledProducts);
 
-    // temp vars for easier access
     const sum = calculateSum();
     const total = calculateTotal();
     const isSufficient = total<=userBalance;
@@ -63,12 +58,10 @@ export default function GeneralUi({showAdminLink = false}) {
 
     useEffect(() => {
         if(user == null) return;
-        setOpenUserSelect(false);        
-        if(debug) console.log(`Balance: ${userBalance}`);
+        setOpenUserSelect(false);
     }, [user, userBalance]);
 
-     // executes in beginning
-     useEffect(() => {
+    useEffect(() => {
         document.title = "Bounty Bezahlungssystem";
     }, []);
 
@@ -100,45 +93,12 @@ export default function GeneralUi({showAdminLink = false}) {
     }
 
     function submit() {
-        if(debug) console.log(`Total: ${total}`);
-
-        // check if user balance is sufficient
-        // if(total > userBalance) {
-        //     console.log("Error: user balance not sufficient");
-        //     window.alert("Error: user balance not sufficient");
-        //     return;
-        // }
-
-        // append correction and cash payment to product array
-        // let correctionTotal = correctionPlus - correctionMinus;
-        // let cashPaymentTotal = paymentIn - paymentOut;
-        
-        // let booking = [
-        //     {productId: 0, name: "correction", amount: correctionTotal},
-        //     {productId: 1, name: "cashpayment", amount: cashPaymentTotal},
-        // ].concat(products);
-
-        // booking.products.concat([
-        //     {productId: 0, name: "correction", amount: correctionTotal},
-        //     {productId: 1, name: "cashpayment", amount: cashPaymentTotal},
-        // ]);
-
-        // filter out unbought products
-        // booking = booking.filter(({amount}) => amount!==0);
-
-        if(debug) console.log(booking);
-
         commitBooking(user.userId, booking);
 
         runResetUser();
 
         resetProducts();
     }
-
-    /*function onNewScanResult(decodedText, decodedResult) {
-        console.log(decodedResult+" "+decodedText);
-        setData(decodedText);
-    }*/
 
     return(
         <>
@@ -159,20 +119,6 @@ export default function GeneralUi({showAdminLink = false}) {
                     {user!=null&&<Col className="col-11"><LastBookings userId={user.userId} /></Col>}</Row>
                 </div>
             </Collapse>
-            {/* <BarcodeScannerComponent
-                width={500}
-                height={500}
-                onUpdate={(err, result) => {
-                if (result) setData(result.text);
-                else setData("Not Found");
-                }}
-            /> */}
-            {/* <Html5QrcodePlugin 
-                fps={10}
-                qrbox={250}
-                disableFlip={false}
-                qrCodeSuccessCallback={onNewScanResult}/> */}
-            {/* <p>{data}</p> */}
         </div>}
         {!showConfirm && <BookingInfo show user={user} openUserSelectCallback={setOpenUserSelect.bind(this, true)} booking={booking} allProducts={products} setProducts={setProducts} reset={resetProducts} submit={submit} />}
         </>

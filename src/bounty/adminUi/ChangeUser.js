@@ -9,7 +9,6 @@ import Warning from '../util/Warning';
 const changeBalance = process.env.REACT_APP_CHANGE_BALANCE === 'true';
 
 export default function ChangeUser(props) {
-    // vars
     const [user, setUser] = useState(null);
     const [newBalance, setNewBalance] = useState(null);
     const balance = useGetUserBalance(user, setNewBalance);
@@ -43,7 +42,6 @@ export default function ChangeUser(props) {
     }
 
     function openRemove() {
-        // if(user == null) return window.alert("Warning: No User selected");
         if(user === null) return setShowWarning(true);
         setShowConfirmRemove(true);
     }
@@ -57,13 +55,11 @@ export default function ChangeUser(props) {
     function openChange() {
         if(user===newUser && balance===newBalance) {
             console.log("nothing changed");
-            // window.alert("Nothing changed");
             setShowWarning(true);
             return;
         }
         if(newUser.firstname==="" || newUser.lastname==="" || newBalance==null) {
             console.log("Error no valid entries");
-            // window.alert("Error: No valid entries");
             setShowWarning(true);
             return;
         }

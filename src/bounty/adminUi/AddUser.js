@@ -6,7 +6,6 @@ import Warning from '../util/Warning';
 import Confirm from '../util/Confirm';
 
 export default function Add(props) {
-    // vars
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [balance, setBalance] = useState();

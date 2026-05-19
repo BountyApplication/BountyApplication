@@ -40,7 +40,6 @@ ProductSelect.defaultProps = {
 };
 
 export default function ProductSelect({runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, isVertical, onlyActive, submitDescription}) {
-    // vars
     const products = useGetProducts(null, onlyActive);
     const [selectedProductId, setSelectedProductId] = useState(-1);
 

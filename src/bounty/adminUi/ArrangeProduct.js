@@ -3,7 +3,6 @@ import { changeProduct, useGetProducts } from '../util/Database';
 import {Form, Button, Card, Table} from 'react-bootstrap';
 
 export default function ArrangeProduct() {
-    // vars
     const products = useGetProducts(null, false);
 
     function getProduct(_place) {

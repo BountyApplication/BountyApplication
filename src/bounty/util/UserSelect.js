@@ -46,7 +46,6 @@ UserSelect.defaultProps = {
 };
 
 function UserSelect({title, runCallback, resetCallback, setResetCallback, useReset, hideReset, useSubmit, hideSubmit, resetOnSubmit, hideDescription, isVertical, submitDescription}) {
-    // vars
     const users = useGetUsers();
     const [userFirstname, setUserFirstname] = useState("");
     const [userLastname, setUserLastname] = useState("");
