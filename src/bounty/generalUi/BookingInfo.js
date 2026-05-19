@@ -52,7 +52,8 @@ function UserButton({user, openUserSelectCallback}) {
 
 export default function BookingInfo({show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, submit}) {
     const {oldBalance, newBalance, correction, cashPayment} = booking;
-    const hasInput = user != null && (newBalance!==oldBalance || correction!==0 || cashPayment!==0)
+    const hasSelectedProducts = allProducts?.some(({amount}) => amount !== 0);
+    const hasInput = user != null && (newBalance!==oldBalance || correction!==0 || cashPayment!==0 || hasSelectedProducts)
 
     return(
     <Offcanvas className="" style={{width: '370px'}} show={show} placement={'end'} backdrop={false} scroll={true}>
