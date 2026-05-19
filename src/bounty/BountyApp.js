@@ -5,6 +5,7 @@ import {
   Route,
 } from "react-router-dom";
 import AdminUi from './adminUi/AdminUi';
+import AdminUiV2 from './adminUi/AdminUiV2';
 import GeneralUi from './generalUi/GeneralUi';
 import TicTacToe from '../TicTacToe';
 import { ThemeContext } from "../themes/ThemeProvider.js";
@@ -38,6 +39,7 @@ export default function BountyApp() {
         <Routes>
           <Route path="/" element={<React.StrictMode><GeneralUi /></React.StrictMode>} />
           <Route path="/admin" element={<AdminUi />} />
+          <Route path="/admin2" element={<AdminUiV2 />} />
           <Route path="/wechselgeld" element={<ChangeMoneyUi />} />
           <Route path="/konten" element={<AccountOverviewUi />} />
           <Route path="/tictactoe" element={<TicTacToe />} />
