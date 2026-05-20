@@ -24,7 +24,7 @@ export function ProductList({className, products, allProducts, setProducts, isHi
                     <tr key={productId}>
                         {/* <td>{count++}</td> */}
                         <td>{name}</td>
-                        <td>{amount}{!isHistory&&<Button variant="primary" className='ms-3 px-2 pb-1 pt-0' onClick={()=>setProducts(allProducts.map((product) => product.productId!==productId?{...product}:{...product, amount: amount-1}))}>-</Button>}</td>
+                        <td><div className="d-flex align-items-center gap-2"><span style={{minWidth:'2rem'}}>{amount}</span>{!isHistory&&<Button variant="primary" className='px-2 pb-1 pt-0' onClick={()=>setProducts(allProducts.map((product) => product.productId!==productId?{...product}:{...product, amount: amount-1}))}>-</Button>}</div></td>
                         <td>{`${price.toFixed(2)}€`}</td>
                         <td>{`${(price*amount).toFixed(2)}€`}{!isHistory&&<Button variant="danger" className='ms-3 px-2 pb-1 pt-0' onClick={()=>setProducts(allProducts.map((product) => product.productId!==productId?{...product}:{...product, amount: 0}))}>X</Button>}</td>
                     </tr>
