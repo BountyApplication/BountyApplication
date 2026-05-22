@@ -1,25 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import ProductSelect from '../util/ProductSelect';
-import { changeProduct, removeProduct, useGetProducts } from '../util/Database';
-import {Form, Button, Collapse, Card, Table} from 'react-bootstrap';
-import Confirm from '../util/Confirm';
-import Input from '../util/Input';
-import { arraysEqual, toCurrency } from '../util/Util.js';
+import React from 'react';
+import { changeProduct, useGetProducts } from '../util/Database';
+import {Form, Button, Card, Table} from 'react-bootstrap';
 
 export default function ArrangeProduct() {
-    // vars
     const products = useGetProducts(null, false);
-
-    function getProductString(name, price) {
-        if(name==null || price==null) return null;
-
-        return `${name} (${toCurrency(price)})`;
-    }
-    function getProductStringP(product) {
-        if(product==null) return null;
-
-        return getProductString(product.name, product.price);
-    }
 
     function getProduct(_place) {
         return products.find(({place}) => place === _place);

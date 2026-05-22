@@ -20,7 +20,6 @@ CashPayment.defaultProps = {
 };
 
 export default function CashPayment({inVal, outVal, setIn, setOut}) {
-    // vars
     const [inMode, setInMode] = useState(true);
 
     function setValue(value) {

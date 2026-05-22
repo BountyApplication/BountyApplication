@@ -20,7 +20,6 @@ BalanceCorrection.defaultProps = {
 };
 
 export default function BalanceCorrection({plus, minus, setPlus, setMinus}) {
-    // vars
     const [plusMode, setPlusMode] = useState(true);
 
     function setValue(value) {

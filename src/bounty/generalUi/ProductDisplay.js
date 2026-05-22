@@ -24,17 +24,11 @@ ProductDisplay.defaultProps = {
 };
 
 export default function ProductDisplay({products, setProducts, isSufficient, availableBalance}) {
-    // vars
-    // const [shift, setShift] = useState(false);
     const [increment, setIncrement] = useState(1);
 
     const shift = useKeyPress('Shift');
-    // const back = useKeyPress('Back')
-    
-    // temp vars
     const tryRemove = shift || !isSufficient;
 
-    // helper function
     function handleProductClick(productId, remove = tryRemove) {
         const product = products.find(product => product.productId === productId);
         if(!product) return;
@@ -61,7 +55,6 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
         if(key === 'Delete' || key === "Escape" || key === "Backspace") return setIncrement(1);
         const num = parseFloat(key);
         if(isNaN(num)) return;
-        // if(increment === num || (num === 0 && increment === 10)) return;
         if(num === 0) return setIncrement(10);
         setIncrement(Number(num));
     }
@@ -77,6 +70,7 @@ export default function ProductDisplay({products, setProducts, isSufficient, ava
                 </Row>
             </Card.Body>
         </Card>
+        
     );
 
 }

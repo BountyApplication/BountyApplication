@@ -7,7 +7,6 @@ import Input from '../util/Input';
 import { arraysEqual, toCurrency } from '../util/Util.js';
 
 export default function ChangeProduct(props) {
-    // vars
     const [product, setProduct] = useState(null);
     const [updatedProduct, setUpdatedProduct] = useState(null);
 

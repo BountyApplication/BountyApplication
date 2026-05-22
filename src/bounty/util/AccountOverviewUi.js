@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Table } from 'react-bootstrap';
 import { getLastBookings, useGetUsers } from './Database';
-import RowText from './RowText';
-import {toCurrency} from './Util';
 
 export default function AccountOverviewUi() {
     const users = useGetUsers();

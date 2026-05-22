@@ -8,9 +8,8 @@ import { useKeyPress } from './Util';
 const debug = true;
 const autoSelection = true;
 const useBarcode = process.env.REACT_APP_ENABLE_BARCODE === "true";
-// const barcodeTimeout = 1000;
 
-UserSelect.prototype = {
+UserSelect.propTypes = {
     title: PropTypes.string,
     submitDescription: PropTypes.string,
     show: PropTypes.bool,
@@ -50,14 +49,12 @@ UserSelect.defaultProps = {
 };
 
 function UserSelect({products, setProducts, inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive}) {
-    // vars
     const [input, setInput] = useState("");
     const [idInput, setIdInput] = useState(null);
     const users = useGetUsers(null, onlyActive);
     const [user, setUser] = useState(null);
     const [barcode, setBarcode] = useState('');
 
-    // temp var for easier access
     const hasCode = !isNaN(parseInt(input));
     const hasInput = input !== '' && !hasCode;
     const hasBarcode = useBarcode && (barcode.length === 4 && !isNaN(parseInt(barcode)));
@@ -75,7 +72,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     
     useKeyPress('Escape', () => {
         if(!show) return;
-        // if(user!=null) return reset(); 
         if(setShow!=null) setShow(false);
     });
 
@@ -86,8 +82,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     useEffect(() => {
         if(!useBarcode) return;
         document.addEventListener("keydown", checkedCodeReceived, false);
-        
-        // if(hasBarcode) setTimeout(()=>{setBarcode('')}, 500);
         setTimeout(()=>{setBarcode('')}, 500);
 
         return (() => {
@@ -99,12 +93,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     function checkedCodeReceived(event) {
         console.log(barcode);
         switch(event.key) {
-            // setTimeout(()=>setBarcode(''), barcodeTimeout); 
-            // case 'K': if(barcode!=='') return; break;
-            // case 'C': if(barcode!=='K') return; break;
-            // case '2': if(barcode.substring(0,2) !== 'KC') return; break;
-            // case 'ß': if(barcode!=='KC22') return; break;
-            // case 'Enter': if(barcode.substring(0,5) !== 'KC22ß' || barcode.length < 8) return; console.log(" Barcode: "); console.log(barcode); setIdInput(parseInt(barcode.substring(5, 8))); break;
             case 'Enter': if(barcode.length < 4) return;
                 if(barcode.length > 4) {
                     if(barcode.includes('ein slush eis bitte') && user != null) {
@@ -121,12 +109,11 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
                 console.log("Barcode: "); console.log(barcode); setIdInput(parseInt(barcode)); break;
             default: setBarcode(barcode+event.key); break;
         }
-        // event.preventDefault();
     }
     
-    // set callback on beginning
     useEffect(() => {
       if(setResetCallback) setResetCallback(()=>reset.bind(this, false));
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- reset bewusst einmalig registrieren; als Dep wuerde es pro Render neu gesetzt
     }, [setResetCallback]);
 
     useEffect(() => {
@@ -134,7 +121,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         if(filteredUsers.length === 1) setUser(filteredUsers[0]);
     }, [filteredUsers])
 
-    // runs if user selected
     useEffect(() => {
         if(user == null) return;
         if(useBarcode && idInput != null) {
@@ -154,14 +140,12 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
             changeUser(newUser);
             setIdInput(null);
         }
-        //  else setIdInput(user.cardId)
         run();
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- soll auf user/idInput/users reagieren; run ist pro Render neu
     }, [user, idInput, users]);
 
-    // Code Input
     useEffect(() => {
         if(!useBarcode) return;
-        // if(input.length < 3 && user==null) return setIdInput(null);
         if(input === '') return;
         let code = parseInt(input);
         if(isNaN(code)) return;
@@ -177,9 +161,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     useEffect(() => {
         if(idInput == null) return;
         if(user != null && !show) return;
-        // if(idInput%10 === 0) return;
-        // if(Math.floor(idInput%100/10) === 0) return;
-        // if(Math.floor(idInput/100) === 0) return;
         getUserByCardId(idInput, (result) => {
             if(Array.isArray(result)) {
                 if(result.length === 0) console.log('Code not assigned'); //window.alert('Code unbekannt! Bitte wähle den dazugehörigen Kunde aus');
@@ -196,12 +177,14 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
             setUser(result);
         });
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- reset bewusst nicht als Dep; soll nur auf idInput/inModal/show/user reagieren
     }, [idInput, inModal, show, user]);
 
     useEffect(() => {
         if(show) return;
         if(input === '') return;
         setInput('');
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- soll nur beim Schliessen (show-Wechsel) leeren, nicht bei jeder input-Aenderung
     }, [show]);
 
     function updateInput(newInput) {
@@ -209,7 +192,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         setInput(newInput);
     }
 
-    // filters for current selection (firstname or lastname)
     function getFilteredUsers() {
         return users.filter(({lastname, firstname}) => checkUser(firstname, lastname));
     }
@@ -228,30 +210,22 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         return input.toLocaleLowerCase().split(" ").some(v => v!=='' && name.toLocaleLowerCase().includes(v));
     }
 
-    // sortes user selection alphabetically
     function getSortedUsers() {
         let lastnameSelected = filteredUsers.some(({lastname}) => checkName(lastname));
         return filteredUsers.sort((user1, user2) => compareNames(lastnameSelected?user1.firstname:user1.lastname, lastnameSelected?user2.firstname:user2.lastname));
     }
 
-    // compares alphabetic order of two names
     function compareNames(name1, name2) {
         return name1.toLowerCase().localeCompare(name2.toLowerCase());
     }
 
-    // executed when selection complete
     function run() {
         if(debug) console.log(`${user.firstname} ${user.lastname} [${user.cardId}]`);
-        
-        // auto submit if no submit button
         if(!useSubmit || barcode) submit();
     }
 
     function submit() {
-        // checks if result valid
         if(user == null) {
-            // console.log(`Error: No User selected!`);
-            // window.alert(`Error: No User selected!`);
             setUser(filteredUsers[0]);
             return;
         }
@@ -302,13 +276,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     function searchUi() {
         return <div>
             <Input value={input} setValue={updateInput} title={title} isFocused={focus&&(!inModal||show)} />
-            {/* <p className='mb-1'>or</p>
-            <div className='mb-2'>
-                <p className='d-inline fs-4 me-2'>Code:</p>
-                <Input className='d-inline' type='id' value={Math.floor(idInput/100)} setValue={(n) => setIdInput(n%10*100+idInput%100)}/>
-                <Input className='d-inline' type='id' value={Math.floor(idInput%100/10)} setValue={(n) => setIdInput(n%10*10+Math.floor(idInput/100)*100+idInput%10)}/>
-                <Input className='d-inline' type='id' value={idInput%10} setValue={(n) => setIdInput(n%10+Math.floor(idInput/10)*10)}/>
-            </div> */}
         </div>
     }
 

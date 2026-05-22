@@ -14,7 +14,6 @@ export default function RemoveProduct() {
     }, [product]);
 
     function run() {
-        // if(window.confirm("Remove Product "+product.name+" ("+product.price+"€) ?")) {
         console.log(`Remove Product: ${product.name} (${product.price}€)`);
         removeProduct(product);
     }
