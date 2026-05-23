@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './darkTheme.css'
+import './modern.css';
 
 const Theme = () => (<React.Fragment></React.Fragment>);
 

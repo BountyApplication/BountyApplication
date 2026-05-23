@@ -16,20 +16,17 @@ const getTheme = () => {
 const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(getTheme);
   function toggleTheme() {
-    if (theme === "dark-theme") {
-      setTheme("light-theme");
-      window.location.reload(false);
-    } else {
-      setTheme("dark-theme");
-    }
+    const next = theme === "dark-theme" ? "light-theme" : "dark-theme";
+    localStorage.setItem("theme", next);
+    window.location.reload();
   };
 
   useEffect(() => {
-    const refreshTheme = () => {
-      localStorage.setItem("theme", theme);
-    };
-
-    refreshTheme();
+    localStorage.setItem("theme", theme);
+    document.documentElement.setAttribute(
+      "data-theme",
+      theme === "dark-theme" ? "dark" : "light"
+    );
   }, [theme]);
 
   return (

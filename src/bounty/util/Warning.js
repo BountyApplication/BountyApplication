@@ -1,4 +1,4 @@
-import {Alert} from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 Warning.propTypes = {
@@ -9,19 +9,20 @@ Warning.propTypes = {
 };
 
 Warning.defaultProps = {
-    title: "Error",
+    title: "Fehler",
     text: "",
     show: false,
 };
 
-export default function Warning({title, text, show, setShow}) {
-    if (show) {
-        return (
-            <Alert variant="danger" onClose={() => setShow(false)} dismissible>
-                <Alert.Heading>{title}</Alert.Heading>
+export default function Warning({ title, text, show, setShow }) {
+    if (!show) return null;
+    return (
+        <Alert variant="danger" onClose={() => setShow(false)} dismissible className="d-flex align-items-start gap-2">
+            <i className="bi bi-exclamation-triangle-fill mt-1" />
+            <div>
+                <Alert.Heading className="fs-6 fw-bold mb-1">{title}</Alert.Heading>
                 {text}
-            </Alert>
-        );
-    }
-    return;
+            </div>
+        </Alert>
+    );
 }

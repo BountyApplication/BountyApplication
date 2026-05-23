@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import './index.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import reportWebVitals from './reportWebVitals';
 import BountyApp from './bounty/BountyApp';
 import { ThemeProvider } from './themes/ThemeProvider.js';
