@@ -15,7 +15,8 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     }
     fetch(`http://${process.env.REACT_APP_DB_IP}:${process.env.REACT_APP_DB_PORT}/bounty/${topic}`, {
         method: method,
-        headers: params,
+        headers: {'Content-Type': 'application/json'},
+        ...(method !== 'GET' ? {body: JSON.stringify(params)} : {}),
     })
     .then(response => response.json())
     .then(data => {
