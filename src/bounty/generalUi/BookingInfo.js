@@ -16,6 +16,7 @@ BookingInfo.propTypes = {
         products: PropTypes.array.isRequired,
     }),
     reset: PropTypes.func,
+    resetUser: PropTypes.func,
     submit: PropTypes.func,
 };
 
@@ -23,10 +24,11 @@ BookingInfo.defaultProps = {
     show: false,
     user: null,
     reset: () => {},
+    resetUser: () => {},
     submit: () => {},
 };
 
-export default function BookingInfo({ show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, submit }) {
+export default function BookingInfo({ show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, resetUser, submit }) {
     const { newBalance, correction, cashPayment, products } = booking;
     const hasArticles = Array.isArray(products) && products.some(p => p.amount !== 0);
     const hasInput = user != null && (hasArticles || correction !== 0 || cashPayment !== 0);
@@ -55,6 +57,16 @@ export default function BookingInfo({ show, user, openUserSelectCallback, bookin
                             : `${user.firstname} ${user.lastname}`
                         }
                     </Button>
+                    {user != null && (
+                        <button
+                            type="button"
+                            className="icon-btn"
+                            onClick={resetUser}
+                            title="Kunde abwählen"
+                        >
+                            <i className="bi bi-x-lg" />
+                        </button>
+                    )}
                 </div>
             </Offcanvas.Header>
 

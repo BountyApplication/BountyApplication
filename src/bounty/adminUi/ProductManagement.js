@@ -198,7 +198,7 @@ export default function ProductManagement() {
                             <InputGroup>
                                 <Form.Control
                                     type="number"
-                                    step="0.01"
+                                    step="0.5"
                                     value={form.price}
                                     onChange={e => setForm({ ...form, price: e.target.value })}
                                 />

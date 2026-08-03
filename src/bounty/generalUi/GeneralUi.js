@@ -34,7 +34,10 @@ export default function GeneralUi() {
     const navigate = useNavigate();
 
     useGetProducts(
-        (p) => setProducts(p.map(product => ({ ...product, amount: 0 }))),
+        (p) => setProducts(prev => p.map(product => {
+            const existing = prev.find(({ productId }) => productId === product.productId);
+            return { ...product, amount: existing ? existing.amount : 0 };
+        })),
         !displayDisabledProducts
     );
 
@@ -128,18 +131,6 @@ export default function GeneralUi() {
                             <span className="pos-brand-mark"><i className="bi bi-cup-straw" /></span>
                             <span>Bounty Kasse</span>
                         </div>
-                        <div className="pos-actions">
-                            <button
-                                className="icon-btn"
-                                onClick={toggleTheme}
-                                title={theme === 'light-theme' ? 'Dunkles Design' : 'Helles Design'}
-                            >
-                                <i className={`bi ${theme === 'light-theme' ? 'bi-moon-stars' : 'bi-sun'}`} />
-                            </button>
-                            <button className="icon-btn" onClick={openAdmin} title="Verwaltung">
-                                <i className="bi bi-gear" />
-                            </button>
-                        </div>
                     </header>
 
                     <UserSelect
@@ -156,6 +147,9 @@ export default function GeneralUi() {
                         hideSubmit
                         hideReset
                         hideDescription
+                        theme={theme}
+                        toggleTheme={toggleTheme}
+                        onOpenAdmin={openAdmin}
                     />
 
                     <Collapse in={hasSidebar}>
@@ -209,6 +203,7 @@ export default function GeneralUi() {
                 allProducts={products}
                 setProducts={setProducts}
                 reset={resetProducts}
+                resetUser={runResetUser}
                 submit={submit}
             />
 

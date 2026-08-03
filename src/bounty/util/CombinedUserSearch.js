@@ -31,6 +31,10 @@ UserSelect.prototype = {
     hideSubmit: PropTypes.bool,
 
     onlyActive: PropTypes.bool,
+
+    theme: PropTypes.string,
+    toggleTheme: PropTypes.func,
+    onOpenAdmin: PropTypes.func,
 };
 
 UserSelect.defaultProps = {
@@ -49,7 +53,7 @@ UserSelect.defaultProps = {
     onlyActive: true,
 };
 
-function UserSelect({products, setProducts, inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive}) {
+function UserSelect({products, setProducts, inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive, theme, toggleTheme, onOpenAdmin}) {
     // vars
     const [input, setInput] = useState("");
     const [idInput, setIdInput] = useState(null);
@@ -65,6 +69,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     const [focus, setFocus] = useState(true);
 
     useKeyPress('Enter', () => {
+        if(inModal && !show) return;
         if(hasBarcode) return;
         submit();
     });
@@ -352,6 +357,30 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         <Modal show={show}>
             <Modal.Header closeButton onClick={setShow!=null?setShow.bind(this, false):()=>{}}>
                 <Modal.Title className='fs-2'>Kunden Auswahl</Modal.Title>
+                {(toggleTheme != null || onOpenAdmin != null) &&
+                    <div className='d-flex gap-2 ms-auto me-2'>
+                        {toggleTheme != null &&
+                            <button
+                                type='button'
+                                className='icon-btn'
+                                onClick={(e) => { e.stopPropagation(); toggleTheme(); }}
+                                title={theme === 'light-theme' ? 'Dunkles Design' : 'Helles Design'}
+                            >
+                                <i className={`bi ${theme === 'light-theme' ? 'bi-moon-stars' : 'bi-sun'}`} />
+                            </button>
+                        }
+                        {onOpenAdmin != null &&
+                            <button
+                                type='button'
+                                className='icon-btn'
+                                onClick={(e) => { e.stopPropagation(); onOpenAdmin(); }}
+                                title='Verwaltung'
+                            >
+                                <i className='bi bi-gear' />
+                            </button>
+                        }
+                    </div>
+                }
             </Modal.Header>
 
             <Modal.Body>

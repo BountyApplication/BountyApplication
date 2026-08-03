@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export function arraysEqual(a1,a2) {
     /* WARNING: arrays must not contain {objects} or behavior may be undefined */
@@ -13,33 +13,36 @@ export function toCurrency(number) {
 
 export function useKeyPress(targetKey, callback) {
     const [keyPressed, setKeyPressed] = useState(false);
+    const callbackRef = useRef(callback);
+    const pressedRef = useRef(false);
 
     useEffect(() => {
-      if(!keyPressed) return;
-      if(callback == null) return;
-      callback();
-    }, [keyPressed, callback]);
-
-
-    function getHandler(isPressed) {
-        return ({key}) => {
-            if(key !== targetKey) return;
-            setKeyPressed(isPressed);
-        }
-    }
-
-    const downHandler = getHandler(true);
-    const upHandler = getHandler(false);
+      callbackRef.current = callback;
+    });
 
     useEffect(() => {
+      function downHandler({key}) {
+        if(key !== targetKey) return;
+        if(pressedRef.current) return; // ignores auto repeat while key is held
+        pressedRef.current = true;
+        setKeyPressed(true);
+        if(callbackRef.current != null) callbackRef.current();
+      }
+
+      function upHandler({key}) {
+        if(key !== targetKey) return;
+        pressedRef.current = false;
+        setKeyPressed(false);
+      }
+
       window.addEventListener("keydown", downHandler);
       window.addEventListener("keyup", upHandler);
-    
+
       return () => {
         window.removeEventListener("keydown", downHandler);
         window.removeEventListener("keyup", upHandler);
       }
-    }, [downHandler, upHandler]);
-        
+    }, [targetKey]);
+
     return keyPressed;
 }
