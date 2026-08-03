@@ -1,47 +1,67 @@
-import React from 'react';
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-import {Link} from "react-router-dom";
-import AddProduct from './AddProduct';
-import AddUser from './AddUser';
-import ChangeProduct from './ChangeProduct';
-import ChangeUser from './ChangeUser';
-import RemoveProduct from './RemoveProduct';
-import RemoveUser from './RemoveUser';
-import { useLocation } from 'react-router-dom';
-import ArrangeProduct from './ArrangeProduct';
+import React, { useContext, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import AdminDashboard from './AdminDashboard';
+import UserManagement from './UserManagement';
+import ProductManagement from './ProductManagement';
+import { ThemeContext } from "../../themes/ThemeProvider.js";
+import { isAdminUnlocked } from '../util/adminAuth';
 
-export default function AdminUi(props) {
+const NAV = [
+    { hash: '#dashboard', label: 'Übersicht', icon: 'bi-grid-1x2' },
+    { hash: '#users',     label: 'Benutzer',  icon: 'bi-people'   },
+    { hash: '#products',  label: 'Produkte',  icon: 'bi-bag'      },
+];
 
+export default function AdminUi() {
     const location = useLocation();
-    const params = new URLSearchParams(location.hash);
+    const navigate = useNavigate();
+    const active = location.hash || '#dashboard';
+    const { theme, toggleTheme } = useContext(ThemeContext);
 
-    return(
-        <div className="main">
-        <Navbar bg="light" expand="lg">
-        <Container>
-            <Navbar.Brand href="#home">Admin Ui</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto" variant="tabs">
-                    <Nav.Item><Nav.Link href="#addUser">add User</Nav.Link></Nav.Item>
-                    <Nav.Item><Nav.Link href="#removeUser">remove User</Nav.Link></Nav.Item>
-                    <Nav.Item><Nav.Link href="#changeUser">change User</Nav.Link></Nav.Item>
-                    <Nav.Item><Nav.Link href="#addProduct">add Product</Nav.Link></Nav.Item>
-                    <Nav.Item><Nav.Link href="#removeProduct">remove Product</Nav.Link></Nav.Item>
-                    <Nav.Item><Nav.Link href="#changeProduct">change Product</Nav.Link></Nav.Item>
-                    <Nav.Item><Nav.Link href="#arrangeProduct">arrange Product</Nav.Link></Nav.Item>
-                    <Nav.Item><Button variant="outline-primary"><Link color="warning" to="/">back</Link></Button></Nav.Item>
-                </Nav>
-            </Navbar.Collapse>
-        </Container>
-        </Navbar>
-        {params.has("#addUser") && <AddUser />}
-        {params.has("#removeUser") && <RemoveUser />}
-        {params.has("#changeUser") && <ChangeUser />}
-        {params.has("#addProduct") && <AddProduct />}
-        {params.has("#removeProduct") && <RemoveProduct />}
-        {params.has("#changeProduct") && <ChangeProduct />}      
-        {params.has("#arrangeProduct") && <ArrangeProduct />}      
-      </div>  
+    useEffect(() => {
+        if (!isAdminUnlocked()) navigate('/', { replace: true });
+    }, [navigate]);
+
+    if (!isAdminUnlocked()) return null;
+
+    return (
+        <div className="admin-shell">
+            <aside className="admin-sidebar">
+                <div className="pos-brand px-2">
+                    <span className="pos-brand-mark"><i className="bi bi-cup-straw" /></span>
+                    <span>Bounty</span>
+                </div>
+
+                <nav className="admin-nav">
+                    {NAV.map(({ hash, label, icon }) => (
+                        <a
+                            key={hash}
+                            href={hash}
+                            className={`admin-nav-item ${active === hash ? 'active' : ''}`}
+                        >
+                            <i className={`bi ${icon}`} />
+                            <span>{label}</span>
+                        </a>
+                    ))}
+                </nav>
+
+                <div className="mt-auto d-flex flex-column gap-2 px-1">
+                    <button className="admin-nav-item" onClick={toggleTheme}>
+                        <i className={`bi ${theme === 'light-theme' ? 'bi-moon-stars' : 'bi-sun'}`} />
+                        <span>{theme === 'light-theme' ? 'Dunkles Design' : 'Helles Design'}</span>
+                    </button>
+                    <Link to="/" className="admin-nav-item">
+                        <i className="bi bi-arrow-left-circle" />
+                        <span>Zur Kasse</span>
+                    </Link>
+                </div>
+            </aside>
+
+            <main className="admin-content">
+                {active === '#dashboard' && <AdminDashboard />}
+                {active === '#users'     && <UserManagement />}
+                {active === '#products'  && <ProductManagement />}
+            </main>
+        </div>
     );
 }

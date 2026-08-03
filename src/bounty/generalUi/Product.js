@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Card, Button} from 'react-bootstrap';
-import {useEffect} from 'react';
+import { Card, Button, Badge } from 'react-bootstrap';
 
 Product.propTypes = {
     productId: PropTypes.number.isRequired,
@@ -10,56 +9,74 @@ Product.propTypes = {
     amount: PropTypes.number.isRequired,
     onClick: PropTypes.func.isRequired,
     tryRemove: PropTypes.bool,
+    increment: PropTypes.number,
+    availableBalance: PropTypes.number,
+    stock: PropTypes.number,
 };
 
 Product.defaultProps = {
-    productId: null,
-    name: null,
-    price: null,
-    amount: 0,
-    onClick: (v) => {},
     tryRemove: false,
+    increment: 1,
+    availableBalance: 0,
+    stock: null,
 };
 
-export default function Product({productId, name, price, amount, onClick, tryRemove, increment, availableBalance}) {
-    const disabled = (tryRemove&&amount<increment) || (!tryRemove&&availableBalance < price*increment);
-    
-    const title = document.getElementById(productId);
+export default function Product({ productId, name, price, amount, onClick, tryRemove, increment, availableBalance, stock }) {
+    const hasStock = stock !== null && stock !== undefined;
+    const soldOut = hasStock && stock <= 0;
+    const stockReached = hasStock && amount >= stock;
 
-    function resize_to_fit() {
-        if(title == null) return;
-        while(title.clientHeight > 30) {
-            var fontSize = parseInt(window.getComputedStyle(title).fontSize)-1;
-            title.style.fontSize = fontSize + 'px';
-            if(fontSize <= 14) {
-                title.style.textOverflow = 'ellipsis';
-                title.className+=" text-truncate";
-                break;
-            }
-            if(fontSize <= 1) break;
-        }
-        title.style.marginTop = Math.floor((30-title.clientHeight)/2)+'px';
-        title.style.marginBottom = Math.ceil((30-title.clientHeight)/2)+'px';
-    }
+    const disabled = soldOut
+        || (tryRemove && amount < increment)
+        || (!tryRemove && (stockReached || availableBalance < price * increment));
+    const hasAmount = amount > 0;
 
-    useEffect(() => {
-        setTimeout(() => {
-            resize_to_fit();
-        }, 0); 
-    });
-
-    return(
-        <Card className={`p-0 ${disabled ? 'disabled text-secondary' : ''}`} style={{width: '120px'}} border={disabled?'secondary':"primary"}>
-            <Card.Body className="p-1">
-                <Card.Title className="fw-bold " id={productId}>{name}</Card.Title>
-                
-                <Card.Text className='mb-1 mt-0'>{`${price.toFixed(2)}€`}</Card.Text>
-                
-                <Button className="me-1" variant={disabled?'outline-danger':"outline-secondary"} onClick={onClick.bind(null, productId, true)}>{amount}</Button>
-                <Button className="" onFocus={()=>{if(document.activeElement.toString() === '[object HTMLButtonElement]') document.activeElement.blur();}} style={{width: '3.5rem'}} variant={disabled?'outline-secondary': "outline-primary"} onClick={onClick.bind(null, productId, undefined)} disabled={disabled}>
-                    
-                    {increment===1 ? (tryRemove?"del.":"add") : ((tryRemove?'-':'+')+increment)}
-                </Button>
+    return (
+        <Card
+            className={`product-card shadow-sm ${disabled ? 'product-disabled' : ''}`}
+            border={hasAmount ? 'primary' : undefined}
+        >
+            <Card.Body className="p-2 d-flex flex-column gap-1">
+                <span className="product-name" title={name}>{name}</span>
+                <div className="d-flex align-items-center justify-content-between">
+                    <span className={`product-price ${disabled ? 'text-secondary' : 'text-muted'}`}>
+                        {price.toFixed(2)} €
+                    </span>
+                    {soldOut
+                        ? <Badge bg="danger">Ausverkauft</Badge>
+                        : hasStock && <span className="product-price text-muted">noch {stock - amount}</span>
+                    }
+                </div>
+                <div className="d-flex align-items-center gap-1 mt-1">
+                    <Button
+                        size="sm"
+                        variant={hasAmount ? 'outline-danger' : 'outline-secondary'}
+                        className="px-2 py-1"
+                        style={{ minWidth: '2.2rem' }}
+                        onClick={() => onClick(productId, true)}
+                        disabled={!hasAmount}
+                        tabIndex={-1}
+                    >
+                        {hasAmount
+                            ? <><i className="bi bi-dash" /> <strong>{amount}</strong></>
+                            : '0'
+                        }
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant={disabled ? 'outline-secondary' : 'outline-primary'}
+                        className="flex-grow-1 py-1"
+                        onClick={() => onClick(productId, undefined)}
+                        disabled={disabled}
+                        onFocus={e => e.target.blur()}
+                        tabIndex={-1}
+                    >
+                        {tryRemove
+                            ? (increment === 1 ? <i className="bi bi-trash3" /> : <>- {increment}</>)
+                            : (increment === 1 ? <><i className="bi bi-plus" /> hinzu</> : <>+ {increment}</>)
+                        }
+                    </Button>
+                </div>
             </Card.Body>
         </Card>
     );

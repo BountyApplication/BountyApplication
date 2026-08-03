@@ -1,4 +1,4 @@
-import { Offcanvas, Collapse, Button, Row, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Offcanvas, Collapse, Button } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import BookingDisplay from '../util/BookingDisplay';
 import React from 'react';
@@ -8,18 +8,12 @@ BookingInfo.propTypes = {
     user: PropTypes.object,
     openUserSelectCallback: PropTypes.func,
     booking: PropTypes.shape({
-        bookingId: PropTypes.number,
         oldBalance: PropTypes.number,
         newBalance: PropTypes.number,
         productSum: PropTypes.number,
         correction: PropTypes.number,
         cashPayment: PropTypes.number,
-        products: PropTypes.arrayOf(PropTypes.shape({
-            productId: PropTypes.number,
-            name: PropTypes.string.isRequired,
-            price: PropTypes.number.isRequired,
-            amount: PropTypes.number.isRequired,
-        })).isRequired,
+        products: PropTypes.array.isRequired,
     }),
     reset: PropTypes.func,
     submit: PropTypes.func,
@@ -28,47 +22,81 @@ BookingInfo.propTypes = {
 BookingInfo.defaultProps = {
     show: false,
     user: null,
-    reset: ()=>{},
-    submit: ()=>{},
+    reset: () => {},
+    submit: () => {},
 };
 
-UserButton.propTypes = {
-    user: PropTypes.object,
-    openUserSelectCallback: PropTypes.func,
-}
+export default function BookingInfo({ show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, submit }) {
+    const { newBalance, correction, cashPayment, products } = booking;
+    const hasArticles = Array.isArray(products) && products.some(p => p.amount !== 0);
+    const hasInput = user != null && (hasArticles || correction !== 0 || cashPayment !== 0);
+    const negativeBalance = newBalance < 0;
 
-function UserButton({user, openUserSelectCallback}) {
-    return <OverlayTrigger
-        placement={'auto'}
-        overlay={
-            <Tooltip>
-                { user == null ? 'Kunde auswählen [a]' : 'Kunde ändern [a]' }
-            </Tooltip>
-        }
-    >
-        <Button variant="secondary" onClick={openUserSelectCallback}>{ user == null ? 'kein Kunde' : `${user.firstname} ${user.lastname} ${process.env.REACT_APP_ENABLE_BARCODE==="true"?`(${('0000' + user.cardId).substr(-4)})`:''}` }</Button>
-    </OverlayTrigger>
-}
+    return (
+        <Offcanvas
+            className="booking-offcanvas"
+            show={show}
+            placement="end"
+            backdrop={false}
+            scroll={true}
+        >
+            <Offcanvas.Header className="border-bottom pb-2">
+                <div className="d-flex align-items-center gap-2 flex-wrap w-100">
+                    <Offcanvas.Title className="fw-bold fs-4 me-auto">Buchung</Offcanvas.Title>
+                    <Button
+                        variant={user == null ? 'outline-primary' : 'outline-secondary'}
+                        size="sm"
+                        onClick={openUserSelectCallback}
+                        title="Kunde wechseln [a]"
+                    >
+                        <i className={`bi ${user == null ? 'bi-person-plus' : 'bi-person'} me-1`} />
+                        {user == null
+                            ? 'Kunde wählen'
+                            : `${user.firstname} ${user.lastname}`
+                        }
+                    </Button>
+                </div>
+            </Offcanvas.Header>
 
-export default function BookingInfo({show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, submit}) {
-    const {oldBalance, newBalance, correction, cashPayment} = booking;
-    const hasInput = user != null && (newBalance!==oldBalance || correction!==0 || cashPayment!==0)
-
-    return(
-    <Offcanvas className="" style={{width: '370px'}} show={show} placement={'end'} backdrop={false} scroll={true}>
-        <Offcanvas.Header className="pb-0">
-            <Offcanvas.Title className="fs-3 fw-bold me-2">Buchung</Offcanvas.Title>
-            <UserButton user={user} openUserSelectCallback={openUserSelectCallback} />
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-            <BookingDisplay booking={booking} allProducts={allProducts} setProducts={setProducts}>
-            <Collapse in={hasInput} >
-                <Row className="w-100">
-                    <Button className="col my-1" type="reset" variant="secondary" onClick={reset}>Zurücksetzen</Button>
-                    <Button className="col ms-2 my-1" type="submit" variant={newBalance<0?'secondary':'primary'} onClick={submit} disabled={newBalance<0} >Buchen</Button>
-                </Row>
-            </Collapse>
-            </BookingDisplay>
-        </Offcanvas.Body>
-    </Offcanvas>)
+            <Offcanvas.Body className="d-flex flex-column">
+                <BookingDisplay
+                    booking={booking}
+                    allProducts={allProducts}
+                    setProducts={setProducts}
+                >
+                    <Collapse in={hasInput}>
+                        <div className="mt-auto pt-3 border-top">
+                            {negativeBalance && (
+                                <div className="mb-2 text-danger small d-flex align-items-center gap-1">
+                                    <i className="bi bi-exclamation-triangle-fill" />
+                                    Kontostand würde negativ
+                                </div>
+                            )}
+                            <div className="d-flex gap-2">
+                                <Button
+                                    className="flex-fill"
+                                    variant="outline-secondary"
+                                    type="reset"
+                                    onClick={reset}
+                                >
+                                    <i className="bi bi-arrow-counterclockwise me-1" />
+                                    Zurücksetzen
+                                </Button>
+                                <Button
+                                    className="flex-fill"
+                                    variant={negativeBalance ? 'outline-danger' : 'primary'}
+                                    type="submit"
+                                    onClick={submit}
+                                    disabled={negativeBalance}
+                                >
+                                    <i className="bi bi-check-lg me-1" />
+                                    Buchen
+                                </Button>
+                            </div>
+                        </div>
+                    </Collapse>
+                </BookingDisplay>
+            </Offcanvas.Body>
+        </Offcanvas>
+    );
 }

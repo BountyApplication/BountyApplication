@@ -1,45 +1,83 @@
-import { getLastBookings, useGetLastBookings } from "../util/Database";
-import { Card, ListGroup, Col } from "react-bootstrap";
+import { useGetLastBookings } from "../util/Database";
+import { Card, ListGroup, Row, Col, Badge } from "react-bootstrap";
 import BookingDisplay from "../util/BookingDisplay";
 import { toCurrency } from '../util/Util';
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 
-export default function LastBookings({userId}) {
-    const [user, setUser] = useState(null);
-    if(user !== userId) setUser(userId);
-    // const [bookings, setBookings] = useState(null);
+export default function LastBookings({ userId }) {
     const bookings = useGetLastBookings(userId);
-    /*useEffect(() => {
-        if(user==null) return;
-        getLastBookings(user, setBookings)
-    }, [user]);*/
-    const [activeBooking, setActiveBooking] = useState(null);
-    
-    if(bookings==null) return <></>;
+    const [activeId, setActiveId] = useState(null);
 
-    var count = bookings.length;
+    if (!bookings || bookings.length === 0) return null;
 
-    let booking = bookings.find(({bookingId}) => bookingId === activeBooking);
+    const activeBooking = bookings.find(({ bookingId }) => bookingId === activeId);
+    let counter = bookings.length;
 
-    return(
-        <Card>
+    return (
+        <Card className="shadow-sm">
             <Card.Header>
-                <Card.Title>Letzte Buchungen</Card.Title>
+                <Card.Title className="mb-0 fw-semibold">
+                    <i className="bi bi-clock-history me-2" />
+                    Letzte Buchungen
+                </Card.Title>
             </Card.Header>
-            <Card.Body className='row'>
-                <Col>
-                    <ListGroup>
-                        {bookings.length === 0 && 'keine Buchungen'}
-                        {bookings.map(({bookingId, date = "0000-00-00 00:00:00", oldBalance, newBalance, total, productSum, correction, cashPayment, products}) =>
-                            <ListGroup.Item key={bookingId} eventKey={bookingId} onClick={() => setActiveBooking(bookingId)}>
-                                <p className='m-0 me-4 text-start'>{`#${count--} | ${date.substring(5,16).replace('-', '.')} | Summe: ${toCurrency(productSum)} ${correction ? ` | Kor.: ${correction>0?'+':''}${toCurrency(correction)}` : ``} ${cashPayment ? ` | Bar: ${cashPayment>0?'+':''}${toCurrency(cashPayment)}` : ``} `}</p>
-                            </ListGroup.Item>
-                        )}
-                    </ListGroup>
-                </Col>
-                {activeBooking!==null && booking && <Col lg>
-                    <BookingDisplay booking={booking} isHistory={true} userId={userId} />
-                </Col>}
+            <Card.Body className="p-0">
+                <Row className="g-0">
+                    <Col xs={12} md={activeBooking ? 5 : 12}>
+                        <ListGroup variant="flush">
+                            {bookings.map(({ bookingId, date = "0000-00-00 00:00:00", productSum, correction, cashPayment, newBalance, oldBalance }) => {
+                                const num = counter--;
+                                const isActive = bookingId === activeId;
+                                const dateStr = date.substring(5, 16).replace('-', '.');
+                                return (
+                                    <ListGroup.Item
+                                        key={bookingId}
+                                        action
+                                        active={isActive}
+                                        onClick={() => setActiveId(isActive ? null : bookingId)}
+                                        className="px-3 py-2"
+                                    >
+                                        <div className="d-flex align-items-center justify-content-between gap-2">
+                                            <div className="d-flex align-items-center gap-2 flex-wrap">
+                                                <Badge bg={isActive ? 'light' : 'secondary'} text={isActive ? 'dark' : undefined}>
+                                                    #{num}
+                                                </Badge>
+                                                <span className="text-nowrap small">{dateStr}</span>
+                                                {productSum !== 0 && (
+                                                    <span className="small fw-semibold">
+                                                        {toCurrency(productSum)}
+                                                    </span>
+                                                )}
+                                                {correction !== 0 && (
+                                                    <span className="small text-muted">
+                                                        Kor.: {correction > 0 ? '+' : ''}{toCurrency(correction)}
+                                                    </span>
+                                                )}
+                                                {cashPayment !== 0 && (
+                                                    <span className="small text-muted">
+                                                        Bar: {cashPayment > 0 ? '+' : ''}{toCurrency(cashPayment)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <span className="small text-muted text-nowrap">
+                                                → {toCurrency(newBalance)}
+                                            </span>
+                                        </div>
+                                    </ListGroup.Item>
+                                );
+                            })}
+                        </ListGroup>
+                    </Col>
+                    {activeBooking && (
+                        <Col xs={12} md={7} className="border-start p-3">
+                            <BookingDisplay
+                                booking={activeBooking}
+                                isHistory
+                                userId={userId}
+                            />
+                        </Col>
+                    )}
+                </Row>
             </Card.Body>
         </Card>
     );

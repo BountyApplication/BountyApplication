@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {arraysEqual} from './Util';
 import { defaultUsers, defaultProducts, defaultBookings, defaultBalance, defaultUser } from './DefaultData';
+import { notifyError } from './Notifications';
 
 const updateRate = 1*1000;
 const debug = false;
@@ -14,7 +15,8 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     }
     fetch(`http://${process.env.REACT_APP_DB_IP}:${process.env.REACT_APP_DB_PORT}/bounty/${topic}`, {
         method: method,
-        headers: params,
+        headers: {'Content-Type': 'application/json'},
+        ...(method !== 'GET' ? {body: JSON.stringify(params)} : {}),
     })
     .then(response => response.json())
     .then(data => {
@@ -28,7 +30,7 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     })
     .catch((error) => {
         console.error('Error:', error);
-        window.alert('Datenbank Error: '+error);
+        notifyError('Datenbank-Fehler: ' + error);
         if(calculate != null) defaultData = calculate(defaultData);
         if(arraysEqual(defaultData, oldData)) return;
         if(setData!=null) setData(defaultData);
@@ -94,14 +96,16 @@ export function commitBooking(userId, booking) {
     // console.log({...booking, products: JSON.stringify(booking.products)});
     doRequest('accounts/'+userId, 'POST', {...booking, products: JSON.stringify(booking.products)}, null, (result) => {
         if(result.balance!==booking.newBalance) {
-            window.alert(`Error: false user balance! expected: ${booking.newBalance} actual: ${result.balance}`);
-            console.log(`Error: false user balance! expected: ${booking.newBalance} actual: ${result.balance}`);
+            notifyError(`Kontostand-Fehler! Erwartet: ${booking.newBalance}€  Tatsächlich: ${result.balance}€`);
+            console.error(`Balance mismatch: expected ${booking.newBalance}, got ${result.balance}`);
         }
     });
 }
 
-export function addProduct(productName, productPrice) {
-    doRequest('products', 'POST', {name: productName, price: productPrice});
+export function addProduct(productName, productPrice, stock = null) {
+    const data = {name: productName, price: productPrice};
+    if(stock !== null && stock !== '' && !isNaN(stock)) data.stock = stock;
+    doRequest('products', 'POST', data);
 }
 
 export function removeProduct(product) {

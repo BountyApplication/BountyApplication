@@ -1,96 +1,87 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Table } from 'react-bootstrap';
 import { useGetUsers } from './Database';
-import RowText from './RowText';
-import {toCurrency} from './Util';
+import { toCurrency } from './Util';
+import { Link } from 'react-router-dom';
+import { notifyError } from './Notifications';
 
-export default function ChangeMoneyUi() {
+const DENOMINATIONS = [
+    { label: '50,00 €', value: 50 },
+    { label: '20,00 €', value: 20 },
+    { label: '10,00 €', value: 10 },
+    { label:  '5,00 €', value: 5  },
+    { label:  '2,00 €', value: 2  },
+    { label:  '1,00 €', value: 1  },
+    { label:  '0,50 €', value: 0.5   },
+    { label:  '0,20 €', value: 0.2   },
+    { label:  '0,10 €', value: 0.1   },
+    { label:  '0,05 €', value: 0.05  },
+    { label:  '0,02 €', value: 0.02  },
+    { label:  '0,01 €', value: 0.01  },
+];
+
+export default function ChangeMoneyUi({ embedded = false }) {
     const users = useGetUsers();
 
-    var total = 0;
-    var _50 = 0;
-    var _20 = 0;
-    var _10 = 0;
-    var _5 = 0;
-    var _2 = 0;
-    var _1 = 0;
-    var _050 = 0;
-    var _020 = 0;
-    var _010 = 0;
-    var _005 = 0;
-    var _002 = 0;
-    var _001 = 0;
+    let total = 0;
+    const counts = new Array(DENOMINATIONS.length).fill(0);
 
-    users.forEach(({balance}) => {
+    users.forEach(({ balance }) => {
         total += balance;
-        
-        _50 += Math.floor(balance/50);
-        balance -= Math.floor(balance/50)*50;
+        let remaining = Math.round(balance * 100);
 
-        _20 += Math.floor(balance/20);
-        balance -= Math.floor(balance/20)*20;
-        
-        _10 += Math.floor(balance/10);
-        balance -= Math.floor(balance/10)*10;
-        
-        _5 += Math.floor(balance/5);
-        balance -= Math.floor(balance/5)*5;
+        DENOMINATIONS.forEach(({ value }, i) => {
+            const cents = Math.round(value * 100);
+            const n = Math.floor(remaining / cents);
+            counts[i] += n;
+            remaining -= n * cents;
+        });
 
-        _2 += Math.floor(balance/2);
-        balance -= Math.floor(balance/2)*2;
-
-        _1 += Math.floor(balance/1);
-        balance -= Math.floor(balance/1)*1;
-
-        balance = Math.round(balance*100);
-
-        _050 += Math.floor(balance/50);
-        balance -= Math.floor(balance/50)*50;
-
-        _020 += Math.floor(balance/20);
-        balance -= Math.floor(balance/20)*20;
-
-        _010 += Math.floor(balance/10);
-        balance -= Math.floor(balance/10)*10;
-
-        _005 += Math.floor(balance/5);
-        balance -= Math.floor(balance/5)*5;
-
-        _002 += Math.floor(balance/2);
-        balance -= Math.floor(balance/2)*2;
-
-        _001 += Math.floor(balance/1);
-        balance -= Math.floor(balance/1)*1;
-       
-        if(balance !== 0) window.alert(`Error calculating balance! ${balance}ct left over`);
-
-
+        if (remaining !== 0) notifyError(`Fehler bei Wechselgeld-Berechnung! Rest: ${remaining} ct`);
     });
 
-    const ref = React.createRef();
-    
-    return (
-        <div className='d-flex justify-content-evenly mt-5'>
-            <Card className='w-25'>
-                <Card.Header>
-                    <Card.Title>Wechselgeld</Card.Title>
-                </Card.Header>
-                <Card.Body >
-                    <RowText className='fw-bold' ref={ref} left={'Total:'} right={toCurrency(total)} />
-                    <RowText ref={ref} left={'50€:'} right={_50} />
-                    <RowText ref={ref} left={'20€:'} right={_20} />
-                    <RowText ref={ref} left={'10€:'} right={_10} />
-                    <RowText ref={ref} left={'5€:'} right={_5} />
-                    <RowText ref={ref} left={'2€:'} right={_2} />
-                    <RowText ref={ref} left={'1€:'} right={_1} />
-                    <RowText ref={ref} left={'50ct:'} right={_050} />
-                    <RowText ref={ref} left={'20ct:'} right={_020} />
-                    <RowText ref={ref} left={'10ct:'} right={_010} />
-                    <RowText ref={ref} left={'5ct:'} right={_005} />
-                    <RowText ref={ref} left={'2ct:'} right={_002} />
-                    <RowText ref={ref} left={'1ct:'} right={_001} />
+    total = Math.round(total * 100) / 100;
+
+    const card = (
+        <Card className="shadow-sm" style={{ maxWidth: '340px' }}>
+                <Card.Body className="p-0">
+                    <Table hover className="mb-0">
+                        <thead>
+                            <tr className="table-active">
+                                <th>Stückelung</th>
+                                <th className="text-end">Anzahl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="fw-bold">
+                                <td>Gesamtsumme</td>
+                                <td className="text-end">{toCurrency(total)}</td>
+                            </tr>
+                            {DENOMINATIONS.map(({ label }, i) => (
+                                <tr key={label}>
+                                    <td>{label}</td>
+                                    <td className="text-end">{counts[i]}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
                 </Card.Body>
-            </Card>
+        </Card>
+    );
+
+    if (embedded) return card;
+
+    return (
+        <div className="p-3">
+            <div className="d-flex align-items-center gap-3 mb-3">
+                <Link to="/" className="btn btn-outline-secondary btn-sm">
+                    <i className="bi bi-arrow-left me-1" />Zurück
+                </Link>
+                <h4 className="mb-0 fw-bold">
+                    <i className="bi bi-cash-stack me-2" />Wechselgeld
+                </h4>
+            </div>
+            {card}
         </div>
     );
 }
