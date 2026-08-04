@@ -212,16 +212,48 @@ tr.drag-row { transition: background-color .1s ease; }
 tr.drag-row.dragging { opacity: 0.4; }
 tr.drag-row.drag-over td { box-shadow: inset 0 2px 0 var(--app-accent); }
 
-/* ── Selected user row ────────────────────────────────────── */
-tr.user-selected td {
-  box-shadow: inset 0 2px 0 var(--app-accent), inset 0 -2px 0 var(--app-accent);
+/* ── User selection list ──────────────────────────────────── */
+.user-list {
+  max-height: 34vh;
+  overflow-y: auto;
+  margin-inline: -0.25rem;
+  padding: 0.25rem;
 }
-tr.user-selected td:first-child {
-  box-shadow: inset 0 2px 0 var(--app-accent), inset 0 -2px 0 var(--app-accent), inset 2px 0 0 var(--app-accent);
+/* scoped to .user-list so it wins over .list-group-item regardless of css order */
+.user-list .user-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 0.65rem;
+  border: 0;
+  border-radius: var(--app-radius);
+  background: transparent;
+  transition: background-color 0.12s ease;
 }
-tr.user-selected td:last-child {
-  box-shadow: inset 0 2px 0 var(--app-accent), inset 0 -2px 0 var(--app-accent), inset -2px 0 0 var(--app-accent);
+.user-list .user-row + .user-row { margin-top: 2px; }
+.user-list .user-row:hover { background: var(--app-surface-2); }
+.user-list .user-row.user-selected { background: var(--app-accent-soft); }
+
+.user-avatar {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--app-surface-2);
+  color: var(--app-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
+.user-row.user-selected .user-avatar { background: var(--app-accent); color: #fff; }
+
+.user-name { font-size: 1.05rem; }
+.user-row.user-selected .user-name { color: var(--app-accent); font-weight: 600; }
+.user-inactive .user-name { font-style: italic; opacity: 0.6; }
 
 .redText { color: var(--app-danger); }
 .numberInput { max-width: 5rem; }

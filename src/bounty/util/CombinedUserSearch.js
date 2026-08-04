@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 import { useGetUsers, getUserByCardId, changeUser } from './Database';
-import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
+import { Modal, Collapse, Button, ListGroup } from 'react-bootstrap';
 import Input from './Input';
 import { useKeyPress } from './Util';
 
@@ -316,25 +316,26 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     }
 
     function displayUsers() {
-        return <Form className='overflow-auto mt-3' style={{maxHeight: '30vh'}}>
-            <Table striped hover size="sm">
-                <thead>
-                    <tr>
-                        <th>Vorname</th>
-                        <th>Nachname</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {getSortedUsers().map(listedUser => {
-                        const isSelected = user != null && user.userId === listedUser.userId;
-                        return <tr key={listedUser.userId} ref={isSelected?selectedRow:null} onClick={setUser.bind(this, listedUser)} className={`${listedUser.active!==1?'fw-light fst-italic':''}${isSelected?' user-selected':''}`}>
-                            <td>{listedUser.firstname}</td>
-                            <td>{listedUser.lastname}</td>
-                        </tr>
-                    })}
-                </tbody>
-            </Table>
-        </Form>
+        return <div className='user-list mt-3'>
+            <ListGroup variant='flush'>
+                {getSortedUsers().map(listedUser => {
+                    const isSelected = user != null && user.userId === listedUser.userId;
+                    return <ListGroup.Item
+                        key={listedUser.userId}
+                        ref={isSelected?selectedRow:null}
+                        onClick={setUser.bind(this, listedUser)}
+                        className={`user-row${isSelected?' user-selected':''}${listedUser.active!==1?' user-inactive':''}`}
+                    >
+                        <span className='user-avatar'>{initials(listedUser)}</span>
+                        <span className='user-name'>{listedUser.firstname} {listedUser.lastname}</span>
+                    </ListGroup.Item>
+                })}
+            </ListGroup>
+        </div>
+    }
+
+    function initials({firstname, lastname}) {
+        return `${firstname?.charAt(0) ?? ''}${lastname?.charAt(0) ?? ''}`;
     }
 
     function searchUi() {
@@ -353,7 +354,6 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     
     function displayUi() {
         return <div>
-            {<div className='ms-1'><p className='fs-4 d-inline'>Kunde: </p><p className='fs-4 d-inline fw-bold'>{user==null?'nicht definiert':`${user.firstname} ${user.lastname}`}</p></div>}
             {useBarcode&&<div className='ms-1'><p className='fs-4 d-inline'>Code: </p><p className='fs-4 d-inline fw-bold'>{user!=null?user.cardId==null?'nicht hinzugefügt':('0000' + user.cardId).substr(-4):('0000' + idInput).substr(-4)}</p></div>}
         </div>
     }
