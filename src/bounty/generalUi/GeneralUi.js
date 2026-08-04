@@ -43,7 +43,7 @@ export default function GeneralUi() {
 
     const sum = calculateSum();
     const total = calculateTotal();
-    const isSufficient = total <= userBalance;
+    const isSufficient = userBalance == null || total <= userBalance;
     const booking = {
         oldBalance: userBalance,
         newBalance: userBalance !== undefined ? Math.round((userBalance - total) * 100) / 100 : undefined,
@@ -123,7 +123,7 @@ export default function GeneralUi() {
         setShowAdminPrompt(true);
     }
 
-    const hasSidebar = user != null && userBalance != null;
+    const hasSidebar = user != null;
 
     return (
         <>
