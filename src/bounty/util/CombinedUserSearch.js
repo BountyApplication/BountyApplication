@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 import { useGetUsers, getUserByCardId, changeUser } from './Database';
 import { Modal, Collapse, Form, Button, Table } from 'react-bootstrap';
@@ -35,6 +35,8 @@ UserSelect.prototype = {
     theme: PropTypes.string,
     toggleTheme: PropTypes.func,
     onOpenAdmin: PropTypes.func,
+
+    disabled: PropTypes.bool,
 };
 
 UserSelect.defaultProps = {
@@ -51,9 +53,11 @@ UserSelect.defaultProps = {
     hideSubmit: false,
 
     onlyActive: true,
+
+    disabled: false,
 };
 
-function UserSelect({products, setProducts, inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive, theme, toggleTheme, onOpenAdmin}) {
+function UserSelect({products, setProducts, inModal, show, title, setShow, runCallback, resetCallback, setResetCallback, useReset, useSubmit, hideUserList, hideReset, hideSubmit, submitDescription, onlyActive, theme, toggleTheme, onOpenAdmin, disabled}) {
     // vars
     const [input, setInput] = useState("");
     const [idInput, setIdInput] = useState(null);
@@ -67,26 +71,54 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     const hasBarcode = useBarcode && (barcode.length === 4 && !isNaN(parseInt(barcode)));
     const filteredUsers = getFilteredUsers();
     const [focus, setFocus] = useState(true);
+    const selectedRow = useRef(null);
 
     useKeyPress('Enter', () => {
+        if(disabled) return;
         if(inModal && !show) return;
         if(hasBarcode) return;
         submit();
     });
 
     useKeyPress('Delete', () => {
+        if(disabled) return;
         reset();
     });
-    
+
     useKeyPress('Escape', () => {
+        if(disabled) return;
         if(!show) return;
-        // if(user!=null) return reset(); 
+        // if(user!=null) return reset();
         if(setShow!=null) setShow(false);
     });
 
     useKeyPress('a', () => {
+        if(disabled) return;
         if(setShow!=null) setShow(true);
     })
+
+    useKeyPress('ArrowDown', () => moveSelection(1));
+    useKeyPress('ArrowUp', () => moveSelection(-1));
+
+    // moves selection through the currently displayed list
+    function moveSelection(direction) {
+        if(disabled) return;
+        if(inModal && !show) return;
+        const sortedUsers = getSortedUsers();
+        if(sortedUsers.length === 0) return;
+
+        const index = user == null ? -1 : sortedUsers.findIndex(({userId}) => userId === user.userId);
+        if(index === -1) return setUser(direction > 0 ? sortedUsers[0] : sortedUsers[sortedUsers.length-1]);
+
+        const next = Math.min(Math.max(index + direction, 0), sortedUsers.length-1);
+        setUser(sortedUsers[next]);
+    }
+
+    // keeps the selected entry visible while navigating
+    useEffect(() => {
+        if(selectedRow.current == null) return;
+        selectedRow.current.scrollIntoView({block: 'nearest'});
+    }, [user]);
     
     useEffect(() => {
         if(!useBarcode) return;
@@ -293,12 +325,13 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
                     </tr>
                 </thead>
                 <tbody>
-                    {getSortedUsers().map(user => 
-                        <tr key={user.userId} onClick={setUser.bind(this, user)} className={user.active!==1?'fw-light fst-italic':''}>
-                            <td>{user.firstname}</td>
-                            <td>{user.lastname}</td>
+                    {getSortedUsers().map(listedUser => {
+                        const isSelected = user != null && user.userId === listedUser.userId;
+                        return <tr key={listedUser.userId} ref={isSelected?selectedRow:null} onClick={setUser.bind(this, listedUser)} className={`${listedUser.active!==1?'fw-light fst-italic':''}${isSelected?' user-selected':''}`}>
+                            <td>{listedUser.firstname}</td>
+                            <td>{listedUser.lastname}</td>
                         </tr>
-                    )}
+                    })}
                 </tbody>
             </Table>
         </Form>

@@ -94,7 +94,7 @@ export default function GeneralUi() {
     }
 
     function resetProducts() {
-        setProducts(products.map(p => ({ ...p, amount: 0 })));
+        setProducts(prev => prev.map(p => ({ ...p, amount: 0 })));
         setCorrectionPlus(null);
         setCorrectionMinus(null);
         setPaymentIn(null);
@@ -107,7 +107,9 @@ export default function GeneralUi() {
             oldBalance: booking.oldBalance,
             spent: booking.total,
             newBalance: booking.newBalance,
+            products: booking.products,
         });
+        resetProducts();
     }
 
     function finishBooking() {
@@ -150,6 +152,7 @@ export default function GeneralUi() {
                         theme={theme}
                         toggleTheme={toggleTheme}
                         onOpenAdmin={openAdmin}
+                        disabled={bookingResult != null}
                     />
 
                     <Collapse in={hasSidebar}>

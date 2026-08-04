@@ -212,6 +212,17 @@ tr.drag-row { transition: background-color .1s ease; }
 tr.drag-row.dragging { opacity: 0.4; }
 tr.drag-row.drag-over td { box-shadow: inset 0 2px 0 var(--app-accent); }
 
+/* ── Selected user row ────────────────────────────────────── */
+tr.user-selected td {
+  box-shadow: inset 0 2px 0 var(--app-accent), inset 0 -2px 0 var(--app-accent);
+}
+tr.user-selected td:first-child {
+  box-shadow: inset 0 2px 0 var(--app-accent), inset 0 -2px 0 var(--app-accent), inset 2px 0 0 var(--app-accent);
+}
+tr.user-selected td:last-child {
+  box-shadow: inset 0 2px 0 var(--app-accent), inset 0 -2px 0 var(--app-accent), inset -2px 0 0 var(--app-accent);
+}
+
 .redText { color: var(--app-danger); }
 .numberInput { max-width: 5rem; }
 
