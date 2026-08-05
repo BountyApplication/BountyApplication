@@ -255,6 +255,17 @@ tr.drag-row.drag-over td { box-shadow: inset 0 2px 0 var(--app-accent); }
 .user-row.user-selected .user-name { color: var(--app-accent); font-weight: 600; }
 .user-inactive .user-name { font-style: italic; opacity: 0.6; }
 
+/* ── Deposit marker ───────────────────────────────────────── */
+/* .badge prefix beats bootstrap's own .badge color, which is loaded after this file */
+.badge.deposit-badge {
+  background: var(--app-surface-2);
+  color: var(--app-text);
+  border: 1px solid var(--app-border);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
 .redText { color: var(--app-danger); }
 .numberInput { max-width: 5rem; }
 

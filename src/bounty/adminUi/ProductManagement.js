@@ -4,7 +4,7 @@ import { useGetProducts, addProduct, changeProduct, removeProduct } from '../uti
 import { toCurrency } from '../util/Util';
 import Confirm from '../util/Confirm';
 
-const empty = { name: '', price: '', stock: '' };
+const empty = { name: '', price: '', stock: '', deposit: 0 };
 
 function stockLabel(stock) {
     if (stock === null || stock === undefined || stock === '') {
@@ -60,6 +60,7 @@ export default function ProductManagement() {
             name: product.name,
             price: product.price,
             stock: product.stock ?? '',
+            deposit: product.deposit ?? 0,
             active: product.active,
         });
         setEditing(product);
@@ -79,8 +80,9 @@ export default function ProductManagement() {
     function save() {
         if (!valid()) return;
         const stock = form.stock === '' ? null : parseInt(form.stock);
+        const deposit = parseInt(form.deposit) || 0;
         if (editing === 'new') {
-            addProduct(form.name.trim(), parseFloat(form.price), stock);
+            addProduct(form.name.trim(), parseFloat(form.price), stock, deposit);
         } else {
             changeProduct({
                 ...editing,
@@ -88,6 +90,7 @@ export default function ProductManagement() {
                 price: parseFloat(form.price),
                 active: form.active,
                 stock,
+                deposit,
             });
         }
         close();
@@ -152,7 +155,11 @@ export default function ProductManagement() {
                                             </Button>
                                         </div>
                                     </td>
-                                    <td className="fw-semibold">{product.name}</td>
+                                    <td className="fw-semibold">
+                                        {product.name}
+                                        {product.deposit > 0 && <Badge bg="" className="deposit-badge ms-2" title="enthält Pfand">Pfand</Badge>}
+                                        {product.deposit < 0 && <Badge bg="" className="deposit-badge ms-2" title="Pfandrückgabe">Rückgabe</Badge>}
+                                    </td>
                                     <td className="text-end fw-semibold">{toCurrency(product.price)}</td>
                                     <td className="text-center">{stockLabel(product.stock)}</td>
                                     <td>
@@ -217,6 +224,18 @@ export default function ProductManagement() {
                             />
                             <Form.Text className="text-muted">
                                 Leer lassen für unbegrenzten Bestand. Bei 0 ist das Produkt ausverkauft.
+                            </Form.Text>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Pfand</Form.Label>
+                            <Form.Control
+                                type="number"
+                                step="1"
+                                value={form.deposit}
+                                onChange={e => setForm({ ...form, deposit: e.target.value })}
+                            />
+                            <Form.Text className="text-muted">
+                                1 für Artikel mit Pfand, -1 für die Pfandrückgabe, 0 für alles andere.
                             </Form.Text>
                         </Form.Group>
                         {editing !== 'new' && (

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ProductDisplay from './ProductDisplay';
 import UserSelect from '../util/CombinedUserSearch';
 import LastBookings from './LastBookings';
-import { useGetProducts, useGetUserBalance, commitBooking } from '../util/Database';
+import { useGetProducts, useGetUserAccount, commitBooking } from '../util/Database';
 import { Row, Collapse } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
@@ -17,7 +17,8 @@ const displayDisabledProducts = true;
 
 export default function GeneralUi() {
     const [user, setUser] = useState();
-    const userBalance = useGetUserBalance(user);
+    const account = useGetUserAccount(user);
+    const userBalance = account?.balance;
 
     const [correctionPlus, setCorrectionPlus] = useState(null);
     const [correctionMinus, setCorrectionMinus] = useState(null);
@@ -44,6 +45,9 @@ export default function GeneralUi() {
     const sum = calculateSum();
     const total = calculateTotal();
     const isSufficient = userBalance == null || total <= userBalance;
+    // what is still returnable, already including what the current cart adds or gives back
+    const depositLeft = (account?.deposit ?? 0)
+        + products.reduce((left, { deposit, amount }) => left + (deposit ?? 0) * amount, 0);
     const booking = {
         oldBalance: userBalance,
         newBalance: userBalance !== undefined ? Math.round((userBalance - total) * 100) / 100 : undefined,
@@ -161,6 +165,7 @@ export default function GeneralUi() {
                                 <ProductDisplay
                                     availableBalance={booking.newBalance}
                                     isSufficient={isSufficient}
+                                    depositLeft={depositLeft}
                                     products={products}
                                     setProducts={setProducts}
                                 />
@@ -208,6 +213,7 @@ export default function GeneralUi() {
                 reset={resetProducts}
                 resetUser={runResetUser}
                 submit={submit}
+                depositLeft={depositLeft}
             />
 
             <BookingResult result={bookingResult} onConfirm={finishBooking} />

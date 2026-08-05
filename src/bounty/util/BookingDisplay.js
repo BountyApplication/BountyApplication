@@ -5,12 +5,14 @@ import { toCurrency } from './Util';
 import Confirm from './Confirm';
 import { commitBooking, getUserBalance } from './Database';
 
-export function ProductList({ className, products, allProducts, setProducts, isHistory }) {
+export function ProductList({ className, products, allProducts, setProducts, isHistory, depositLeft }) {
     function setAmount(productId, next) {
         setProducts(allProducts.map(p => {
             if (p.productId !== productId) return p;
             const hasStock = p.stock !== null && p.stock !== undefined;
-            const max = hasStock ? Math.max(p.stock, 0) : Infinity;
+            let max = hasStock ? Math.max(p.stock, 0) : Infinity;
+            // deposit returns are capped by what the customer still has out
+            if (p.deposit < 0) max = Math.min(max, p.amount + Math.max(Math.floor(depositLeft / -p.deposit), 0));
             return { ...p, amount: Math.min(Math.max(next, 0), max) };
         }));
     }
@@ -27,8 +29,9 @@ export function ProductList({ className, products, allProducts, setProducts, isH
                 </tr>
             </thead>
             <tbody>
-                {products != null && products.map(({ productId, name, price, amount, stock }) => {
-                    const stockReached = stock !== null && stock !== undefined && amount >= stock;
+                {products != null && products.map(({ productId, name, price, amount, stock, deposit }) => {
+                    const stockReached = (stock !== null && stock !== undefined && amount >= stock)
+                        || (deposit < 0 && depositLeft < -deposit);
                     return (
                         <tr key={productId}>
                             <td className="text-truncate" style={{ maxWidth: '8rem' }} title={name}>{name}</td>
@@ -80,7 +83,7 @@ export function ProductList({ className, products, allProducts, setProducts, isH
     );
 }
 
-export default function BookingDisplay({ children, booking: { oldBalance, newBalance, total, productSum, correction, cashPayment, products }, allProducts, setProducts, isHistory = false, userId = null }) {
+export default function BookingDisplay({ children, booking: { oldBalance, newBalance, total, productSum, correction, cashPayment, products }, allProducts, setProducts, isHistory = false, userId = null, depositLeft = 0 }) {
     const bold = "fs-5 fw-bold px-0";
     const normal = "fs-5 px-0";
     const hasArticles = Array.isArray(products) && products.some(p => p.amount !== 0);
@@ -132,6 +135,7 @@ export default function BookingDisplay({ children, booking: { oldBalance, newBal
                         allProducts={allProducts}
                         setProducts={setProducts}
                         isHistory={isHistory}
+                        depositLeft={depositLeft}
                     />
                 </div>
             </Collapse>

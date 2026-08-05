@@ -14,6 +14,7 @@ ProductDisplay.propTypes = {
     setProducts: PropTypes.func.isRequired,
     isSufficient: PropTypes.bool,
     availableBalance: PropTypes.number,
+    depositLeft: PropTypes.number,
 };
 
 ProductDisplay.defaultProps = {
@@ -21,9 +22,10 @@ ProductDisplay.defaultProps = {
     setProducts: () => {},
     isSufficient: true,
     availableBalance: 0,
+    depositLeft: 0,
 };
 
-export default function ProductDisplay({ products, setProducts, isSufficient, availableBalance }) {
+export default function ProductDisplay({ products, setProducts, isSufficient, availableBalance, depositLeft }) {
     const [increment, setIncrement] = useState(1);
     const shift = useKeyPress('Shift');
     const tryRemove = shift || !isSufficient;
@@ -35,6 +37,11 @@ export default function ProductDisplay({ products, setProducts, isSufficient, av
         let newAmount = Math.max(product.amount + (remove ? -1 : 1) * increment, 0);
         const hasStock = product.stock !== null && product.stock !== undefined;
         if (!remove && hasStock) newAmount = Math.min(newAmount, Math.max(product.stock, 0));
+        // deposit can only be returned for what the customer still has out
+        if (!remove && product.deposit < 0) {
+            const returnable = Math.floor(depositLeft / -product.deposit);
+            newAmount = Math.min(newAmount, product.amount + Math.max(returnable, 0));
+        }
         setProducts(products.map(p => p.productId === productId ? { ...p, amount: newAmount } : p));
         if (increment !== 1) setIncrement(1);
     }
@@ -61,6 +68,11 @@ export default function ProductDisplay({ products, setProducts, isSufficient, av
             <Card.Header className="d-flex align-items-center justify-content-between">
                 <Card.Title className="mb-0 fw-semibold">Einkaufen</Card.Title>
                 <div className="d-flex align-items-center gap-2">
+                    {depositLeft > 0 && (
+                        <Badge bg="" className="deposit-badge px-2" title="offenes Pfand">
+                            <i className="bi bi-cup me-1" />Pfand: {depositLeft}
+                        </Badge>
+                    )}
                     {increment !== 1 && (
                         <Badge bg="primary" className="fs-6 px-2">
                             Schritt: {increment}
@@ -75,7 +87,7 @@ export default function ProductDisplay({ products, setProducts, isSufficient, av
             </Card.Header>
             <Card.Body>
                 <div className="product-grid">
-                    {activeProducts.map(({ productId, name, price, amount, stock }) =>
+                    {activeProducts.map(({ productId, name, price, amount, stock, deposit }) =>
                         <Product
                             key={productId}
                             productId={productId}
@@ -83,6 +95,8 @@ export default function ProductDisplay({ products, setProducts, isSufficient, av
                             price={price}
                             amount={amount}
                             stock={stock}
+                            deposit={deposit}
+                            depositLeft={depositLeft}
                             availableBalance={availableBalance}
                             tryRemove={tryRemove}
                             increment={increment}

@@ -18,6 +18,7 @@ BookingInfo.propTypes = {
     reset: PropTypes.func,
     resetUser: PropTypes.func,
     submit: PropTypes.func,
+    depositLeft: PropTypes.number,
 };
 
 BookingInfo.defaultProps = {
@@ -28,7 +29,7 @@ BookingInfo.defaultProps = {
     submit: () => {},
 };
 
-export default function BookingInfo({ show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, resetUser, submit }) {
+export default function BookingInfo({ show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, resetUser, submit, depositLeft }) {
     const { newBalance, correction, cashPayment, products } = booking;
     const hasArticles = Array.isArray(products) && products.some(p => p.amount !== 0);
     const hasInput = user != null && (hasArticles || correction !== 0 || cashPayment !== 0);
@@ -75,6 +76,7 @@ export default function BookingInfo({ show, user, openUserSelectCallback, bookin
                     booking={booking}
                     allProducts={allProducts}
                     setProducts={setProducts}
+                    depositLeft={depositLeft}
                 >
                     <Collapse in={hasInput}>
                         <div className="mt-auto pt-3 border-top">

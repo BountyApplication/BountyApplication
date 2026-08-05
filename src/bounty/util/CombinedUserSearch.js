@@ -251,18 +251,19 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         return users.filter(({lastname, firstname}) => checkUser(firstname, lastname));
     }
 
+    // every part of the input has to show up in one of the two names
     function checkUser(firstname, lastname) {
         if(!hasInput) return true;
-        let hasFirstname = checkName(firstname);
-        let hasLastname = checkName(lastname);
-        let inputsCount = input.split(' ').filter(input => input !== '').length;
-        if(inputsCount > 1) return hasFirstname && hasLastname
-        return hasFirstname || hasLastname;
+        return searchParts().every(part => firstname.toLocaleLowerCase().includes(part) || lastname.toLocaleLowerCase().includes(part));
     }
-    
+
     function checkName(name) {
         if(!hasInput) return true;
-        return input.toLocaleLowerCase().split(" ").some(v => v!=='' && name.toLocaleLowerCase().includes(v));
+        return searchParts().some(part => name.toLocaleLowerCase().includes(part));
+    }
+
+    function searchParts() {
+        return input.toLocaleLowerCase().split(' ').filter(part => part !== '');
     }
 
     // sortes user selection alphabetically
@@ -316,9 +317,14 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     }
 
     function displayUsers() {
+        const sortedUsers = getSortedUsers();
+        if(sortedUsers.length === 0) return <div className='user-list mt-3'>
+            <p className='text-muted text-center my-3'>Keine Ergebnisse gefunden</p>
+        </div>
+
         return <div className='user-list mt-3'>
             <ListGroup variant='flush'>
-                {getSortedUsers().map(listedUser => {
+                {sortedUsers.map(listedUser => {
                     const isSelected = user != null && user.userId === listedUser.userId;
                     return <ListGroup.Item
                         key={listedUser.userId}
@@ -369,7 +375,7 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
     function buttons() {
         return <>
             <Collapse in={useReset  && (!hideReset  || hasInput || user != null)}>
-                <Button className='mx-0 ms-2' variant="secondary" type="reset" onClick={reset.bind(this, false)}>Zurücksetzten</Button>
+                <Button className='mx-0 ms-2' variant="secondary" type="reset" onClick={reset.bind(this, false)}>Zurücksetzen</Button>
             </Collapse>
             <Collapse in={useSubmit && (!hideSubmit || hasInput || user != null)}>
                 <Button className='mx-0 ms-2' variant="primary" type="submit" onClick={submit}>{submitDescription}</Button>

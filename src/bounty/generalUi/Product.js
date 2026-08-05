@@ -12,6 +12,8 @@ Product.propTypes = {
     increment: PropTypes.number,
     availableBalance: PropTypes.number,
     stock: PropTypes.number,
+    deposit: PropTypes.number,
+    depositLeft: PropTypes.number,
 };
 
 Product.defaultProps = {
@@ -19,16 +21,22 @@ Product.defaultProps = {
     increment: 1,
     availableBalance: 0,
     stock: null,
+    deposit: 0,
+    depositLeft: 0,
 };
 
-export default function Product({ productId, name, price, amount, onClick, tryRemove, increment, availableBalance, stock }) {
+export default function Product({ productId, name, price, amount, onClick, tryRemove, increment, availableBalance, stock, deposit, depositLeft }) {
     const hasStock = stock !== null && stock !== undefined;
     const soldOut = hasStock && stock <= 0;
     const stockReached = hasStock && amount >= stock;
 
+    const isDepositReturn = deposit < 0;
+    const returnable = isDepositReturn ? Math.floor(depositLeft / -deposit) : 0;
+    const depositReached = isDepositReturn && returnable <= 0;
+
     const disabled = soldOut
         || (tryRemove && amount < increment)
-        || (!tryRemove && (stockReached || availableBalance < price * increment));
+        || (!tryRemove && (stockReached || depositReached || availableBalance < price * increment));
     const hasAmount = amount > 0;
 
     return (
@@ -37,14 +45,21 @@ export default function Product({ productId, name, price, amount, onClick, tryRe
             border={hasAmount ? 'primary' : undefined}
         >
             <Card.Body className="p-2 d-flex flex-column gap-1">
-                <span className="product-name" title={name}>{name}</span>
+                <div className="d-flex align-items-center justify-content-between gap-1">
+                    <span className="product-name" title={name}>{name}</span>
+                    {deposit > 0 && <Badge bg="" className="deposit-badge" title="enthält Pfand">Pfand</Badge>}
+                </div>
                 <div className="d-flex align-items-center justify-content-between">
                     <span className={`product-price ${disabled ? 'text-secondary' : 'text-muted'}`}>
                         {price.toFixed(2)} €
                     </span>
                     {soldOut
                         ? <Badge bg="danger">Ausverkauft</Badge>
-                        : hasStock && <span className="product-price text-muted">noch {stock - amount}</span>
+                        : depositReached
+                            ? <Badge bg="secondary">kein Pfand</Badge>
+                            : isDepositReturn
+                                ? <span className="product-price text-muted">noch {returnable}</span>
+                                : hasStock && <span className="product-price text-muted">noch {stock - amount}</span>
                     }
                 </div>
                 <div className="d-flex align-items-center gap-1 mt-1">

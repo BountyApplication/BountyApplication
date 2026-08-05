@@ -4,7 +4,20 @@ import { defaultUsers, defaultProducts, defaultBookings, defaultBalance, default
 import { notifyError } from './Notifications';
 
 const updateRate = 1*1000;
+const requestTimeout = 10*1000;
+const errorNoticeRate = 5*1000;
 const debug = false;
+
+const pendingRequests = new Set();
+let lastErrorNotice = 0;
+
+// one message per interval, otherwise a short outage stacks up a wall of toasts
+function notifyRequestError(error) {
+    const now = Date.now();
+    if(now - lastErrorNotice < errorNoticeRate) return;
+    lastErrorNotice = now;
+    notifyError('Datenbank-Fehler: ' + error);
+}
 
 function doRequest(topic, method, params, oldData, setData, defaultData, calculate = null) {
     if(topic.slice(-2)==='-1') {
@@ -13,9 +26,19 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
         if(setData!=null) setData(defaultData);
         return;
     }
+
+    // skips a poll while the same one is still running so a busy server does not get flooded
+    const requestKey = method+' '+topic;
+    if(method === 'GET' && pendingRequests.has(requestKey)) return;
+    pendingRequests.add(requestKey);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), requestTimeout);
+
     fetch(`http://${process.env.REACT_APP_DB_IP}:${process.env.REACT_APP_DB_PORT}/bounty/${topic}`, {
         method: method,
         headers: {'Content-Type': 'application/json'},
+        signal: controller.signal,
         ...(method !== 'GET' ? {body: JSON.stringify(params)} : {}),
     })
     .then(response => response.json())
@@ -30,10 +53,15 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     })
     .catch((error) => {
         console.error('Error:', error);
-        notifyError('Datenbank-Fehler: ' + error);
+        notifyRequestError(error);
+        if(oldData != null) return; // keeps the last known data instead of clearing the view
         if(calculate != null) defaultData = calculate(defaultData);
         if(arraysEqual(defaultData, oldData)) return;
         if(setData!=null) setData(defaultData);
+    })
+    .finally(() => {
+        clearTimeout(timeout);
+        pendingRequests.delete(requestKey);
     })
 }
 
@@ -73,6 +101,13 @@ export function useGetProducts(callback, onlyActive = true) {
     return useGetData('products', defaultProducts, callback, (products) => products.filter(({active}) => !onlyActive || active===1).sort((product1, product2) => (product1.place < product2.place ? -1 : product1.place > product2.place ? 1: 0)));
 }
 
+// delivers the whole account so balance and deposit share a single request
+export function useGetUserAccount(user, callback) {
+    if(user==null || user===undefined)
+        user = {userId: -1};
+    return useGetData('accounts/'+user.userId, defaultUser, callback);
+}
+
 export function useGetUserBalance(user, callback) {
     if(user==null || user===undefined)
         user = {userId: -1};
@@ -102,8 +137,8 @@ export function commitBooking(userId, booking) {
     });
 }
 
-export function addProduct(productName, productPrice, stock = null) {
-    const data = {name: productName, price: productPrice};
+export function addProduct(productName, productPrice, stock = null, deposit = 0) {
+    const data = {name: productName, price: productPrice, deposit: deposit};
     if(stock !== null && stock !== '' && !isNaN(stock)) data.stock = stock;
     doRequest('products', 'POST', data);
 }
