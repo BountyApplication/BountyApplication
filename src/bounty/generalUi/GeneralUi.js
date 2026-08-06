@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ProductDisplay from './ProductDisplay';
 import UserSelect from '../util/CombinedUserSearch';
 import LastBookings from './LastBookings';
-import { useGetProducts, useGetUserAccount, commitBooking } from '../util/Database';
+import { useGetProducts, useGetUserAccount, useGetSettings, commitBooking } from '../util/Database';
 import { Row, Collapse } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
@@ -24,6 +24,7 @@ export default function GeneralUi() {
     const [correctionMinus, setCorrectionMinus] = useState(null);
     const [paymentIn, setPaymentIn] = useState(null);
     const [paymentOut, setPaymentOut] = useState(null);
+    const [donation, setDonation] = useState(null);
 
     const [products, setProducts] = useState([]);
     const [resetUserCallback, setResetUserCallback] = useState();
@@ -33,6 +34,8 @@ export default function GeneralUi() {
 
     const { theme, toggleTheme } = useContext(ThemeContext);
     const navigate = useNavigate();
+    const settings = useGetSettings();
+    const payoutMode = settings?.payout === 'on';
 
     useGetProducts(
         (p) => setProducts(prev => p.map(product => {
@@ -55,17 +58,31 @@ export default function GeneralUi() {
         productSum: sum,
         correction: -(correctionMinus ?? 0) + (correctionPlus ?? 0),
         cashPayment: -(paymentOut ?? 0) + (paymentIn ?? 0),
+        donation: donation ?? 0,
         products: products.filter(({ amount }) => amount !== 0),
+        // kept apart from the netted values above so the display can show both directions
+        correctionPlus, correctionMinus, paymentIn, paymentOut,
     };
 
     const hasArticles = booking.products.length > 0;
+    // checks the entered fields, not the netted values: 5 in and 5 out cancel out but are still a booking
+    const hasEntries = [correctionPlus, correctionMinus, paymentIn, paymentOut, donation].some(v => (v ?? 0) !== 0);
     const canBook = user != null
         && booking.newBalance >= 0
-        && (hasArticles || booking.correction !== 0 || booking.cashPayment !== 0);
+        && (hasArticles || hasEntries);
 
     useKeyPress("Enter", () => {
         if (bookingResult != null) return finishBooking();
         if (canBook) submit();
+    });
+
+    // leaves the customer only when nothing would get lost, the selection handles Escape on its own
+    useKeyPress("Escape", () => {
+        if (bookingResult != null) return;
+        if (openUserSelect) return;
+        if (user == null) return;
+        if (hasArticles || hasEntries) return;
+        runResetUser();
     });
 
     useEffect(() => {
@@ -83,8 +100,28 @@ export default function GeneralUi() {
 
     function calculateTotal() {
         return parseFloat(
-            (calculateSum() - (correctionPlus ?? 0) + (correctionMinus ?? 0) - (paymentIn ?? 0) + (paymentOut ?? 0)).toPrecision(7)
+            (calculateSum() - (correctionPlus ?? 0) + (correctionMinus ?? 0) - (paymentIn ?? 0) + (paymentOut ?? 0) + (donation ?? 0)).toPrecision(7)
         );
+    }
+
+    // both quick actions bring the resulting balance down to zero
+    function payOutRest() {
+        if (!(booking.newBalance > 0)) return;
+        setPaymentOut(Math.round(((paymentOut ?? 0) + booking.newBalance) * 100) / 100);
+    }
+
+    function donateRest() {
+        if (!(booking.newBalance > 0)) return;
+        setDonation(Math.round(((donation ?? 0) + booking.newBalance) * 100) / 100);
+    }
+
+    // pays out full euros and leaves the odd cents as a donation
+    function payOutRoundedAndDonateRest() {
+        if (!(booking.newBalance > 0)) return;
+        const fullEuros = Math.floor(booking.newBalance);
+        const rest = Math.round((booking.newBalance - fullEuros) * 100) / 100;
+        if (fullEuros > 0) setPaymentOut(Math.round(((paymentOut ?? 0) + fullEuros) * 100) / 100);
+        if (rest > 0) setDonation(Math.round(((donation ?? 0) + rest) * 100) / 100);
     }
 
     function resetUser() {
@@ -103,6 +140,7 @@ export default function GeneralUi() {
         setCorrectionMinus(null);
         setPaymentIn(null);
         setPaymentOut(null);
+        setDonation(null);
     }
 
     function submit() {
@@ -112,6 +150,12 @@ export default function GeneralUi() {
             spent: booking.total,
             newBalance: booking.newBalance,
             products: booking.products,
+            productSum: booking.productSum,
+            correctionPlus: booking.correctionPlus,
+            correctionMinus: booking.correctionMinus,
+            paymentIn: booking.paymentIn,
+            paymentOut: booking.paymentOut,
+            donation: booking.donation,
         });
         resetProducts();
     }
@@ -173,23 +217,43 @@ export default function GeneralUi() {
 
                             <div className="m-0 mb-3">
                                 <Adjustment
+                                    defaultNegative={payoutMode}
                                     channels={[
                                         {
+                                            key: 'payIn',
+                                            label: 'Einzahlung',
+                                            direction: 'plus',
+                                            plus: paymentIn,
+                                            minus: null,
+                                            setPlus: setPaymentIn,
+                                            setMinus: () => {},
+                                        },
+                                        {
+                                            key: 'payOut',
+                                            label: 'Auszahlung',
+                                            direction: 'minus',
+                                            plus: null,
+                                            minus: paymentOut,
+                                            setPlus: () => {},
+                                            setMinus: setPaymentOut,
+                                        },
+                                        {
                                             key: 'correction',
-                                            label: 'Korrektur',
+                                            label: 'Korrekturbuchung',
                                             plus: correctionPlus,
                                             minus: correctionMinus,
                                             setPlus: setCorrectionPlus,
                                             setMinus: setCorrectionMinus,
                                         },
-                                        {
-                                            key: 'cash',
-                                            label: 'Barzahlung',
-                                            plus: paymentIn,
-                                            minus: paymentOut,
-                                            setPlus: setPaymentIn,
-                                            setMinus: setPaymentOut,
-                                        },
+                                        ...(payoutMode ? [{
+                                            key: 'donation',
+                                            label: 'Spende',
+                                            direction: 'minus',
+                                            plus: null,
+                                            minus: donation,
+                                            setPlus: () => {},
+                                            setMinus: setDonation,
+                                        }] : []),
                                     ]}
                                 />
                             </div>
@@ -214,6 +278,11 @@ export default function GeneralUi() {
                 resetUser={runResetUser}
                 submit={submit}
                 depositLeft={depositLeft}
+                hasEntries={hasEntries}
+                payoutMode={payoutMode}
+                payOutRest={payOutRest}
+                donateRest={donateRest}
+                payOutRoundedAndDonateRest={payOutRoundedAndDonateRest}
             />
 
             <BookingResult result={bookingResult} onConfirm={finishBooking} />

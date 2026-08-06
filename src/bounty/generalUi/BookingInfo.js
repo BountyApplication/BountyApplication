@@ -19,6 +19,11 @@ BookingInfo.propTypes = {
     resetUser: PropTypes.func,
     submit: PropTypes.func,
     depositLeft: PropTypes.number,
+    hasEntries: PropTypes.bool,
+    payoutMode: PropTypes.bool,
+    payOutRest: PropTypes.func,
+    donateRest: PropTypes.func,
+    payOutRoundedAndDonateRest: PropTypes.func,
 };
 
 BookingInfo.defaultProps = {
@@ -29,11 +34,12 @@ BookingInfo.defaultProps = {
     submit: () => {},
 };
 
-export default function BookingInfo({ show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, resetUser, submit, depositLeft }) {
-    const { newBalance, correction, cashPayment, products } = booking;
+export default function BookingInfo({ show, user, openUserSelectCallback, booking, allProducts, setProducts, reset, resetUser, submit, depositLeft, hasEntries, payoutMode, payOutRest, donateRest, payOutRoundedAndDonateRest }) {
+    const { newBalance, products } = booking;
     const hasArticles = Array.isArray(products) && products.some(p => p.amount !== 0);
-    const hasInput = user != null && (hasArticles || correction !== 0 || cashPayment !== 0);
+    const hasInput = user != null && (hasArticles || hasEntries);
     const negativeBalance = newBalance < 0;
+    const hasRest = user != null && newBalance > 0;
 
     return (
         <Offcanvas
@@ -78,6 +84,31 @@ export default function BookingInfo({ show, user, openUserSelectCallback, bookin
                     setProducts={setProducts}
                     depositLeft={depositLeft}
                 >
+                    <Collapse in={payoutMode && hasRest}>
+                        <div className="pt-3">
+                            {depositLeft > 0 && (
+                                <div className="mb-2 text-warning small d-flex align-items-center gap-1">
+                                    <i className="bi bi-info-circle-fill" />
+                                    {depositLeft} Pfand noch offen
+                                </div>
+                            )}
+                            <div className="d-flex gap-2">
+                                <Button className="flex-fill" variant="outline-primary" onClick={payOutRest}>
+                                    <i className="bi bi-cash-coin me-1" />
+                                    Alles auszahlen
+                                </Button>
+                                <Button className="flex-fill" variant="outline-primary" onClick={donateRest}>
+                                    <i className="bi bi-heart me-1" />
+                                    Rest spenden
+                                </Button>
+                            </div>
+                            <Button className="w-100 mt-2" variant="outline-primary" onClick={payOutRoundedAndDonateRest}>
+                                <i className="bi bi-scissors me-1" />
+                                Runden &amp; Rest spenden
+                            </Button>
+                        </div>
+                    </Collapse>
+
                     <Collapse in={hasInput}>
                         <div className="mt-auto pt-3 border-top">
                             {negativeBalance && (

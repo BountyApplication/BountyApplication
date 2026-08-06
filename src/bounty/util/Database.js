@@ -4,6 +4,8 @@ import { defaultUsers, defaultProducts, defaultBookings, defaultBalance, default
 import { notifyError } from './Notifications';
 
 const updateRate = 1*1000;
+const settingsRate = 10*1000;
+const summaryRate = 5*1000;
 const requestTimeout = 10*1000;
 const errorNoticeRate = 5*1000;
 const debug = false;
@@ -65,9 +67,9 @@ function doRequest(topic, method, params, oldData, setData, defaultData, calcula
     })
 }
 
-function useGetData(topic, defaultData, callback = null, calculate=null, continues = true, method = 'GET', params = {}) {
+function useGetData(topic, defaultData, callback = null, calculate=null, continues = true, method = 'GET', params = {}, rate = updateRate) {
     const [data, setData] = useState(null);
-    
+
     useEffect(() => {
         doRequest(topic, method, params, data, setData, defaultData, calculate);
     }, [topic, method]);
@@ -78,7 +80,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
         if(debug) console.log('start loop '+topic);
         const updateLoop = setInterval(() => {
             doRequest(topic, method, params, data, setData, defaultData, calculate);
-        }, updateRate);
+        }, rate);
 
         if(callback != null && (data != null || (defaultData != null && defaultData.length > 0))) callback(data==null ? (calculate!=null ? calculate(defaultData) : defaultData) : data);
 
@@ -86,7 +88,7 @@ function useGetData(topic, defaultData, callback = null, calculate=null, continu
             if(debug) console.log('stop loop '+topic);
             clearInterval(updateLoop);
         }
-    }, [data, topic, method, continues]);
+    }, [data, topic, method, continues, rate]);
 
     if(data == null || data === undefined) return calculate!=null ? calculate(defaultData) : defaultData;
 
@@ -112,6 +114,19 @@ export function useGetUserBalance(user, callback) {
     if(user==null || user===undefined)
         user = {userId: -1};
     return useGetData('accounts/'+user.userId, [{balance: defaultBalance}], callback, ({balance}) => balance);
+}
+
+// changes about once a day, so a slower interval is enough here
+export function useGetSettings() {
+    return useGetData('settings', {}, null, null, true, 'GET', {}, settingsRate);
+}
+
+export function setSetting(key, value) {
+    doRequest('settings', 'PUT', {key: key, value: value});
+}
+
+export function useGetSummary() {
+    return useGetData('summary', null, null, null, true, 'GET', {}, summaryRate);
 }
 
 export function getUserBalance(userId, callback) {

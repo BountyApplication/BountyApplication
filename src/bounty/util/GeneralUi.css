@@ -295,7 +295,7 @@ tr.drag-row.drag-over td { box-shadow: inset 0 2px 0 var(--app-accent); }
 .adj-summary.zero strong { color: var(--app-text-muted); font-weight: 500; }
 
 /* Modal shell */
-.adj-sheet { max-width: 440px; }
+.adj-sheet { max-width: 620px; }
 @media (max-width: 540px) {
   .adj-sheet { max-width: none; margin: 0; }
   .adj-sheet .adj-sheet-content {
@@ -325,18 +325,31 @@ tr.drag-row.drag-over td { box-shadow: inset 0 2px 0 var(--app-accent); }
 .adj-close:hover { background: var(--app-border); transform: rotate(90deg); }
 .adj-body { padding: 1.75rem 1.5rem 1.5rem; }
 
+/* channel menu on the left, keypad on the right */
+.adj-layout {
+  display: grid;
+  grid-template-columns: minmax(9.5rem, 11rem) 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+.adj-main { min-width: 0; }
+@media (max-width: 540px) {
+  .adj-layout { grid-template-columns: 1fr; gap: 1rem; }
+}
+
 /* Mode pills */
 .adj-pills {
-  display: flex; gap: 6px; padding: 5px;
+  display: flex; flex-direction: column; gap: 6px; padding: 5px;
   background: var(--app-accent-soft);
-  border-radius: 14px; margin-bottom: 1.25rem;
+  border-radius: 14px;
 }
 .adj-pill {
-  flex: 1; border: none; background: transparent;
-  border-radius: 10px; padding: 0.6rem 0.4rem;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  border: none; background: transparent;
+  border-radius: 10px; padding: 0.55rem 0.7rem;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
   color: var(--app-text-muted); cursor: pointer;
   transition: all 0.18s ease;
+  text-align: left;
 }
 .adj-pill:hover { color: var(--app-text); }
 .adj-pill.active {

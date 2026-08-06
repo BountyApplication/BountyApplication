@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import AdminDashboard from './AdminDashboard';
 import UserManagement from './UserManagement';
 import ProductManagement from './ProductManagement';
+import ClosingUi from './ClosingUi';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
 import { isAdminUnlocked } from '../util/adminAuth';
 
@@ -10,6 +11,7 @@ const NAV = [
     { hash: '#dashboard', label: 'Übersicht', icon: 'bi-grid-1x2' },
     { hash: '#users',     label: 'Benutzer',  icon: 'bi-people'   },
     { hash: '#products',  label: 'Produkte',  icon: 'bi-bag'      },
+    { hash: '#closing',   label: 'Abschluss', icon: 'bi-flag'     },
 ];
 
 export default function AdminUi() {
@@ -61,6 +63,7 @@ export default function AdminUi() {
                 {active === '#dashboard' && <AdminDashboard />}
                 {active === '#users'     && <UserManagement />}
                 {active === '#products'  && <ProductManagement />}
+                {active === '#closing'   && <ClosingUi />}
             </main>
         </div>
     );

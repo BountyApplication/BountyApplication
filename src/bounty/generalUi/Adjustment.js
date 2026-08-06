@@ -11,11 +11,26 @@ Adjustment.propTypes = {
         minus: PropTypes.number,
         setPlus: PropTypes.func.isRequired,
         setMinus: PropTypes.func.isRequired,
+        direction: PropTypes.oneOf(['plus', 'minus']), // fixed direction, entered without a sign
     })).isRequired,
+    defaultNegative: PropTypes.bool, // preselects the minus sign on channels that take both
 };
 
 function channelValue(c) {
     return (c.plus || 0) - (c.minus || 0);
+}
+
+// channels with a fixed direction are typed in as a plain amount, the sign is implied
+function channelBuffer(c) {
+    if (c.direction === 'minus') return valueToBuffer(c.minus || 0);
+    if (c.direction === 'plus') return valueToBuffer(c.plus || 0);
+    return valueToBuffer(channelValue(c));
+}
+
+function signedValue(c, v) {
+    if (c.direction === 'minus') return -Math.abs(v);
+    if (c.direction === 'plus') return Math.abs(v);
+    return v;
 }
 
 function valueToBuffer(v) {
@@ -36,19 +51,23 @@ function formatBuffer(s) {
     return s;
 }
 
-export default function Adjustment({ channels }) {
+export default function Adjustment({ channels, defaultNegative }) {
     const [open, setOpen] = useState(false);
     const [mode, setMode] = useState(channels[0].key);
     const [drafts, setDrafts] = useState({});
+
+    const current = channels.find((c) => c.key === mode) || channels[0];
 
     useEffect(() => {
         if (!open) return;
         const next = {};
         channels.forEach((c) => {
-            next[c.key] = valueToBuffer(channelValue(c));
+            next[c.key] = channelBuffer(c);
         });
         setDrafts(next);
-        setMode(channels[0].key);
+        // during payout the money usually goes out, so that channel starts selected
+        const start = defaultNegative ? channels.find((c) => c.direction === 'minus') : null;
+        setMode((start ?? channels[0]).key);
     }, [open]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -96,6 +115,8 @@ export default function Adjustment({ channels }) {
             const [, dec] = cur.split(',');
             if (dec && dec.length >= 2) return;
         }
+        // in payout mode a correction is meant to lower the balance more often than not
+        if (cur === '' && defaultNegative && current.direction == null) return setBuffer('-' + d);
         if (cur === '0') return setBuffer(d);
         if (cur === '-0') return setBuffer('-' + d);
         setBuffer(cur + d);
@@ -119,6 +140,7 @@ export default function Adjustment({ channels }) {
     }
 
     function toggleSign() {
+        if (current.direction != null) return;
         const cur = buffer();
         if (cur === '' || cur === '0') return;
         if (cur.startsWith('-')) setBuffer(cur.slice(1));
@@ -128,7 +150,9 @@ export default function Adjustment({ channels }) {
     function confirm() {
         channels.forEach((c) => {
             const v = Math.round(bufferToValue(drafts[c.key]) * 100) / 100;
-            if (v > 0)      { c.setPlus(v);    c.setMinus(null); }
+            if (c.direction === 'minus')     { c.setPlus(null); c.setMinus(Math.abs(v) || null); }
+            else if (c.direction === 'plus') { c.setMinus(null); c.setPlus(Math.abs(v) || null); }
+            else if (v > 0) { c.setPlus(v);    c.setMinus(null); }
             else if (v < 0) { c.setPlus(null); c.setMinus(Math.abs(v)); }
             else            { c.setPlus(null); c.setMinus(null); }
         });
@@ -140,9 +164,9 @@ export default function Adjustment({ channels }) {
         setOpen(false);
     }
 
-    const draftValue = bufferToValue(buffer());
+    const draftValue = signedValue(current, bufferToValue(buffer()));
     const sign = draftValue > 0 ? 'pos' : draftValue < 0 ? 'neg' : 'zero';
-    const display = formatBuffer(buffer());
+    const display = (current.direction === 'minus' && draftValue !== 0 ? '-' : '') + formatBuffer(buffer());
 
     const totalsActive = channels.some((c) => channelValue(c) !== 0);
 
@@ -159,16 +183,16 @@ export default function Adjustment({ channels }) {
                 <Card.Body className="d-flex align-items-center justify-content-between py-2 px-3">
                     <div className="d-flex flex-column">
                         <small className="text-muted">
-                            <i className="bi bi-sliders me-1" />Korrektur &amp; Barzahlung
+                            <i className="bi bi-sliders me-1" />Zahlungen &amp; Korrekturen
                         </small>
                         <div className="d-flex gap-3 mt-1 flex-wrap">
-                            {channels.map((c) => {
+                            {!totalsActive && <span className="adj-summary zero"><strong>—</strong></span>}
+                            {channels.filter((c) => channelValue(c) !== 0).map((c) => {
                                 const v = channelValue(c);
-                                const tone = v > 0 ? 'pos' : v < 0 ? 'neg' : 'zero';
                                 return (
-                                    <span key={c.key} className={`adj-summary ${tone}`}>
+                                    <span key={c.key} className={`adj-summary ${v > 0 ? 'pos' : 'neg'}`}>
                                         <span className="opacity-75 me-1">{c.label}:</span>
-                                        <strong>{v === 0 ? '—' : (v > 0 ? '+' : '') + toCurrency(v)}</strong>
+                                        <strong>{(v > 0 ? '+' : '') + toCurrency(v)}</strong>
                                     </span>
                                 );
                             })}
@@ -193,9 +217,10 @@ export default function Adjustment({ channels }) {
                 >×</button>
 
                 <div className="adj-body">
+                  <div className="adj-layout">
                     <div className="adj-pills">
                         {channels.map((c) => {
-                            const v = bufferToValue(drafts[c.key] ?? '');
+                            const v = signedValue(c, bufferToValue(drafts[c.key] ?? ''));
                             const isActive = mode === c.key;
                             return (
                                 <button
@@ -213,6 +238,7 @@ export default function Adjustment({ channels }) {
                         })}
                     </div>
 
+                  <div className="adj-main">
                     <div className={`adj-display ${sign}`}>
                         <span className="adj-display-value">{display}</span>
                         <span className="adj-display-suffix">€</span>
@@ -258,6 +284,7 @@ export default function Adjustment({ channels }) {
                             type="button"
                             className={`adj-tool ${draftValue < 0 ? 'is-neg' : ''}`}
                             onClick={toggleSign}
+                            disabled={current.direction != null}
                             title="Vorzeichen wechseln"
                         >± Vorzeichen</button>
                         <button
@@ -272,6 +299,8 @@ export default function Adjustment({ channels }) {
                             disabled={!totalsActive}
                         >Alles ↺</button>
                     </div>
+                  </div>
+                  </div>
 
                     <div className="adj-actions">
                         <button

@@ -392,8 +392,9 @@ function UserSelect({products, setProducts, inModal, show, title, setShow, runCa
         </>
     );
     
+    // the modal grabs the focus itself once the transition is done, so the search field claims it afterwards
     return(
-        <Modal show={show}>
+        <Modal show={show} autoFocus={false} onEntered={resetFocus}>
             <Modal.Header closeButton onClick={setShow!=null?setShow.bind(this, false):()=>{}}>
                 <Modal.Title className='fs-2'>Kunden Auswahl</Modal.Title>
                 {(toggleTheme != null || onOpenAdmin != null) &&

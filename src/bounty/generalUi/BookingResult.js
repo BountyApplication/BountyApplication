@@ -4,9 +4,12 @@ import { toCurrency } from '../util/Util';
 
 export default function BookingResult({ result, onConfirm }) {
     const show = result != null;
-    const { oldBalance, spent, newBalance, products } = result || {};
+    const { oldBalance, spent, newBalance, products, productSum, correctionPlus, correctionMinus, paymentIn, paymentOut, donation } = result || {};
     const displaySpent = spent != null ? -spent : spent;
     const boughtProducts = (products || []).filter(({ amount }) => amount !== 0);
+    const paidIn = paymentIn ?? 0;
+    const paidOut = paymentOut ?? 0;
+    const correction = (correctionPlus ?? 0) - (correctionMinus ?? 0);
 
     return (
         <Modal show={show} centered backdrop="static" keyboard={false}>
@@ -33,6 +36,38 @@ export default function BookingResult({ result, onConfirm }) {
                         ))}
                     </div>
                 )}
+                <div className="border-top py-2">
+                    {(productSum ?? 0) !== 0 && (
+                        <div className="d-flex justify-content-between align-items-center py-1">
+                            <span className="text-muted">Warensumme</span>
+                            <span>{toCurrency(-productSum)}</span>
+                        </div>
+                    )}
+                    {(correction ?? 0) !== 0 && (
+                        <div className="d-flex justify-content-between align-items-center py-1">
+                            <span className="text-muted">Korrektur</span>
+                            <span>{correction > 0 ? '+' : ''}{toCurrency(correction)}</span>
+                        </div>
+                    )}
+                    {paidIn !== 0 && (
+                        <div className="d-flex justify-content-between align-items-center py-1">
+                            <span className="text-muted">Einzahlung</span>
+                            <span className="fw-semibold">{toCurrency(paidIn)} in die Kasse</span>
+                        </div>
+                    )}
+                    {paidOut !== 0 && (
+                        <div className="d-flex justify-content-between align-items-center py-1">
+                            <span className="text-muted">Auszahlung</span>
+                            <span className="fw-bold fs-5">{toCurrency(paidOut)} aus der Kasse</span>
+                        </div>
+                    )}
+                    {(donation ?? 0) !== 0 && (
+                        <div className="d-flex justify-content-between align-items-center py-1">
+                            <span className="text-muted"><i className="bi bi-heart me-1" />Spende</span>
+                            <span className="fw-semibold">{toCurrency(donation)}</span>
+                        </div>
+                    )}
+                </div>
                 <div className="d-flex justify-content-between align-items-center py-2 border-top">
                     <span className="text-muted">Ausgegeben</span>
                     <span className="fs-5">{displaySpent > 0 ? '+' : ''}{toCurrency(displaySpent)}</span>
