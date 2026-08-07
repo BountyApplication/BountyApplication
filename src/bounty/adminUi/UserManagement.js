@@ -5,7 +5,7 @@ import { toCurrency } from '../util/Util';
 import Confirm from '../util/Confirm';
 
 const changeBalance = process.env.REACT_APP_CHANGE_BALANCE === 'true';
-const empty = { firstname: '', lastname: '', balance: '' };
+const empty = { firstname: '', lastname: '', balance: '', note: '', noteLevel: 'info' };
 
 export default function UserManagement() {
     const users = useGetUsers(null, false);
@@ -29,6 +29,8 @@ export default function UserManagement() {
             lastname: user.lastname,
             balance: user.balance,
             active: user.active,
+            note: user.note ?? '',
+            noteLevel: user.noteLevel ?? 'info',
         });
         setEditing(user);
     }
@@ -50,11 +52,14 @@ export default function UserManagement() {
         if (editing === 'new') {
             addUser(form.firstname.trim(), form.lastname.trim(), parseFloat(form.balance));
         } else {
+            const note = form.note.trim();
             const updated = {
                 ...editing,
                 firstname: form.firstname.trim(),
                 lastname: form.lastname.trim(),
                 active: form.active,
+                note: note,
+                noteLevel: note === '' ? null : form.noteLevel,
             };
             if (changeBalance) updated.balance = parseFloat(form.balance);
             changeUser(updated);
@@ -168,13 +173,47 @@ export default function UserManagement() {
                             </Form.Group>
                         )}
                         {editing !== 'new' && (
-                            <Form.Check
-                                type="switch"
-                                id="user-active"
-                                label={form.active === 1 ? 'Aktiv' : 'Inaktiv'}
-                                checked={form.active === 1}
-                                onChange={() => setForm({ ...form, active: form.active ? 0 : 1 })}
-                            />
+                            <>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Hinweis</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={2}
+                                        maxLength={200}
+                                        placeholder="z.B. heute keine Cola mehr"
+                                        value={form.note}
+                                        onChange={e => setForm({ ...form, note: e.target.value })}
+                                    />
+                                    <div className="d-flex gap-3 mt-2">
+                                        <Form.Check
+                                            type="radio"
+                                            id="note-info"
+                                            name="noteLevel"
+                                            label="Info (Balken über den Produkten)"
+                                            checked={form.noteLevel !== 'warning'}
+                                            onChange={() => setForm({ ...form, noteLevel: 'info' })}
+                                        />
+                                        <Form.Check
+                                            type="radio"
+                                            id="note-warning"
+                                            name="noteLevel"
+                                            label="Warnung (Fenster beim Öffnen)"
+                                            checked={form.noteLevel === 'warning'}
+                                            onChange={() => setForm({ ...form, noteLevel: 'warning' })}
+                                        />
+                                    </div>
+                                    <Form.Text className="text-muted">
+                                        Leer lassen, wenn kein Hinweis erscheinen soll.
+                                    </Form.Text>
+                                </Form.Group>
+                                <Form.Check
+                                    type="switch"
+                                    id="user-active"
+                                    label={form.active === 1 ? 'Aktiv' : 'Inaktiv'}
+                                    checked={form.active === 1}
+                                    onChange={() => setForm({ ...form, active: form.active ? 0 : 1 })}
+                                />
+                            </>
                         )}
                     </Form>
                 </Modal.Body>

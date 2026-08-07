@@ -4,12 +4,13 @@ import ProductDisplay from './ProductDisplay';
 import UserSelect from '../util/CombinedUserSearch';
 import LastBookings from './LastBookings';
 import { useGetProducts, useGetUserAccount, useGetSettings, commitBooking } from '../util/Database';
-import { Row, Collapse } from 'react-bootstrap';
+import { Row, Collapse, Alert } from 'react-bootstrap';
 import BookingInfo from './BookingInfo';
 import { ThemeContext } from "../../themes/ThemeProvider.js";
 import { useKeyPress } from '../util/Util';
 import Adjustment from './Adjustment';
 import BookingResult from './BookingResult';
+import CustomerNote from './CustomerNote';
 import AdminPasswordModal from '../util/AdminPasswordModal';
 import { isAdminUnlocked } from '../util/adminAuth';
 
@@ -31,11 +32,17 @@ export default function GeneralUi() {
     const [openUserSelect, setOpenUserSelect] = useState(true);
     const [bookingResult, setBookingResult] = useState(null);
     const [showAdminPrompt, setShowAdminPrompt] = useState(false);
+    const [noteAcknowledged, setNoteAcknowledged] = useState(false);
 
     const { theme, toggleTheme } = useContext(ThemeContext);
     const navigate = useNavigate();
     const settings = useGetSettings();
     const payoutMode = settings?.payout === 'on';
+
+    const note = account?.note ? account.note.trim() : '';
+    const isWarning = note !== '' && account?.noteLevel === 'warning';
+    const infoNote = note !== '' && !isWarning ? note : null;
+    const warningNote = isWarning && !noteAcknowledged ? note : null;
 
     useGetProducts(
         (p) => setProducts(prev => p.map(product => {
@@ -72,12 +79,14 @@ export default function GeneralUi() {
         && (hasArticles || hasEntries);
 
     useKeyPress("Enter", () => {
+        if (warningNote != null) return setNoteAcknowledged(true);
         if (bookingResult != null) return finishBooking();
         if (canBook) submit();
     });
 
     // leaves the customer only when nothing would get lost, the selection handles Escape on its own
     useKeyPress("Escape", () => {
+        if (warningNote != null) return;
         if (bookingResult != null) return;
         if (openUserSelect) return;
         if (user == null) return;
@@ -89,6 +98,11 @@ export default function GeneralUi() {
         if (user == null) return;
         setOpenUserSelect(false);
     }, [user, userBalance]);
+
+    // every customer brings up their warning again
+    useEffect(() => {
+        setNoteAcknowledged(false);
+    }, [user]);
 
     useEffect(() => {
         document.title = "Bounty Bezahlungssystem";
@@ -205,6 +219,12 @@ export default function GeneralUi() {
 
                     <Collapse in={hasSidebar}>
                         <div>
+                            {infoNote != null && (
+                                <Alert className="customer-note m-0 mb-3 d-flex align-items-center justify-content-center gap-2">
+                                    <i className="bi bi-info-circle-fill" />
+                                    <span>{infoNote}</span>
+                                </Alert>
+                            )}
                             <Row className="m-0 mb-3">
                                 <ProductDisplay
                                     availableBalance={booking.newBalance}
@@ -286,6 +306,8 @@ export default function GeneralUi() {
             />
 
             <BookingResult result={bookingResult} onConfirm={finishBooking} />
+
+            <CustomerNote user={user} note={warningNote} onConfirm={() => setNoteAcknowledged(true)} />
 
             <AdminPasswordModal
                 show={showAdminPrompt}
